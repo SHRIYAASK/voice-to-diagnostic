@@ -1,0 +1,131 @@
+{
+  "issue_id": "AC05",
+  "title": "Moisture / Water Droplets on Panel",
+  "start_node": "q1_moisture_type",
+  "nodes": [
+    {
+      "id": "q1_moisture_type",
+      "type": "question",
+      "text_en": "Are you noticing light mist/droplets (sweating) on the louvers or water streaming down?",
+      "text_hi": "Kya AC ke louvers/panel par halki boondein (sweating) hain ya paani beh raha hai?",
+      "options": [
+        {
+          "label": "Light droplets / Sweating on front louvers",
+          "next_node": "q2_weather_humidity"
+        },
+        {
+          "label": "Water is actively streaming/flowing down",
+          "redirect_issue": "AC04"
+        }
+      ]
+    },
+    {
+      "id": "q2_weather_humidity",
+      "type": "question",
+      "text_en": "Is the weather currently very humid, rainy, or is a window/door left open in the room?",
+      "text_hi": "Kya aaj mausam bahut nam (humid) ya barish wala hai, ya kamre ki khidki/darwaza khula hai?",
+      "options": [
+        {
+          "label": "Yes, high humidity / Monsoon weather",
+          "next_node": "q3_fan_mode_settings"
+        },
+        {
+          "label": "No, normal dry indoor weather",
+          "next_node": "q4_air_deflector_angle"
+        }
+      ]
+    },
+    {
+      "id": "q3_fan_mode_settings",
+      "type": "question",
+      "text_en": "Is the AC running on Low Fan Speed with temperature set very low (18°C-20°C)?",
+      "text_hi": "Kya AC Low fan speed aur bahut kam temperature (18°C-20°C) par chal raha hai?",
+      "options": [
+        {
+          "label": "Yes, Low Fan and low temperature",
+          "action": "instruct_monsoon_mode_high_fan",
+          "next_node": "q_monsoon_test"
+        },
+        {
+          "label": "No, normal High/Auto Fan",
+          "next_node": "q4_air_deflector_angle"
+        }
+      ]
+    },
+    {
+      "id": "q_monsoon_test",
+      "type": "question",
+      "text_en": "Did switching to Monsoon (Dry) Mode or increasing fan speed stop the panel droplets?",
+      "text_hi": "Dry Mode lagane ya Fan Speed badhane se kya boondein banna band hui?",
+      "options": [
+        {
+          "label": "Yes, condensation stopped",
+          "resolution": "resolved_humidity_settings_adjusted"
+        },
+        {
+          "label": "No, droplets continue forming",
+          "next_node": "q5_electrical_safety"
+        }
+      ]
+    },
+    {
+      "id": "q4_air_deflector_angle",
+      "type": "question",
+      "text_en": "Is the horizontal air louver angled straight down causing cold air to hit the lower casing?",
+      "text_hi": "Kya AC ka flap bilkul neeche jhuka hua hai jisse thandi hawa body se takra rahi hai?",
+      "options": [
+        {
+          "label": "Yes, flap is angled downwards",
+          "action": "instruct_adjust_vane_angle",
+          "resolution": "resolved_louver_angle_adjusted"
+        },
+        {
+          "label": "No, flap is positioned normally",
+          "next_node": "q5_electrical_safety"
+        }
+      ]
+    },
+    {
+      "id": "q5_electrical_safety",
+      "type": "question",
+      "text_en": "Is any water droplet or condensation reaching electrical sockets, power cords, or wiring?",
+      "text_hi": "Kya paani ki boondein kisi power switch, taar ya socket tak pahunch rahi hain?",
+      "options": [
+        {
+          "label": "Yes, moisture is near electrical wires",
+          "conclusion": "diag_urgent_insulation_leak"
+        },
+        {
+          "label": "No, only on plastic casing",
+          "conclusion": "diag_casing_insulation_gap"
+        }
+      ]
+    }
+  ],
+  "conclusions": {
+    "diag_urgent_insulation_leak": {
+      "probable_cause": "Condensation Dripping Near Electricals / Damaged Internal Insulation",
+      "confidence": 0.9,
+      "parts": [
+        "Thermal Insulation Foam",
+        "Anti-sweat Gasket Tape"
+      ],
+      "priority": "Critical",
+      "safety_flag": true,
+      "rag_query": "LG AC condensation droplets near electrical wiring safety",
+      "technician_note": "SHUT OFF POWER IMMEDIATELY. Inspect indoor backplate insulation and seal vapor barrier gaps."
+    },
+    "diag_casing_insulation_gap": {
+      "probable_cause": "Internal Styrofoam Casing Gap or High Room Infiltration",
+      "confidence": 0.8,
+      "parts": [
+        "Front Panel Gasket",
+        "EVA Insulation Strip"
+      ],
+      "priority": "Low",
+      "safety_flag": false,
+      "rag_query": "LG AC front panel condensation sweating fix",
+      "technician_note": "Reseat front panel louvers and inspect internal EPS air duct insulation for cracks."
+    }
+  }
+}

@@ -1,0 +1,75 @@
+{
+  "issue_id": "AC10",
+  "title": "Cleaning & Maintenance",
+  "start_node": "q1_maintenance_reason",
+  "nodes": [
+    {
+      "id": "q1_maintenance_reason",
+      "type": "question",
+      "text_en": "Are you performing routine 15-day cleaning or troubleshooting poor cooling / bad odor?",
+      "text_hi": "Kya aap 15-din ki routine safai kar rahe hain ya kam cooling/badboo ki vajah se saaf kar rahe hain?",
+      "options": [
+        {
+          "label": "Routine 15-Day Filter Maintenance",
+          "action": "instruct_filter_clean_steps",
+          "next_node": "q2_filter_removal_help"
+        },
+        {
+          "label": "Poor Cooling issue",
+          "redirect_issue": "AC01"
+        },
+        {
+          "label": "Bad Odor / Mold smell",
+          "redirect_issue": "AC06"
+        }
+      ]
+    },
+    {
+      "id": "q2_filter_removal_help",
+      "type": "question",
+      "text_en": "Have you removed the filter using the designated tabs and washed it with normal water and a soft brush?",
+      "text_hi": "Kya aapne filter ko tabs se bahar nikal kar normal paani aur soft brush se dho liya hai?",
+      "options": [
+        {
+          "label": "Yes, washed cleanly",
+          "next_node": "q3_drying_check"
+        },
+        {
+          "label": "Need help removing filter",
+          "action": "instruct_filter_removal_guide",
+          "next_node": "q3_drying_check"
+        }
+      ]
+    },
+    {
+      "id": "q3_drying_check",
+      "type": "question",
+      "text_en": "Is the air filter 100% dry in shade? (Never install a wet filter as it causes mold and short circuit risk).",
+      "text_hi": "Kya filter chhaon mein poori tarah sookh chuka hai? (Geela filter kabhi na lagayein).",
+      "options": [
+        {
+          "label": "Yes, completely dry; reinstalled firmly",
+          "resolution": "resolved_routine_filter_maintenance"
+        },
+        {
+          "label": "Filter is still damp / drying",
+          "action": "instruct_wait_dry_complete",
+          "resolution": "resolved_filter_drying_guided"
+        }
+      ]
+    }
+  ],
+  "conclusions": {
+    "diag_deep_chemical_service_needed": {
+      "probable_cause": "Cooling Coils Need Annual Professional Jet Wash Service",
+      "confidence": 0.85,
+      "parts": [
+        "Annual Preventative Maintenance Service Kit"
+      ],
+      "priority": "Low",
+      "safety_flag": false,
+      "rag_query": "LG AC annual preventive maintenance service schedule",
+      "technician_note": "Perform foam wash of condenser and evaporator coils."
+    }
+  }
+}

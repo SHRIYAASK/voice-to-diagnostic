@@ -1,0 +1,742 @@
+DOCUMENT TYPE: TROUBLESHOOTING GUIDE
+MODEL: LG Split AC Inverter Series
+SECTION: ERROR CODE DIAGNOSIS
+FILE: troubleshooting_error_codes.txt
+
+IMPORTANT SCOPE AND SAFETY NOTICE
+This guide expands the error-code notes supplied for this document. Error-code meanings and diagnostic procedures can vary by LG product family, region, controller, indoor/outdoor combination and model revision. The codes and descriptions below are based on the supplied reference list and are not confirmed as universally applicable to every LG inverter split AC, including the UW-Q18WUZA.
+
+Before using a code to diagnose or replace a component, verify it against the official service manual for the exact model and product revision. Do not assume a code has the same meaning across all LG models.
+
+Customer-safe actions are limited to external visual checks and the reset procedure explicitly permitted by the product's user manual. Do not instruct customers to open electrical covers, probe terminals, measure resistance or voltage, manipulate fan blades, replace fuses, handle refrigerant, or replace PCBs. Electrical, refrigerant, pressure and internal component tests are for qualified technicians using the correct service manual and equipment.
+
+GENERAL CUSTOMER GUIDANCE
+1. Record the exact error code as displayed, including any leading zero.
+2. If there is smoke, a burning smell, sparking, repeated breaker trips, water near electrical equipment, or a damaged cable, stop using the unit and isolate power only if it is safe to do so. Contact qualified service.
+3. For codes that permit a reset, follow the exact product's user manual. Do not repeatedly cycle the breaker to suppress a recurring fault.
+4. Keep the outdoor unit's air inlet and outlet clear of loose debris, but do not remove covers or insert tools through the grille.
+5. If a code returns after an allowed reset, arrange service and provide the code and symptom history.
+6. The diagnostic suggestions in this document are not a substitute for the official code-specific flowchart.
+
+ERROR CODE INDEX
+CH 01 — Indoor air inlet thermistor error (open/short) [supplied reference]
+CH 02 — Indoor pipe inlet thermistor error (open/short) [supplied reference]
+CH 03 — Indoor/outdoor communication or wiring error [supplied reference]
+CH 04 — Drain pump error or float switch open [supplied reference]
+CH 05 — Indoor/outdoor communication error [supplied reference]
+CH 06 — Outdoor fan motor error [supplied reference]
+CH 07 — Operation mode mismatch [supplied reference]
+CH 08 — Indoor fan motor error [supplied reference]
+CH 10 — Indoor drain level high / overflow risk [supplied reference]
+CH 13 — Indoor pipe outlet thermistor error [supplied reference]
+CH 21 — Outdoor IPM/inverter overcurrent fault [supplied reference]
+CH 22 — Outdoor current transformer (CT) sensor error [supplied reference]
+CH 23 — DC link low-voltage error [supplied reference]
+CH 24 — High-pressure switch open / discharge-temperature protection [supplied reference]
+CH 26 — Compressor start failure / locked rotor [supplied reference]
+CH 27 — PFC circuit error [supplied reference]
+CH 29 — Compressor rotation/reverse-phase error [supplied reference]
+CH 32 — Discharge pipe thermistor high-temperature error [supplied reference]
+CH 33 — Outdoor pipe thermistor error [supplied reference]
+CH 40 — Outdoor ambient thermistor error [supplied reference]
+CH 44 — Outdoor discharge thermistor error [supplied reference]
+CH 45 — Outdoor condenser middle thermistor error [supplied reference]
+CH 46 — Outdoor suction thermistor error [supplied reference]
+CH 53 — Outdoor unit EEPROM/data error [supplied reference]
+CH 60 — Outdoor unit overload protection [supplied reference]
+CH 65 — Heatsink over-temperature protection [supplied reference]
+CH 67 — Compressor startup/position-detection failure [supplied reference]
+CH 97 — Installation check/commissioning error [supplied reference]
+
+The list above is the list supplied for expansion; it is not a claim that every listed code exists on every LG split AC model. Missing numbers are intentionally not filled with guessed meanings.
+
+----------------------------------------------------------------------
+CH 01 — INDOOR AIR INLET THERMISTOR ERROR
+Category: Sensor
+Severity in supplied reference: Medium
+Description in supplied reference: Indoor air inlet thermistor open/short.
+
+What it may indicate
+The control system may be detecting an abnormal signal from the indoor room-air temperature sensor or its circuit. A code alone does not prove the sensor itself has failed.
+
+Customer actions
+1. Record the code and any unusual behavior.
+2. If the product manual permits a reset, switch the unit off and follow the manual's reset procedure.
+3. Do not open the indoor unit or pull on sensor wiring.
+4. If the code returns, book service.
+
+Technician checks
+1. Confirm the exact code definition for the model.
+2. Isolate power and follow the service manual's electrical-safety procedure.
+3. Inspect the indoor air sensor, harness and connector for damage, moisture or a loose connection.
+4. The supplied reference suggests checking resistance at 25°C in a 5 kΩ–10 kΩ range and checking connector CN-TH1. These details are unverified; use the model-specific sensor resistance table and connector designation.
+5. Compare measured resistance with the manufacturer's temperature/resistance chart rather than a broad range alone.
+6. Check the relevant PCB input only using the official procedure.
+
+Possible parts listed in supplied reference
+Indoor air sensor; main PCB.
+
+Do not replace the PCB or sensor based only on the code. Confirm the sensor, wiring and specified test results first.
+
+----------------------------------------------------------------------
+CH 02 — INDOOR PIPE INLET THERMISTOR ERROR
+Category: Sensor
+Severity in supplied reference: Medium
+Description in supplied reference: Indoor pipe inlet thermistor open/short.
+
+What it may indicate
+The control system may be detecting an abnormal signal from the indoor heat-exchanger pipe sensor or its circuit.
+
+Customer actions
+1. Record the code.
+2. Follow the product manual's reset procedure if permitted.
+3. Do not remove the front cover beyond normal user filter access or attempt to reach the copper pipe sensor.
+4. Arrange service if the code persists.
+
+Technician checks
+1. Verify the code and sensor identity from the exact service manual.
+2. Isolate power and inspect the sensor harness and connector.
+3. Check that the sensor is seated in its specified clip or holder on the pipe.
+4. Measure resistance only with the approved method and compare it with the official temperature/resistance table.
+5. Check for a damaged harness, poor connector contact, moisture or a faulty PCB input.
+
+Possible part listed in supplied reference
+Indoor pipe inlet sensor.
+
+----------------------------------------------------------------------
+CH 03 — INDOOR/OUTDOOR COMMUNICATION OR WIRING ERROR
+Category: Communication
+Severity in supplied reference: High
+Description in supplied reference: Wiring error or indoor/outdoor communication failure.
+
+Customer actions
+1. Note whether the outdoor unit appears to start, without touching it or listening close to moving parts.
+2. Check only for obvious external obstruction or visible cable damage from a safe location.
+3. If the user manual permits, perform one reset using the specified procedure.
+4. If the error returns, stop repeated resets and contact service.
+
+Technician checks
+1. Verify the code meaning and communication topology for the exact model.
+2. Isolate power before inspecting terminal blocks or interconnecting cables.
+3. Compare terminal-to-terminal wiring with the official diagram; do not rely on wire color alone.
+4. Inspect for loose terminals, damaged insulation, corrosion, moisture or an incorrect connection.
+5. Test continuity and signal behavior only as specified by the official service procedure.
+6. Test indoor/outdoor PCB operation only after wiring and supply checks have been completed.
+
+The supplied reference mentions F1/F2 or L1/L2. These labels are not interchangeable across all models. Use only the terminals identified by the exact wiring diagram.
+
+Possible parts listed in supplied reference
+Communication wire; indoor PCB; outdoor PCB.
+
+Safety
+Electrical diagnostic work is technician-only. Do not probe live or unidentified terminals.
+
+----------------------------------------------------------------------
+CH 04 — DRAIN PUMP ERROR OR FLOAT SWITCH OPEN
+Category: Drainage
+Severity in supplied reference: Medium
+Description in supplied reference: Drain pump error or float switch open.
+
+Applicability note
+A drain pump and float switch may be present on certain indoor-unit designs or installations. Confirm that the specific indoor unit has these components; do not assume all wall-mounted split units use a drain pump.
+
+Customer actions
+1. Check for visible water leakage.
+2. If water is leaking indoors, turn the AC off. Keep water away from sockets and electrical equipment.
+3. If the drain hose is visible and safely accessible, check for an obvious kink, crushing or submerged outlet.
+4. Do not dismantle the unit or pour chemicals into the drain.
+5. Book service if the code remains or leakage occurs.
+
+Technician checks
+1. Confirm the installed drain arrangement and code definition.
+2. Inspect the drain pan and accessible hose route.
+3. Check for a blockage or incorrect hose slope.
+4. Test the drain pump and float switch using the official procedure.
+5. Inspect connectors and control inputs for damage or moisture.
+6. Perform a controlled drainage test and check for leaks after repair.
+
+Possible parts listed in supplied reference
+Drain pump; float switch.
+
+----------------------------------------------------------------------
+CH 05 — INDOOR/OUTDOOR COMMUNICATION ERROR
+Category: Communication
+Severity in supplied reference: High
+Description in supplied reference: Communication error between indoor and outdoor units.
+
+Customer actions
+1. Record the code and when it appears.
+2. Check for obvious external cable damage only from a safe location; do not touch exposed or damaged wiring.
+3. If the product manual allows, perform one reset according to its instructions. The supplied reference mentions turning the MCB off for five minutes, but this interval must be verified against the exact product's instructions.
+4. If the code returns, stop resetting and arrange qualified service.
+
+Technician checks
+1. Confirm the CH 05 definition for the exact model; code meanings vary across product families.
+2. Isolate power and inspect interconnecting wiring and terminal connections.
+3. Confirm terminal assignments from the official wiring diagram. Do not assume L1/L2 are communication terminals.
+4. The supplied reference states that DC voltage between L1 and L2 should fluctuate between 0 V and 24 V. This is unverified and must not be used as a universal pass/fail range. Test only the manufacturer-designated terminals, using the specified meter and operating conditions.
+5. Verify supply and wiring before considering a PCB fault.
+6. Follow the official flowchart to distinguish a cable, connector, supply or PCB problem.
+
+Possible parts listed in supplied reference
+Communication wire; indoor main PCB; outdoor main PCB.
+
+Do not replace the indoor PCB first as a blanket rule. Replace a PCB only when the official diagnostic process supports that conclusion.
+
+----------------------------------------------------------------------
+CH 06 — OUTDOOR FAN MOTOR ERROR
+Category: Motor
+Severity in supplied reference: High
+Description in supplied reference: Outdoor fan motor not rotating or rotating abnormally.
+
+Customer actions
+1. Turn the unit off if this code appears and follow the product manual.
+2. Do not put hands or tools through the grille.
+3. Do not try to rotate the fan manually.
+4. Keep the outdoor unit's external airflow area clear of loose debris.
+5. Arrange service if the code persists.
+
+Technician checks
+1. Isolate power and follow the inverter stored-energy safety procedure.
+2. Inspect the fan blade for visible obstruction or damage.
+3. Identify the installed fan motor type. Some inverter motors are electronically commutated and may not use a conventional run capacitor.
+4. Do not assume a capacitor is present; check the wiring diagram and parts list.
+5. Test the motor, connector, feedback signal and PCB driver using the exact approved procedure.
+6. Compare resistance readings only with verified motor specifications.
+7. Check for mechanical rubbing or damage without forcing the fan wheel.
+
+Possible parts listed in supplied reference
+Outdoor fan motor; fan capacitor (only if fitted); outdoor PCB.
+
+----------------------------------------------------------------------
+CH 07 — OPERATION MODE MISMATCH
+Category: Mode
+Severity in supplied reference: Low
+Description in supplied reference: Operation mode mismatch between units.
+
+Applicability note
+This type of mismatch is most relevant to systems with multiple indoor units or particular system configurations. Confirm that this code and behavior apply to the installed product.
+
+Customer actions
+1. If the system has multiple indoor units, check whether the product instructions require them to use a common operating mode.
+2. Set modes according to the official operating instructions; do not change service switches.
+3. If the code persists on a single-split system or the instructions do not explain it, contact the installer or service provider.
+
+Technician checks
+1. Confirm the system type and official code definition.
+2. Verify configuration and installation settings against the commissioning documentation.
+3. Check DIP-switch settings only if the exact service manual instructs this and only by a qualified technician with power isolated.
+4. Follow the official reset/commissioning process.
+
+Possible parts listed in supplied reference
+None specified.
+
+----------------------------------------------------------------------
+CH 08 — INDOOR FAN MOTOR ERROR
+Category: Motor
+Severity in supplied reference: High
+Description in supplied reference: Indoor fan motor error.
+
+Customer actions
+1. Turn the unit off.
+2. Do not insert objects into the air outlet or attempt to turn the blower wheel.
+3. Book a technician visit if the code persists.
+
+Technician checks
+1. Verify the code definition for the exact indoor unit.
+2. Isolate power and inspect the blower wheel for visible debris or damage where safely accessible.
+3. Identify the motor type and connector pinout.
+4. Test motor feedback, drive signals and PCB circuitry only with the official procedure.
+5. Inspect wiring and connectors for looseness, damage or moisture.
+6. Do not apply mains voltage directly to a motor or use generic resistance limits without the correct specification.
+
+Possible parts listed in supplied reference
+Indoor blower motor; indoor PCB.
+
+----------------------------------------------------------------------
+CH 10 — INDOOR DRAIN LEVEL HIGH / OVERFLOW RISK
+Category: Drainage
+Severity in supplied reference: Critical
+Description in supplied reference: Indoor drain level high or water overflow risk.
+
+Customer actions
+1. Turn the AC off if water is leaking or overflow is suspected.
+2. Keep water away from electrical outlets and devices.
+3. Check the visible drain hose only if safely accessible; look for an obvious kink or submerged outlet.
+4. Do not open the indoor electrical compartment or pour chemicals into the drain.
+5. Arrange prompt service if water leakage continues.
+
+Technician checks
+1. Confirm whether the unit uses a drain-level sensor, float switch or pump.
+2. Inspect the drain pan, hose route, slope and outlet.
+3. Clear obstructions using an approved method.
+4. Test the pump or float sensor if fitted.
+5. Check for disconnected hose joints, damaged pan or incorrect installation level.
+6. Perform a controlled drainage test and verify no leakage.
+
+Possible parts listed in supplied reference
+Drain pump; float sensor; drain hose.
+
+----------------------------------------------------------------------
+CH 13 — INDOOR PIPE OUTLET THERMISTOR ERROR
+Category: Sensor
+Severity in supplied reference: Medium
+Description in supplied reference: Indoor pipe outlet thermistor error.
+
+Customer actions
+1. Record the code.
+2. Follow the product manual's permitted reset procedure.
+3. Do not attempt to locate or unclip internal sensors.
+4. Arrange service if the code returns.
+
+Technician checks
+1. Confirm sensor identity and code meaning from the exact service manual.
+2. Inspect the sensor connector and harness with power isolated.
+3. Verify sensor seating at the manufacturer-designated pipe location. The supplied reference mentions a U-bend; confirm this against the actual design.
+4. Measure resistance using the official sensor table and specified temperature conditions.
+5. Check for wiring or PCB input faults before replacing parts.
+
+Possible part listed in supplied reference
+Indoor pipe outlet sensor.
+
+----------------------------------------------------------------------
+CH 21 — OUTDOOR IPM / INVERTER OVERCURRENT FAULT
+Category: Electrical
+Severity in supplied reference: Critical
+Description in supplied reference: Outdoor inverter power module overcurrent fault.
+
+Customer actions
+1. Turn the AC off and isolate it at the breaker only if safe.
+2. Do not attempt to restart the unit.
+3. Do not open the outdoor electrical compartment.
+4. Contact authorized service.
+
+Technician checks
+1. Follow the official inverter fault procedure and stored-energy safety instructions.
+2. Inspect for visible damage or moisture only after safe isolation and verification.
+3. Test compressor windings, inverter power module and related circuits only as directed by the exact service manual.
+4. Check the prescribed mechanical and system conditions before condemning the compressor or IPM.
+5. Do not open the refrigerant circuit or adjust charge without proper qualifications and diagnostic evidence.
+
+Possible parts listed in supplied reference
+Outdoor PCB/IPM; compressor.
+
+----------------------------------------------------------------------
+CH 22 — OUTDOOR CURRENT TRANSFORMER (CT) SENSOR ERROR
+Category: Electrical
+Severity in supplied reference: High
+Description in supplied reference: Outdoor CT sensor error.
+
+Customer actions
+1. Record the code.
+2. If the code returns after a manual-permitted reset, stop using the unit and book service.
+3. Do not open the outdoor electrical compartment.
+
+Technician checks
+1. Confirm that the installed board uses a CT sensor and verify the code definition.
+2. Isolate power and follow the stored-energy procedure.
+3. Inspect the CT connector and wiring.
+4. Perform current measurements only with suitable equipment and the manufacturer-approved method.
+5. Compare current readings with the nameplate and official operating limits under the specified test conditions.
+6. Check the CT sensor and PCB input using the service procedure.
+
+Possible parts listed in supplied reference
+CT sensor; outdoor PCB.
+
+----------------------------------------------------------------------
+CH 23 — DC LINK LOW-VOLTAGE ERROR
+Category: Electrical
+Severity in supplied reference: Critical
+Description in supplied reference: DC link low-voltage error.
+
+Customer actions
+1. Stop operating the AC and contact qualified service if the code persists.
+2. Do not open the outdoor electrical compartment.
+3. Do not assume a stabilizer is required or purchase one solely because of this code; supply requirements must be checked against the product documentation and measured by a qualified person.
+
+Technician checks
+1. Verify the code definition for the exact model.
+2. Check supply conditions using the prescribed electrical safety procedure.
+3. Follow the manufacturer's DC-bus diagnostic procedure; hazardous stored voltage may remain after isolation.
+4. Inspect and test rectifier, capacitor and inverter circuits only as authorized by the service manual.
+5. Check for associated compressor or power-stage faults where indicated.
+6. Do not touch or discharge capacitors using improvised methods.
+
+Possible parts listed in supplied reference
+Outdoor PCB; capacitor bank; voltage stabilizer (only if a qualified assessment and manufacturer requirements support it).
+
+----------------------------------------------------------------------
+CH 24 — HIGH-PRESSURE SWITCH OPEN / DISCHARGE-TEMPERATURE PROTECTION
+Category: Pressure
+Severity in supplied reference: Critical
+Description in supplied reference: High-pressure switch open or discharge-temperature protection.
+
+Customer actions
+1. Turn the AC off.
+2. From a safe location, check whether leaves or other loose debris visibly block the outdoor unit's airflow.
+3. Remove only loose external debris that can be reached safely without opening the cabinet.
+4. Do not remove covers, touch refrigerant pipes or attempt pressure measurements.
+5. Arrange service if the code persists.
+
+Technician checks
+1. Confirm the exact code meaning; the supplied reference groups pressure-switch and discharge-temperature conditions, which may be distinct on some models.
+2. Inspect condenser cleanliness, airflow and fan operation.
+3. Verify the installed protection device and sensor inputs according to the wiring diagram.
+4. Measure pressure and assess refrigerant charge only with proper equipment and qualifications.
+5. Investigate the underlying cause before resetting or replacing a protection device.
+6. Never bypass a pressure switch or protection circuit.
+
+Possible parts/actions listed in supplied reference
+High-pressure switch; condenser cleaning; refrigerant-system inspection.
+
+----------------------------------------------------------------------
+CH 26 — COMPRESSOR START FAILURE / LOCKED ROTOR
+Category: Compressor
+Severity in supplied reference: Critical
+Description in supplied reference: Compressor start failure or locked rotor.
+
+Customer actions
+1. Turn the AC off immediately if instructed by the product's fault guidance.
+2. Do not repeatedly restart the unit.
+3. Contact authorized service.
+
+Technician checks
+1. Verify the exact model-specific code and compressor type.
+2. Isolate power and follow the inverter stored-energy procedure.
+3. Check compressor terminal wiring and winding measurements using the official procedure.
+4. Do not assume a conventional start/run capacitor is present on an inverter compressor; verify the circuit design.
+5. Check the inverter output and related fault history using approved methods.
+6. Investigate mechanical, electrical and system causes before recommending compressor replacement.
+
+Possible parts listed in supplied reference
+Compressor; start capacitor (only if fitted); outdoor PCB.
+
+----------------------------------------------------------------------
+CH 27 — PFC (POWER FACTOR CORRECTION) CIRCUIT ERROR
+Category: Electrical
+Severity in supplied reference: High
+Description in supplied reference: PFC circuit error.
+
+Customer actions
+1. Record the code.
+2. If the user manual permits a reset, perform it once according to its instructions.
+3. If the error persists, stop using the unit and arrange authorized service.
+4. Do not open the outdoor electrical compartment.
+
+Technician checks
+1. Confirm the code and PFC circuit layout for the exact board.
+2. Isolate power and follow the stored-energy procedure.
+3. Inspect for visible damage, overheating, loose connectors or moisture.
+4. Test the PFC reactor and power components only using the manufacturer's approved diagnostic procedure.
+5. Do not probe the energized DC bus unless qualified and explicitly following the service procedure.
+
+Possible parts listed in supplied reference
+Outdoor PCB; PFC reactor.
+
+----------------------------------------------------------------------
+CH 29 — COMPRESSOR ROTATION / PHASE ERROR
+Category: Compressor
+Severity in supplied reference: High
+Description in supplied reference: Compressor rotation or phase-related error.
+
+Applicability and correction
+The supplied reference suggests swapping two input phases for three-phase models and checking wiring/capacitor for single-phase models. Do NOT apply this as a generic instruction. Many inverter split AC compressors are driven by an inverter and do not use a conventional field correction by swapping supply phases. The correct procedure depends on the exact product and system design.
+
+Customer actions
+1. Turn the unit off.
+2. If electrical work was recently performed, tell the installer or service technician.
+3. Do not alter wiring or swap conductors yourself.
+4. Arrange qualified service if the error persists.
+
+Technician checks
+1. Verify the exact code definition and power/compressor architecture.
+2. Inspect wiring against the official diagram with power isolated.
+3. Confirm connector positions and phase/rotation diagnostic steps as prescribed by LG.
+4. Check inverter output and compressor feedback only using the approved procedure.
+5. Do not swap wires or bypass a phase/rotation protection device without explicit model-specific instructions.
+
+Possible parts/actions listed in supplied reference
+Wiring correction; phase-reversal protection component where fitted.
+
+----------------------------------------------------------------------
+CH 32 — DISCHARGE PIPE THERMISTOR HIGH-TEMPERATURE ERROR
+Category in supplied reference: Pressure
+Severity in supplied reference: High
+Description in supplied reference: Discharge pipe thermistor high temperature.
+
+Important distinction
+The supplied reference describes CH 32 as a discharge-pipe thermistor high-temperature error. It should not automatically be described as a high-pressure sensor fault. Verify the exact code definition for the model.
+
+Customer actions
+1. Turn the unit off if the code persists or the product manual directs.
+2. Keep the outdoor unit's external airflow area clear.
+3. Clean only loose external debris safely; do not open the cabinet.
+4. Book service if the code returns.
+
+Technician checks
+1. Inspect outdoor coil cleanliness and fan operation.
+2. Confirm discharge sensor attachment, wiring and measured value against the official temperature/resistance chart.
+3. Assess refrigerant-system operation and charge only through the prescribed diagnostic procedure.
+4. Investigate airflow, sensor accuracy and other causes of high discharge temperature.
+5. Do not add refrigerant based on this code alone.
+
+Possible parts/actions listed in supplied reference
+Discharge sensor; refrigerant-system inspection; condenser cleaning.
+
+----------------------------------------------------------------------
+CH 33 — OUTDOOR PIPE THERMISTOR ERROR
+Category: Sensor
+Severity in supplied reference: Medium
+Description in supplied reference: Outdoor pipe thermistor error.
+
+Customer actions
+1. Record the code.
+2. Follow the product manual's reset instructions if allowed.
+3. If the code returns, schedule service.
+4. Do not open the outdoor unit.
+
+Technician checks
+1. Confirm which outdoor pipe sensor corresponds to the code.
+2. Isolate power and inspect the sensor harness and connector.
+3. Confirm that the sensor is positioned at the specified location.
+4. Measure resistance using the official sensor chart and test conditions.
+5. Inspect for moisture, corrosion, wiring damage or a PCB input issue.
+
+Possible part listed in supplied reference
+Outdoor pipe sensor.
+
+----------------------------------------------------------------------
+CH 40 — OUTDOOR AMBIENT THERMISTOR ERROR
+Category: Sensor
+Severity in supplied reference: Medium
+Description in supplied reference: Outdoor ambient thermistor error.
+
+Customer actions
+1. Record the code and current outdoor conditions.
+2. Use the product manual's reset procedure if permitted.
+3. Arrange service if the error returns.
+
+Technician checks
+1. Verify the sensor identity and code meaning.
+2. Inspect the ambient sensor, mounting location, connector and harness.
+3. Compare resistance with the official temperature/resistance table.
+4. Check for incorrect sensor placement, damage, moisture or PCB input issues.
+
+Possible part listed in supplied reference
+Outdoor ambient sensor.
+
+----------------------------------------------------------------------
+CH 44 — OUTDOOR DISCHARGE THERMISTOR ERROR
+Category: Sensor
+Severity in supplied reference: Medium
+Description in supplied reference: Outdoor discharge thermistor error.
+
+Customer actions
+1. Record the code.
+2. If permitted by the product manual, perform one reset.
+3. Arrange service if it persists.
+4. Do not open the outdoor unit or touch compressor wiring.
+
+Technician checks
+1. Confirm whether this is the compressor discharge sensor and verify its exact location.
+2. Isolate power and inspect sensor mounting, harness and connector.
+3. Measure resistance according to the official chart at a known temperature.
+4. Check for an open/short circuit and related PCB input fault using the approved procedure.
+5. Refit the sensor exactly as specified.
+
+Possible part listed in supplied reference
+Discharge thermistor.
+
+----------------------------------------------------------------------
+CH 45 — OUTDOOR CONDENSER MIDDLE THERMISTOR ERROR
+Category: Sensor
+Severity in supplied reference: Medium
+Description in supplied reference: Outdoor condenser middle thermistor error.
+
+Customer actions
+1. Record the code.
+2. Follow the permitted reset procedure if stated in the user manual.
+3. Contact service if the code returns.
+
+Technician checks
+1. Confirm that the installed outdoor unit uses a middle-coil sensor and verify the code definition.
+2. Isolate power.
+3. Inspect sensor position, clip, connector and harness.
+4. Measure resistance using the manufacturer's temperature/resistance chart.
+5. Check for damage, moisture and PCB input faults.
+
+Possible part listed in supplied reference
+Condenser middle sensor.
+
+----------------------------------------------------------------------
+CH 46 — OUTDOOR SUCTION THERMISTOR ERROR
+Category: Sensor
+Severity in supplied reference: Medium
+Description in supplied reference: Outdoor suction thermistor error.
+
+Customer actions
+1. Record the code.
+2. Use the reset method in the user manual if permitted.
+3. Book service if the code persists.
+4. Do not handle refrigerant tubing or open the outdoor unit.
+
+Technician checks
+1. Verify the correct suction sensor and code definition.
+2. Inspect sensor attachment and wiring with power isolated.
+3. Check for moisture ingress, corrosion or damaged connectors.
+4. Measure resistance against the official chart.
+5. Check the PCB input only as specified by the service manual.
+
+Possible part listed in supplied reference
+Suction thermistor.
+
+----------------------------------------------------------------------
+CH 53 — OUTDOOR UNIT EEPROM / DATA ERROR
+Category: Communication in supplied reference
+Severity in supplied reference: High
+Description in supplied reference: Outdoor unit EEPROM/data error.
+
+Customer actions
+1. Record the code.
+2. If the user manual permits, perform one reset.
+3. If the code returns, stop repeated resets and arrange professional service.
+4. Do not open the electrical compartment.
+
+Technician checks
+1. Confirm whether the code refers to EEPROM, stored configuration, communication or another data fault on the exact model.
+2. Check supply stability and connector condition according to the official procedure.
+3. Firmware reprogramming or data recovery should be attempted only if officially supported for the exact PCB.
+4. Replace a PCB only when the manufacturer's diagnostic procedure supports it.
+5. Record PCB part number and configuration before authorized replacement.
+
+Possible part listed in supplied reference
+Outdoor PCB.
+
+----------------------------------------------------------------------
+CH 60 — OUTDOOR UNIT OVERLOAD PROTECTION
+Category: Protection
+Severity in supplied reference: High
+Description in supplied reference: Outdoor unit overload protection activated.
+
+Customer actions
+1. Turn the unit off if the fault persists.
+2. Allow cooling only if the user manual recommends a waiting period.
+3. Check from a safe position for obvious external blockage around the outdoor unit.
+4. Do not repeatedly restart the unit or open the cabinet.
+5. Arrange service if the code returns.
+
+Technician checks
+1. Verify the code definition and operating conditions.
+2. Inspect outdoor airflow, coil cleanliness and fan operation.
+3. Measure current only with appropriate equipment and under the manufacturer's prescribed conditions.
+4. Evaluate ambient conditions, supply, refrigerant-system operation and other causes according to the official flowchart.
+5. Do not adjust refrigerant charge without measurements and proper authorization.
+
+Possible parts/actions listed in supplied reference
+Condenser cleaning; refrigerant-system assessment.
+
+----------------------------------------------------------------------
+CH 65 — HEATSINK OVER-TEMPERATURE PROTECTION
+Category: Electrical
+Severity in supplied reference: High
+Description in supplied reference: Heatsink over-temperature protection.
+
+Customer actions
+1. Turn the unit off and allow it to cool if the user manual recommends doing so.
+2. Keep the outdoor unit's external airflow clear.
+3. Do not open the electrical compartment or touch the heatsink.
+4. If the error returns, arrange authorized service.
+
+Technician checks
+1. Confirm the exact code definition and heatsink arrangement.
+2. Isolate power and follow the stored-energy procedure.
+3. Inspect external airflow, fan operation, heatsink contamination and visible damage.
+4. Check temperature-sensor connections and PCB diagnostics using the official procedure.
+5. Inspect thermal interface materials or mounting torque only when specified by the manufacturer; do not apply generic torque or thermal paste instructions.
+6. Test the IPM and PCB only with approved procedures.
+
+Possible parts listed in supplied reference
+Thermal interface material; outdoor fan; heatsink assembly. Replace or service only as directed by the exact service manual.
+
+----------------------------------------------------------------------
+CH 67 — COMPRESSOR STARTUP / POSITION-DETECTION FAILURE
+Category: Compressor
+Severity in supplied reference: Critical
+Description in supplied reference: Compressor startup failure or position-detection error.
+
+Customer actions
+1. Stop using the AC.
+2. Do not repeatedly restart it.
+3. Contact authorized service.
+
+Technician checks
+1. Confirm the code definition and compressor/inverter type.
+2. Isolate power and follow the manufacturer's stored-energy procedure.
+3. Inspect compressor connectors and harness routing.
+4. Test compressor windings, inverter/IPM output and feedback circuits only as directed by the service manual.
+5. Check for mechanical or system conditions identified by the official diagnostic flowchart.
+6. Do not replace the compressor until the inverter, wiring and other specified causes have been assessed.
+
+Possible parts listed in supplied reference
+Compressor; outdoor PCB/IPM.
+
+----------------------------------------------------------------------
+CH 97 — INSTALLATION CHECK / COMMISSIONING ERROR
+Category: System
+Severity in supplied reference: Low
+Description in supplied reference: Installation check or commissioning error.
+
+Applicability note
+Confirm that this code and commissioning function exist on the exact product. Some systems use model-specific installation or commissioning procedures that cannot be inferred from a generic code list.
+
+Customer actions
+1. If the code appears during initial installation, contact the installer.
+2. Do not change DIP switches, enter installer mode or attempt undocumented commissioning steps.
+3. If the unit was previously working normally and this code appears unexpectedly, record the circumstances and contact service.
+
+Technician checks
+1. Confirm the exact code definition and commissioning procedure.
+2. Verify installation configuration, wiring and any required addressing steps using the official manual.
+3. Change DIP switches or installer settings only when the manual explicitly requires it.
+4. Complete the prescribed commissioning test and record the outcome.
+
+Possible parts listed in supplied reference
+None specified.
+
+----------------------------------------------------------------------
+CROSS-CODE SAFETY RULES
+
+1. Electrical codes (including CH 03, CH 05, CH 21, CH 22, CH 23, CH 27 and CH 65 in the supplied list) must be handled by qualified personnel.
+2. Compressor codes (including CH 26 and CH 67) should not trigger repeated restart attempts.
+3. Drainage codes (CH 04 and CH 10) require attention to indoor water leakage and nearby electrical hazards.
+4. Sensor codes do not automatically prove a sensor has failed; wiring, connectors, placement, temperature and PCB input can also be involved.
+5. Pressure and temperature protection codes must not be bypassed. Do not add or remove refrigerant without the correct diagnosis.
+6. Do not replace a PCB, compressor, motor or sensor solely because a code appears. Follow the official diagnostic sequence.
+7. Do not assume a capacitor, pressure switch, float switch, drain pump or particular sensor exists in every unit. Confirm the actual model design.
+8. Do not use generic resistance or voltage values as model-specific pass/fail criteria unless verified against official documentation.
+9. Do not treat a code list from a different LG product family as authoritative for the UW-Q18WUZA.
+10. If the displayed code does not match the code definitions in the exact model's manual, stop and verify the product identity and documentation.
+
+SERVICE RECORD TEMPLATE
+
+Product model and full product code: __________________________
+Serial number: _____________________________________________
+Indoor unit model: __________________________________________
+Outdoor unit model: _________________________________________
+Date/time of fault: __________________________________________
+Displayed error code: _______________________________________
+Customer's description: _____________________________________
+Operating mode and conditions: _______________________________
+Was a reset attempted under the user manual? _________________
+Did the code return? ________________________________________
+
+Official service manual reference/revision: ____________________
+Technician diagnosis: ________________________________________
+Measurements and test conditions: ____________________________
+Confirmed fault (if identified): _______________________________
+Parts replaced (part numbers): ________________________________
+Post-repair verification: _____________________________________
+Further action required: _____________________________________
+
+FINAL VERIFICATION REQUIREMENT
+This file is an expanded troubleshooting knowledge document based on the supplied error-code list. Before deployment in a customer-facing chatbot or use by service personnel, validate each code, description, reset procedure, connector designation, measurement range and replacement recommendation against the official LG service documentation for the exact indoor/outdoor model combination and regional variant. Where confirmation is unavailable, the chatbot should provide safe customer actions and recommend authorized service rather than inventing a diagnostic procedure.

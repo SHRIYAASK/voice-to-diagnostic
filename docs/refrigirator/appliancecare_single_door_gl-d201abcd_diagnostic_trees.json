@@ -1,0 +1,323 @@
+{
+  "schema_version": "1.0",
+  "description": "Single-door Direct Cool diagnostic extensions. Intended for the selected GL-D201ABCD example; verify all controls and procedures against its exact manual before deployment. Common REF issues are referenced, not duplicated.",
+  "appliance_category": "Refrigerator",
+  "appliance_type": "single_door",
+  "model_code": "GL-D201ABCD",
+  "issue_scope": "SDF01-SDF05",
+  "issue_count": 5,
+  "issues": {
+    "SDF01": {
+      "issue_id": "SDF01",
+      "title": "Single-Door Manual Temperature Control",
+      "start_node": "q1_knob",
+      "nodes": [
+        {
+          "id": "q1_knob",
+          "type": "question",
+          "text_en": "Does this single-door model use a manual temperature-control knob?",
+          "text_hi": "",
+          "options": [
+            {
+              "label": "Yes",
+              "next_node": "q2_position"
+            },
+            {
+              "label": "No / not sure",
+              "conclusion": "diag_confirm_control_design"
+            }
+          ]
+        },
+        {
+          "id": "q2_position",
+          "type": "question",
+          "text_en": "Is the knob accidentally at OFF or at a setting outside the recommended range in the model manual?",
+          "text_hi": "",
+          "options": [
+            {
+              "label": "Yes / not sure",
+              "action": "instruct_set_manual_control_to_recommended_setting",
+              "next_node": "q3_result"
+            },
+            {
+              "label": "No",
+              "next_node": "q3_result"
+            }
+          ]
+        },
+        {
+          "id": "q3_result",
+          "type": "question",
+          "text_en": "After setting the control as described in the manual and allowing time to stabilize, is cooling normal?",
+          "text_hi": "",
+          "options": [
+            {
+              "label": "Yes",
+              "resolution": "resolved_manual_control_setting"
+            },
+            {
+              "label": "No",
+              "redirect_issue": "REF02"
+            }
+          ]
+        }
+      ],
+      "conclusions": {
+        "diag_confirm_control_design": {
+          "probable_cause": "Control type is not confirmed; do not give knob-specific instructions until the exact model is verified.",
+          "confidence": 0.5,
+          "parts": [],
+          "priority": "Low",
+          "safety_flag": false,
+          "rag_query": "single door refrigerator verify temperature control model",
+          "technician_note": "Confirm model number and manual before selecting a control action."
+        }
+      }
+    },
+    "SDF02": {
+      "issue_id": "SDF02",
+      "title": "Single-Door Manual Defrost",
+      "start_node": "q1_ice",
+      "nodes": [
+        {
+          "id": "q1_ice",
+          "type": "question",
+          "text_en": "Is ice buildup affecting use or cooling on a Direct Cool cooling plate or compartment surface?",
+          "text_hi": "",
+          "options": [
+            {
+              "label": "Yes",
+              "next_node": "q2_manual"
+            },
+            {
+              "label": "No",
+              "redirect_issue": "REF10"
+            }
+          ]
+        },
+        {
+          "id": "q2_manual",
+          "type": "question",
+          "text_en": "Does the exact model manual provide a user-permitted manual defrost procedure?",
+          "text_hi": "",
+          "options": [
+            {
+              "label": "Yes",
+              "action": "instruct_follow_exact_manual_defrost_disconnect_power_if_manual_says",
+              "next_node": "q3_result"
+            },
+            {
+              "label": "No / not sure",
+              "conclusion": "diag_defrost_manual_required"
+            }
+          ]
+        },
+        {
+          "id": "q3_result",
+          "type": "question",
+          "text_en": "After defrosting exactly as directed by the manual, does normal cooling return and remain stable?",
+          "text_hi": "",
+          "options": [
+            {
+              "label": "Yes",
+              "resolution": "resolved_manual_defrost"
+            },
+            {
+              "label": "No / frost quickly returns",
+              "redirect_issue": "REF10"
+            }
+          ]
+        }
+      ],
+      "conclusions": {
+        "diag_defrost_manual_required": {
+          "probable_cause": "The approved defrost procedure is unconfirmed for this exact model.",
+          "confidence": 0.55,
+          "parts": [],
+          "priority": "Medium",
+          "safety_flag": false,
+          "rag_query": "single door refrigerator manual defrost exact model instructions",
+          "technician_note": "Do not chip ice, use sharp tools, heat the liner, or dismantle components. Confirm the manual before advising the customer."
+        }
+      }
+    },
+    "SDF03": {
+      "issue_id": "SDF03",
+      "title": "Direct Cool Cooling-Plate Frost",
+      "start_node": "q1_plate",
+      "nodes": [
+        {
+          "id": "q1_plate",
+          "type": "question",
+          "text_en": "Is frost visible on the exposed cooling plate/cooling surface of the Direct Cool refrigerator?",
+          "text_hi": "",
+          "options": [
+            {
+              "label": "Yes",
+              "next_node": "q2_pattern"
+            },
+            {
+              "label": "No / not sure",
+              "redirect_issue": "REF02"
+            }
+          ]
+        },
+        {
+          "id": "q2_pattern",
+          "type": "question",
+          "text_en": "Does the frost appear after normal use and reduce during the model's normal defrost process, or does it remain excessive?",
+          "text_hi": "",
+          "options": [
+            {
+              "label": "Reduces during normal defrost",
+              "resolution": "normal_frost_behaviour_explained"
+            },
+            {
+              "label": "Remains excessive or rapidly returns",
+              "redirect_issue": "SDF02"
+            }
+          ]
+        }
+      ],
+      "conclusions": {
+        "diag_confirm_cooling_plate": {
+          "probable_cause": "Cooling-plate frost behaviour requires confirmation against the exact Direct Cool model and usage conditions.",
+          "confidence": 0.5,
+          "parts": [],
+          "priority": "Medium",
+          "safety_flag": false,
+          "rag_query": "Direct Cool single door refrigerator cooling plate frost model manual",
+          "technician_note": "Do not infer refrigerant loss from visible frost alone. Check the model manual and investigate persistent abnormal frost if it affects cooling."
+        }
+      }
+    },
+    "SDF04": {
+      "issue_id": "SDF04",
+      "title": "Single-Door Tray / Chiller Placement and Internal Water",
+      "start_node": "q1_water",
+      "nodes": [
+        {
+          "id": "q1_water",
+          "type": "question",
+          "text_en": "Is water pooling around a tray, chiller/fresh-food area, or underneath food containers?",
+          "text_hi": "",
+          "options": [
+            {
+              "label": "Yes",
+              "next_node": "q2_spill"
+            },
+            {
+              "label": "No / not sure",
+              "redirect_issue": "REF06"
+            }
+          ]
+        },
+        {
+          "id": "q2_spill",
+          "type": "question",
+          "text_en": "Could spilled liquid, an uncovered container, or tray placement explain the water?",
+          "text_hi": "",
+          "options": [
+            {
+              "label": "Yes",
+              "action": "instruct_clean_spill_and_reseat_removable_tray_per_manual",
+              "next_node": "q3_result"
+            },
+            {
+              "label": "No / not sure",
+              "redirect_issue": "REF06"
+            }
+          ]
+        },
+        {
+          "id": "q3_result",
+          "type": "question",
+          "text_en": "After cleaning and correctly reseating removable parts, has the water stopped returning?",
+          "text_hi": "",
+          "options": [
+            {
+              "label": "Yes",
+              "resolution": "resolved_spill_or_tray_placement"
+            },
+            {
+              "label": "No",
+              "redirect_issue": "REF06"
+            }
+          ]
+        }
+      ],
+      "conclusions": {
+        "diag_tray_water_service": {
+          "probable_cause": "Recurring water source is unconfirmed and requires model-specific inspection.",
+          "confidence": 0.5,
+          "parts": [],
+          "priority": "Medium",
+          "safety_flag": false,
+          "rag_query": "single door Direct Cool refrigerator water around tray fresh food compartment",
+          "technician_note": "Verify the tray arrangement and internal drainage design in the exact model manual. Do not assume all models have the same drain path."
+        }
+      }
+    },
+    "SDF05": {
+      "issue_id": "SDF05",
+      "title": "Cooling Recovery After Manual Defrost",
+      "start_node": "q1_defrost",
+      "nodes": [
+        {
+          "id": "q1_defrost",
+          "type": "question",
+          "text_en": "Was the refrigerator defrosted recently using the exact model's manual-approved procedure?",
+          "text_hi": "",
+          "options": [
+            {
+              "label": "Yes",
+              "next_node": "q2_recovery"
+            },
+            {
+              "label": "No / not sure",
+              "redirect_issue": "SDF02"
+            }
+          ]
+        },
+        {
+          "id": "q2_recovery",
+          "type": "question",
+          "text_en": "After restarting as directed and allowing the recommended stabilization time, is cooling returning?",
+          "text_hi": "",
+          "options": [
+            {
+              "label": "Yes",
+              "resolution": "cooling_recovery_in_progress"
+            },
+            {
+              "label": "No",
+              "redirect_issue": "REF01"
+            },
+            {
+              "label": "Cooling returned but frost quickly reappears",
+              "redirect_issue": "SDF03"
+            }
+          ]
+        }
+      ],
+      "conclusions": {
+        "diag_recovery_service": {
+          "probable_cause": "Cooling recovery is incomplete after defrost; cause cannot be determined from this observation alone.",
+          "confidence": 0.5,
+          "parts": [],
+          "priority": "Medium",
+          "safety_flag": false,
+          "rag_query": "Direct Cool refrigerator not cooling after manual defrost restart",
+          "technician_note": "Confirm restart/stabilization instructions in the exact model manual. If cooling does not return, follow REF01 rather than assuming a particular component has failed."
+        }
+      }
+    }
+  },
+  "runtime_notes": [
+    "Ask one question at a time and use the selected option to follow next_node.",
+    "If redirect_issue is present, transfer to that issue in the common or model-specific knowledge base.",
+    "Treat conclusion.probable_cause as a provisional triage hypothesis, not a confirmed component failure.",
+    "Use only actions supported by the exact model manual; do not instruct customers to open panels, handle wiring, or work on refrigerant systems.",
+    "Internal issue IDs are ApplianceCare AI identifiers, not manufacturer error codes."
+  ]
+}

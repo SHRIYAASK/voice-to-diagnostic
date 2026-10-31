@@ -1,0 +1,541 @@
+DOCUMENT TYPE: TECHNICAL SPECIFICATIONS AND ELECTRICAL DIAGNOSTICS
+MODEL: LG Split AC UW-Q18WUZA (model designation supplied by requester)
+SECTION: ELECTRICAL DIAGNOSTICS
+FILE: manual_electrical_specs.txt
+
+IMPORTANT DOCUMENT STATUS
+This document expands the electrical diagnostic notes supplied by the requester into a structured technical reference. The numerical values in Sections 1–5 are reproduced from the supplied notes and have NOT been independently verified against an official LG service manual for the exact UW-Q18WUZA variant. Do not treat them as confirmed manufacturer specifications until checked against the unit nameplate, wiring diagram and official service documentation.
+
+Electrical diagnostics on inverter air conditioners can expose lethal mains voltage and hazardous DC bus voltage that may remain after power is disconnected. These procedures are for appropriately trained and authorized HVAC/electrical technicians using suitable instruments and the manufacturer's exact procedure. Users should not open electrical compartments, probe terminals, measure compressor windings or replace PCB fuses.
+
+CONTENTS
+1. Power supply requirements
+2. Main PCB fuse ratings
+3. Compressor terminal resistance checks
+4. Fan motor resistance checks
+5. Communication wire check for CH 05
+6. Safety and isolation requirements
+7. Diagnostic tools and instrument limitations
+8. General electrical inspection workflow
+9. Symptom-based diagnostic guide
+10. Interpreting measurements carefully
+11. Fuse replacement and failure analysis
+12. Communication fault investigation
+13. Post-service verification
+14. Inspection checklist
+15. Service record template
+16. Stop-work conditions
+17. Reference and verification requirements
+
+1. POWER SUPPLY REQUIREMENTS
+
+1.1 Values supplied for this document
+- Nominal supply type: AC mains.
+- Voltage range stated in supplied notes: 200 V–240 V AC.
+- Frequency stated in supplied notes: 50 Hz.
+- Maximum current draw stated in supplied notes: 8.5 A.
+- Recommended protective device stated in supplied notes: 16 A double-pole MCB.
+- Earthing: protective earth connection is mandatory.
+
+Verification notice:
+Confirm the rated voltage, frequency, rated input current, maximum current, recommended circuit protection and wiring requirements on the product nameplate and official installation documentation. “Maximum current draw” and “rated current” are not necessarily interchangeable. The correct breaker and cable size depend on the manufacturer's instructions, local electrical code, installation conditions, circuit length, ambient temperature and the supply arrangement. Do not select or change an MCB based solely on this document.
+
+1.2 General supply inspection — qualified personnel only
+1. Record the model, complete product code, serial number and nameplate ratings.
+2. Review the installation wiring diagram and identify the specified supply terminals and protective-earth terminal.
+3. Confirm that the dedicated supply circuit and overcurrent protection comply with the manufacturer's installation instructions and local electrical requirements.
+4. Inspect externally accessible cable routes for damage, crushing, heat discoloration or unsuitable joints.
+5. Check that the protective-earth connection is present and correctly installed using the prescribed test method.
+6. If a supply measurement is required, perform it only with suitable rated equipment, appropriate PPE and an approved electrical safety procedure.
+7. Compare measurements with the actual product specifications and the conditions under which the measurement was taken.
+8. If supply voltage is outside the permitted range, isolate the unit and refer the supply issue to a qualified electrician.
+
+1.3 Earthing
+- Protective earthing is a critical electric-shock safety measure.
+- Do not operate the air conditioner with a missing, loose or damaged protective-earth connection.
+- Do not use neutral as a substitute for protective earth.
+- Do not remove or bypass earth connections to investigate noise or nuisance trips.
+- Noise reduction may be affected by several factors; protective earthing must never be treated as an optional noise-control measure.
+- Earthing continuity and related tests must be performed with the correct procedure and instruments by qualified personnel.
+
+1.4 Circuit protection
+- The breaker rating in the supplied notes is a value to verify, not a universal instruction.
+- Do not increase breaker amperage to stop nuisance tripping.
+- Do not replace an MCB with a fuse, bypass the breaker or defeat a protective device.
+- A breaker that trips repeatedly may indicate a short circuit, insulation failure, wiring fault, compressor/inverter fault, overload or a supply problem.
+- Keep the unit isolated until the cause has been identified and corrected.
+
+2. MAIN PCB FUSE RATINGS
+
+2.1 Values supplied for this document
+- Indoor unit main fuse: 3.15 A, 250 V, fast-blow type.
+- Outdoor unit main fuse: 20 A, 250 V, slow-blow type.
+
+Verification notice:
+These ratings and fuse characteristics are reproduced from the supplied notes and are not verified here for the exact model. Confirm the fuse designation, current rating, voltage rating, breaking capacity, physical dimensions and time-current characteristic from the PCB markings and official parts/service documentation. The correct fuse may differ by product revision or market variant.
+
+2.2 Fuse safety
+WARNING: Replace a fuse only with the exact manufacturer-approved type and rating. A higher-current fuse, an incorrect time-delay characteristic, a fuse of unsuitable breaking capacity or a wire bridge can create a fire, electric-shock or equipment-damage hazard.
+
+- Do not bridge, wrap, solder across or bypass a fuse.
+- Do not repeatedly replace a fuse without diagnosing why it opened.
+- Do not handle a PCB or fuse while the unit is energized.
+- Inverter outdoor units can contain capacitors with hazardous stored energy after power is disconnected.
+- Follow the official discharge and verification procedure; never assume a capacitor is discharged because a waiting period has elapsed.
+- Do not discharge capacitors by shorting their terminals with a screwdriver or other improvised tool.
+
+2.3 General fuse-failure workflow — qualified technicians only
+1. Record the fault symptoms, error codes and circumstances in which the fuse failed.
+2. Isolate the supply and follow the manufacturer's lockout and stored-energy procedure.
+3. Verify absence of hazardous voltage with a suitable, correctly rated instrument and the prescribed test method.
+4. Inspect for visible damage, moisture, burnt components, carbon tracking, damaged wiring or a shorted component.
+5. Use the model-specific circuit diagram and approved diagnostic process to identify the underlying fault.
+6. Confirm the replacement fuse's exact part specification before installation.
+7. Replace the fuse only after the suspected fault has been investigated and corrected.
+8. Restore the unit according to the service procedure and observe it from a safe position.
+9. If the replacement fuse opens again, isolate the unit and continue fault diagnosis; do not install a higher-rated fuse.
+
+2.4 Possible causes of a fuse opening
+Potential causes can include a shorted wire, damaged connector, moisture ingress, failed electronic component, motor fault, inverter power-stage fault, compressor fault or an external supply problem. These are possibilities, not diagnoses. Testing must follow the exact model's schematic and service manual.
+
+3. COMPRESSOR TERMINAL RESISTANCE CHECK
+
+3.1 Values supplied for this document
+The supplied notes describe a three-terminal compressor winding check:
+- U to V: 2.5 Ω ± 10%.
+- V to W: 2.5 Ω ± 10%.
+- U to W: 5.0 Ω ± 10%.
+
+The notes also state that an infinite reading indicates an open circuit and a zero reading indicates a short circuit.
+
+CRITICAL VERIFICATION NOTICE:
+These resistance values and the U/V/W terminal interpretation are unverified and must not be used as pass/fail limits for this model until confirmed by the official compressor specification and wiring diagram. In particular, inverter compressors may use a three-phase motor driven by an inverter board; resistance readings depend on compressor design, meter accuracy, lead resistance, temperature and the manufacturer's test procedure. A near-zero displayed value does not by itself prove a winding short, and an infinite reading may result from poor probe contact or an incorrect terminal identification.
+
+3.2 Safety boundary
+Compressor terminal measurements are technician-only work. The outdoor unit may contain hazardous DC bus voltage even after AC power is disconnected. Do not open the inverter compartment or touch compressor terminals unless qualified and following the official stored-energy, isolation and test procedure.
+
+3.3 General diagnostic principles
+- Confirm the exact compressor terminal labels using the wiring diagram; never guess terminal order.
+- Isolate all power sources and follow the manufacturer's procedure for stored-energy discharge.
+- Verify absence of hazardous voltage with the prescribed instrument and test method.
+- Disconnect the relevant compressor leads only where the service procedure requires it and only after documenting their original positions.
+- Use an appropriate meter with known accuracy and account for test-lead resistance when measuring low-ohm windings.
+- Compare each pair of winding measurements with the compressor manufacturer's specified values and allowable tolerances.
+- Compare the three pairwise measurements for consistency according to the specified motor design.
+- Do not apply an insulation-resistance tester to inverter electronics or connected components unless the manufacturer explicitly permits the test and specifies how to isolate them.
+
+3.4 Interpreting results cautiously
+- Open/infinite reading: may indicate an open winding, an open connection, a poor probe contact, an incorrect terminal or a measurement setup problem.
+- Very low reading: may be normal for some windings or may indicate a fault; the meter resolution and lead resistance matter.
+- Unequal readings: may indicate a winding or connection issue, but must be compared with the exact manufacturer's specification.
+- Similar winding resistance does not prove the compressor is mechanically healthy or that the inverter drive is functioning.
+- A resistance test alone cannot confirm refrigerant charge, compressor pumping performance or the overall health of the refrigeration system.
+
+3.5 Escalation
+If the result is outside the verified manufacturer limits, do not immediately condemn the compressor. Confirm the terminal identification, wiring, meter setup and official test conditions. Additional technician-level checks may be required to distinguish a compressor fault from an inverter PCB, connector, supply or control fault.
+
+4. FAN MOTOR RESISTANCE CHECK
+
+4.1 Values supplied for this document
+- Indoor blower motor: 150 Ω–200 Ω between Common and Run terminals.
+- Outdoor fan motor: 200 Ω–250 Ω between Common and Run terminals.
+- The supplied notes state that readings may vary with temperature.
+
+CRITICAL VERIFICATION NOTICE:
+These resistance ranges and terminal names are unverified. Modern inverter air conditioners may use BLDC/DC fan motors with electronic drive circuits, multiple windings, Hall sensors or integrated control electronics. A simple Common-to-Run resistance test may not be applicable. Confirm the motor type, connector pinout and manufacturer-approved test method before measuring.
+
+4.2 Safety and setup
+1. Switch off and isolate power.
+2. Follow the manufacturer's stored-energy procedure if working near inverter electronics.
+3. Verify absence of hazardous voltage using the prescribed method.
+4. Identify the exact motor and connector from the wiring diagram.
+5. Do not probe unidentified connector pins.
+6. Disconnect a motor connector only if the service procedure calls for it and record its original orientation.
+7. Use a suitable meter and avoid damaging connector contacts.
+8. Do not energize the motor directly from mains or apply an external voltage unless the official procedure specifically requires an approved test setup.
+
+4.3 General interpretation
+- Compare measurements only with the verified specifications for the exact motor.
+- An open reading may indicate a winding, connector or measurement issue.
+- A low reading cannot be interpreted without knowing the motor design and expected resistance.
+- Resistance measurements may not identify an electronic driver fault, sensor fault, mechanical obstruction or intermittent fault.
+- A fan that does not rotate may be affected by a blocked impeller, wiring, control signal, sensor, motor electronics, PCB or normal operating logic. Do not replace the motor based on one resistance reading alone.
+
+4.4 Mechanical inspection
+With power isolated:
+- Check accessible fan blades or blower wheel for foreign objects and visible damage.
+- Do not force the wheel or bend blades.
+- Check for rubbing, loose mounting or debris.
+- If there is grinding, significant wobble, a cracked blade or a damaged wheel, keep the unit off and arrange service.
+- Do not put fingers or tools through a grille while the unit is energized.
+
+5. COMMUNICATION WIRE CHECK FOR ERROR CH 05
+
+5.1 Values supplied for this document
+The supplied notes state:
+- Check voltage between L1 and L2 terminals at the outdoor unit.
+- Expected DC voltage: 0 V–24 V fluctuating.
+- A constant 0 V or constant 24 V may indicate a broken communication wire or faulty PCB.
+
+CRITICAL VERIFICATION NOTICE:
+The terminal labels, voltage range, voltage type and interpretation above are unverified. Do not probe L1/L2 or assume they are communication terminals. On different products, terminal labels can refer to line supply, neutral, interconnect terminals or other circuits. Communication methods and diagnostic voltages vary by model and PCB revision. Use the official wiring diagram and CH 05 diagnostic procedure for the exact product variant.
+
+5.2 Meaning of a communication fault
+A communication error generally indicates that the indoor and outdoor control systems are not exchanging the expected signals. Possible causes can include:
+- Incorrect or loose interconnecting wiring.
+- Incorrect terminal-to-terminal connection.
+- Damaged cable or connector.
+- Supply or grounding issue.
+- Moisture or corrosion at a connection.
+- Indoor PCB or outdoor PCB fault.
+- A fault in another component or operating condition that prevents normal communication.
+These are possible causes only; an error code alone does not identify the failed component.
+
+5.3 Safe investigation workflow — qualified technicians only
+1. Record the exact displayed error code, when it appears and whether the unit attempts to start.
+2. Turn the unit off and isolate the supply before inspecting wiring or opening covers.
+3. Consult the exact model's wiring diagram and official CH 05 troubleshooting chart.
+4. Visually inspect accessible cable routes and connectors for damage, loose connections, corrosion, moisture, crushing or signs of overheating.
+5. Verify terminal-to-terminal wiring against the diagram. Do not rely on wire color alone.
+6. Confirm supply and protective-earth conditions using the prescribed procedures.
+7. Perform communication-signal tests only at the terminals and under the conditions specified by the manufacturer, with suitably rated instruments and appropriate PPE.
+8. Do not assume that a static 0 V or 24 V reading proves a broken wire or failed PCB. Measurement timing, meter type, signal waveform, operating state and terminal reference can affect readings.
+9. If wiring and supply checks pass, continue with the manufacturer's approved indoor/outdoor PCB diagnostic process.
+10. Reassemble all covers before normal operation and confirm whether the fault returns.
+
+5.4 Do not
+- Probe unidentified terminals.
+- Short communication terminals together.
+- connect a test lamp or external power source to communication wiring.
+- Bypass protective earth or any safety interlock.
+- Replace either PCB solely because of one voltage reading.
+- Perform live measurements unless qualified, authorized and following the exact procedure.
+
+6. SAFETY AND ISOLATION REQUIREMENTS
+
+6.1 Electrical hazards
+- Mains voltage can cause fatal electric shock.
+- Inverter equipment may contain a high-voltage DC bus and capacitors that retain energy after power-off.
+- The absence of fan movement does not establish electrical safety.
+- Do not touch a PCB, terminal block, compressor terminal or capacitor until the official procedure confirms it is safe.
+
+6.2 Required work practices
+- Use a documented isolation/lockout procedure.
+- Prevent accidental re-energization.
+- Use PPE and insulated tools suitable for the task and local regulations.
+- Use instruments with the appropriate measurement category, voltage rating and intact leads.
+- Inspect the meter and leads before use.
+- Verify the instrument on a known source before and after a voltage-absence test, according to the approved procedure.
+- Keep hands and the work area dry.
+- Never work alone where site rules require a second person or emergency support.
+
+6.3 Stop-work conditions
+Stop and refer the job to qualified service if there is:
+- Burnt odor, smoke, sparking or visible arcing.
+- Repeated breaker tripping.
+- Damaged insulation, exposed conductors or loose terminals.
+- Water or corrosion in an electrical compartment.
+- A suspected inverter, compressor or PCB failure that requires tests beyond the technician's authorization.
+- Unclear terminal identification or missing wiring diagram.
+- A measurement that conflicts with the official service documentation.
+
+7. DIAGNOSTIC TOOLS AND INSTRUMENT LIMITATIONS
+
+Potential tools for authorized technicians:
+- Digital multimeter with suitable safety category and ratings.
+- Insulated hand tools.
+- Approved lockout/tagout equipment.
+- Manufacturer-approved diagnostic interface or service tool, where applicable.
+- Wiring diagram and service manual for the exact model and revision.
+- Appropriate PPE.
+
+Important limitations:
+- A general-purpose multimeter may not accurately characterize a pulsed or rapidly varying communication signal.
+- Low-resistance measurements can be strongly affected by test-lead resistance and instrument resolution.
+- Resistance measurements must not be taken on energized circuits.
+- Insulation testing can damage connected electronic equipment if the manufacturer's isolation procedure is not followed.
+- A single measurement should not be used as the sole basis for replacing a compressor, motor or PCB.
+
+8. GENERAL ELECTRICAL INSPECTION WORKFLOW
+
+Step 1 — Identify
+Record the complete model code, serial number, product revision where available, nameplate ratings and the exact PCB/motor/compressor part identifiers if service access is authorized.
+
+Step 2 — Record the symptom
+Document whether the unit is completely dead, fails to start, stops intermittently, trips a breaker, displays an error code, or operates with weak cooling. Record when the issue occurs and whether it follows rain, cleaning or a supply interruption.
+
+Step 3 — Review official information
+Obtain the exact wiring diagram, terminal layout, fuse specification and error-code diagnostic chart. Do not infer terminal function from labels or wire color alone.
+
+Step 4 — Isolate safely
+Switch off and isolate power. Follow the manufacturer's stored-energy procedure and verify electrical safety before touching internal components.
+
+Step 5 — Inspect visually
+Look for damaged cables, loose connectors, moisture, corrosion, burnt components, damaged insulation and signs of overheating. Visual inspection is not proof that a circuit is electrically safe.
+
+Step 6 — Test systematically
+Use only the measurements and test points specified by the official service procedure. Record test conditions, meter type and measured values. Avoid replacing parts until the fault has been isolated to a component with sufficient evidence.
+
+Step 7 — Correct the cause
+Repair wiring or replace a component only under the manufacturer's approved procedure and with approved parts. Never bypass a fuse, earth connection, interlock or protective device.
+
+Step 8 — Reassemble and verify
+Restore all connectors, covers, barriers and fasteners. Ensure wiring is routed correctly. Restore power only after the unit is fully reassembled and safe to operate. Confirm normal behavior and check for recurring error codes.
+
+9. SYMPTOM-BASED DIAGNOSTIC GUIDE
+
+Symptom: Unit has no display or does not start
+Potential areas for qualified inspection:
+- Supply isolation or supply availability.
+- Protective device status.
+- Correct interconnection and wiring.
+- Indoor control circuit and PCB.
+- Error indications or service diagnostics.
+Do not open the unit or probe mains terminals as a user. A blank display does not by itself prove the indoor PCB is defective.
+
+Symptom: Breaker trips when the unit starts
+Potential areas for qualified inspection:
+- Supply circuit and wiring condition.
+- Short circuit or insulation fault.
+- Compressor/inverter power stage.
+- Fan motor or other component fault.
+- Incorrect circuit protection or installation issue.
+Do not increase the MCB rating or repeatedly reset it. Keep the unit isolated until inspected.
+
+Symptom: Indoor unit runs but outdoor unit does not operate
+Potential areas for qualified inspection:
+- Operating mode and startup delay.
+- Error code and communication status.
+- Outdoor supply and interconnection.
+- Outdoor PCB, fan, compressor or protection logic.
+Inverter systems may delay or modulate outdoor operation depending on demand and protection logic. Do not diagnose a failed outdoor PCB solely from the fan not running.
+
+Symptom: CH 05 or communication-related error
+- Record the exact code and conditions.
+- Verify the correct model-specific code definition.
+- Inspect interconnecting wiring with power isolated.
+- Check terminal mapping and connectors against the wiring diagram.
+- Perform signal checks only at manufacturer-designated points.
+- Do not replace PCBs until wiring, supply and prescribed diagnostic checks are complete.
+
+Symptom: Fuse is open
+- Keep the unit isolated.
+- Confirm the fuse part specification.
+- Investigate the cause using the official circuit diagram.
+- Replace only with the exact approved fuse after the fault is addressed.
+- If it opens again, stop and continue diagnosis. Never install a higher-rated fuse.
+
+Symptom: Fan does not rotate
+- Confirm no obstruction with power isolated.
+- Check for mechanical damage.
+- Use the correct motor diagnostic procedure for the installed motor type.
+- Inspect wiring, sensor/driver circuitry and control signals as prescribed.
+- Do not directly power an inverter fan motor from mains.
+
+Symptom: Cooling is poor but no electrical error is shown
+Potential causes include filter or coil restriction, room load, airflow, installation conditions, sensor/control issues or refrigerant-system faults. Electrical checks alone may not resolve the issue. Use the official service diagnostic sequence rather than assuming a compressor or refrigerant fault.
+
+10. INTERPRETING MEASUREMENTS CAREFULLY
+
+Every recorded measurement should include:
+- Exact component and terminal identifiers.
+- Whether power was isolated.
+- The test method specified by the manufacturer.
+- Instrument type and relevant range.
+- Measured value and units.
+- Ambient/component temperature where relevant.
+- The official acceptable range and document revision.
+- Any uncertainty or abnormal visual observation.
+
+Do not:
+- Compare readings from different motor designs as if they were equivalent.
+- Use generic internet values instead of model-specific limits.
+- Treat a displayed 0.0 Ω as conclusive proof of a short.
+- Treat a high-resistance or open reading as conclusive without checking contact and setup.
+- Measure resistance on an energized circuit.
+- Perform insulation-resistance testing on connected electronics without explicit manufacturer instructions.
+- Infer communication status from a voltage reading taken at an unverified terminal pair.
+
+11. FUSE REPLACEMENT AND FAILURE ANALYSIS
+
+Before a replacement:
+1. Confirm the exact fuse specification from official documentation and PCB identification.
+2. Isolate all power and follow the stored-energy procedure.
+3. Confirm the suspected cause of the fuse failure has been investigated.
+4. Inspect the holder and nearby PCB for heat damage or corrosion.
+5. Install only the approved replacement part.
+6. Ensure the holder and covers are correctly restored.
+7. Follow the official verification procedure after repair.
+
+If the fuse fails again:
+- Do not keep replacing it.
+- Do not install a larger fuse or bridge the fuse.
+- Leave the unit isolated.
+- Continue diagnosis using the official circuit schematic and component-level procedure.
+
+12. COMMUNICATION FAULT INVESTIGATION
+
+A communication-related code is a symptom, not a component diagnosis. A sound diagnostic process distinguishes wiring faults, supply faults, connection issues and PCB/component faults.
+
+Recommended record:
+- Exact code and display location.
+- Whether the error is immediate or appears after startup.
+- Whether it follows a power interruption or service visit.
+- Indoor/outdoor supply status, tested only by a qualified technician.
+- Wiring inspection findings.
+- Manufacturer-designated communication measurement point and specified test conditions.
+- Actual result compared with the official expected behavior.
+- Parts replaced and post-repair outcome.
+
+Do not use the unverified 0–24 V range in the supplied notes as a universal pass/fail criterion. The correct waveform, reference point, test mode and interpretation must come from the official documentation for this exact model.
+
+13. POST-SERVICE VERIFICATION
+
+Before energizing:
+[ ] All electrical connectors restored to their correct positions
+[ ] All covers, barriers and terminal covers reinstalled
+[ ] Wiring routed away from moving or hot parts
+[ ] Protective earth restored and verified by the approved method
+[ ] Correct fuses installed, where replacement was authorized
+[ ] No tools, loose fasteners or debris remain in the unit
+[ ] No signs of moisture remain in electrical compartments
+[ ] All manufacturer-required checks completed
+
+After energizing:
+[ ] Supply and operation verified using approved procedures
+[ ] No abnormal sound, smell, smoke or vibration
+[ ] No repeated protective-device operation
+[ ] No new or recurring error code
+[ ] Indoor/outdoor communication behaves as specified
+[ ] Cooling operation checked under suitable conditions
+[ ] Any unresolved issue documented and communicated to the customer
+
+If any unsafe symptom appears, isolate power if safe to do so and stop operation.
+
+14. INSPECTION CHECKLIST
+
+Identification
+[ ] Complete model and serial number recorded
+[ ] Nameplate specifications recorded
+[ ] Exact wiring diagram and service manual revision available
+[ ] Installed compressor, motor and PCB identified where necessary
+
+Supply and protection
+[ ] Supply requirements verified against official documentation
+[ ] Circuit protection verified by qualified personnel
+[ ] Wiring inspected for damage
+[ ] Protective earth verified using the approved method
+[ ] No evidence of overheating or water ingress
+
+Fuse and PCB
+[ ] Fuse type/rating verified
+[ ] Fuse holder inspected
+[ ] Root cause investigated before replacement
+[ ] No bypass or unauthorized modification present
+
+Compressor and fan
+[ ] Correct test method confirmed for installed motor type
+[ ] Terminal identification verified
+[ ] Measurements recorded with units and conditions
+[ ] Values compared against official limits
+[ ] Mechanical obstruction/damage assessed with power isolated
+
+Communication
+[ ] Exact error code recorded
+[ ] Terminal map confirmed from wiring diagram
+[ ] Interconnecting cable and connectors inspected
+[ ] Signal test performed only at approved test points
+[ ] No PCB replaced solely from an unverified voltage reading
+
+Completion
+[ ] Covers and barriers reinstalled
+[ ] Work area clear
+[ ] Post-service checks completed
+[ ] Outstanding faults documented
+[ ] Unit status communicated to customer
+
+15. SERVICE RECORD TEMPLATE
+
+Product model: LG UW-Q18WUZA (verify full product code)
+Serial number: ______________________________________
+Product revision/market variant: _______________________
+Service date: _______________________________________
+Technician/company: __________________________________
+Customer-reported symptom: ___________________________
+Displayed error code: _________________________________
+
+Nameplate data
+Rated voltage: ______________________________________
+Rated frequency: ____________________________________
+Rated current/input: __________________________________
+Other nameplate data: _________________________________
+
+Official references used
+Service manual/document number: _______________________
+Revision/date: _______________________________________
+Wiring diagram reference: _____________________________
+
+Measurements
+Component: __________________________________________
+Terminal/test point: __________________________________
+Test conditions: _____________________________________
+Instrument: _________________________________________
+Measured value: _____________________________________
+Official acceptable range/source: ______________________
+Interpretation: ______________________________________
+
+Inspection findings:
+______________________________________________________
+______________________________________________________
+
+Corrective action:
+______________________________________________________
+
+Parts replaced (part number and rating):
+______________________________________________________
+
+Post-service result:
+[ ] Operating normally at time of check
+[ ] Fault remains
+[ ] Unit left isolated for safety
+[ ] Follow-up required
+
+Follow-up notes:
+______________________________________________________
+
+16. STOP-WORK CONDITIONS
+
+Stop and refer the work to an appropriately qualified technician or electrician if:
+- A breaker repeatedly trips.
+- There is smoke, sparking, arcing or a burning odor.
+- Wiring or insulation is damaged.
+- Water has entered an electrical compartment.
+- The protective-earth connection is missing or damaged.
+- The exact terminal layout cannot be confirmed.
+- A high-voltage DC bus or stored-energy condition is not understood.
+- Compressor, fan or PCB testing is outside the technician's authorization.
+- The official service procedure is unavailable or conflicts with the supplied values.
+- A fuse opens again after replacement.
+- The unit exhibits an unexplained electrical fault after reassembly.
+
+17. REFERENCE AND VERIFICATION REQUIREMENTS
+
+Before this document is used as an official service reference, chatbot answer source or field-service procedure, verify the following against LG documentation for the exact model and revision:
+
+[ ] Supply voltage and frequency
+[ ] Rated and maximum input current
+[ ] Required breaker type/rating and wiring size
+[ ] Protective-earth requirements
+[ ] Indoor PCB fuse part number and rating
+[ ] Outdoor PCB fuse part number and rating
+[ ] Compressor terminal naming and winding resistance specification
+[ ] Installed compressor type and approved test method
+[ ] Indoor fan motor type, pinout and test procedure
+[ ] Outdoor fan motor type, pinout and test procedure
+[ ] Exact CH 05 meaning for this model
+[ ] Correct communication terminals, signal characteristics and diagnostic test points
+[ ] Stored-energy discharge and voltage-verification procedure
+[ ] Manufacturer-required post-repair tests
+
+FINAL NOTE
+The technical values in this file originate from the requester-provided notes and are not independently confirmed manufacturer specifications. They must remain labeled as “provided values — verification required” until validated against official LG documentation. Never use unverified electrical measurements to authorize live probing, replace a compressor or PCB, change protective-device ratings, or bypass a safety device.

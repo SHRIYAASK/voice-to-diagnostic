@@ -1,0 +1,447 @@
+DOCUMENT TYPE: WARRANTY & POLICY RULES
+REGION: India
+BRAND: LG Electronics
+PRODUCT CONTEXT: LG Split AC — UW-Q18WUZA (model supplied by requester)
+FILE: warranty_policy_rules.txt
+
+IMPORTANT POLICY STATUS
+This document expands the warranty and policy notes supplied by the requester. The policy terms below are reproduced from those notes and have NOT been independently verified as current official LG Electronics India terms for the exact model, purchase date, sales channel or warranty registration status. Warranty terms can vary by product, promotion, purchase date and registration conditions.
+
+For customer-facing use, verify the active warranty card, invoice, official LG India warranty terms and any product-specific compressor warranty certificate. Do not promise claim approval or rejection based only on this document. Final eligibility is determined by LG or its authorized service process under the applicable written terms.
+
+CONTENTS
+1. Standard warranty coverage
+2. Coverage interpretation and proof
+3. Exclusions listed in supplied notes
+4. Installation warranty
+5. Claim process
+6. Customer service workflow
+7. Warranty decision guide
+8. Required documents and information
+9. Communication guidelines
+10. Escalation and dispute handling
+11. Customer FAQ
+12. Warranty case record template
+13. Policy verification checklist
+
+1. STANDARD WARRANTY COVERAGE
+
+The following terms are stated in the requester-provided notes. They must be checked against the warranty documents issued for the customer's exact product.
+
+1.1 Product warranty
+- Supplied policy note: 1 year comprehensive warranty on the entire product from the date of purchase.
+- The start date, covered components, labor, visit charges and any exceptions must be confirmed from the applicable warranty terms.
+- Ask for the invoice or other accepted proof of purchase to establish the purchase date.
+- Do not infer that every repair, accessory, consumable or service charge is covered merely because it occurs within the first year.
+
+1.2 Compressor warranty
+- Supplied policy note: 10 years on the compressor, only for registered products.
+- Verify that the product and compressor warranty are eligible for the stated extended coverage.
+- Confirm whether registration was completed within the required period and whether the registration record matches the product's model and serial number.
+- Confirm exactly what the extended compressor warranty covers. It may not mean that labor, refrigerant, transport, visit charges or other parts are included.
+- Do not promise free replacement until the authorized service process confirms the fault and coverage.
+
+1.3 PCB warranty
+- Supplied policy note: 1 year on printed circuit boards (PCBs).
+- Confirm which PCB or electronic component is covered and whether the claim falls within the applicable warranty period.
+- A failure code or suspected PCB fault does not by itself establish that a PCB is defective or that the repair is covered.
+- The final diagnosis and coverage decision must follow the applicable warranty terms.
+
+1.4 Warranty date calculation
+- Use the purchase date and warranty wording on the invoice and warranty documents.
+- Do not calculate eligibility from installation date unless the applicable policy explicitly uses installation date.
+- If the purchase date, invoice or registration information is inconsistent, flag the case for authorized verification rather than guessing.
+
+2. COVERAGE INTERPRETATION AND PROOF
+
+Before discussing a warranty outcome, establish:
+- Product model and full product code.
+- Serial number of the relevant unit.
+- Purchase date and proof of purchase.
+- Installation date and installation record, if relevant.
+- Warranty registration status and confirmation, especially for extended compressor coverage.
+- Customer-reported symptom and when it began.
+- Any prior service visits, repairs, relocations or modifications.
+- Technician's confirmed diagnosis, if one exists.
+- Any applicable warranty-card terms or product-specific conditions.
+
+Important distinctions:
+- A symptom is not a confirmed component failure.
+- A diagnostic error code is not, by itself, proof of a warranty-covered defect.
+- A component may have a different warranty period from the overall product.
+- An extended compressor warranty may have different coverage from the standard comprehensive warranty.
+- A claim may require inspection before eligibility can be decided.
+- Never ask a customer to perform dangerous electrical or refrigerant checks to establish warranty eligibility.
+
+3. EXCLUSIONS LISTED IN THE SUPPLIED NOTES
+
+The following exclusions are reproduced from the supplied notes and must be checked against the current official policy before being stated as definitive.
+
+3.1 Power fluctuations or surges
+Supplied note: Damage caused by power fluctuations (voltage spikes/surges) without a stabilizer is not covered.
+
+Handling guidance:
+- Record the customer's description of the event and any visible damage.
+- Do not conclude that a surge caused the fault without an authorized diagnosis.
+- Do not state that a stabilizer is universally mandatory unless the official product guidance says so.
+- Ask the authorized service team to assess the cause and applicable terms.
+- Never advise bypassing circuit protection or changing an MCB rating.
+
+3.2 Refrigerant leakage
+Supplied note: Gas leakage due to poor installation or external physical damage is not covered.
+
+Handling guidance:
+- Do not assume that low cooling means refrigerant leakage.
+- Do not ask the customer to loosen pipes, inspect refrigerant joints by touch or add refrigerant.
+- Record when the symptom began and whether installation, relocation or physical damage occurred.
+- Refer refrigerant diagnosis and repair to authorized or appropriately qualified service personnel.
+- Coverage depends on the verified cause and applicable installation/product terms.
+
+3.3 Rust or corrosion in coastal/saline environments
+Supplied note: Rust or corrosion due to exposure to saline air in coastal areas without anti-corrosion treatment is not covered.
+
+Handling guidance:
+- Record the location and visible condition, if safely observable.
+- Do not promise coverage or denial based on geography alone.
+- Ask for the authorized inspection report and the applicable warranty wording.
+- Do not imply that all coastal installations are automatically excluded unless the written terms say so.
+
+3.4 Pest damage
+Supplied note: Damage caused by pests, including rats or insects chewing wires, is not covered.
+
+Handling guidance:
+- Record visible evidence or the technician's findings.
+- Do not instruct the customer to open the electrical compartment to look for damaged wires.
+- Treat exposed wiring, short circuits, burning smells or repeated breaker trips as safety issues and advise the customer to stop using the unit and arrange service.
+- Final cause and claim treatment require authorized assessment.
+
+3.5 Consumables and accessories
+Supplied note: Filters, remote controls and batteries are considered consumables and are not covered after 1 month.
+
+Handling guidance:
+- Verify the exact written policy for each item and the stated one-month condition before communicating a decision.
+- Distinguish normal wear, loss, accidental damage and manufacturing defects.
+- Do not promise free replacement or reject a claim without checking the applicable terms.
+
+4. INSTALLATION WARRANTY
+
+4.1 Standard installation
+Supplied note: Free standard installation is provided only once at the time of purchase.
+
+Handling guidance:
+- Confirm whether the original order included standard installation and whether it was completed.
+- Clarify that “standard installation” may not include every accessory, civil modification, extra piping, electrical work or site-specific requirement; check the actual quotation and written terms.
+- Do not invent prices for extra work.
+- Refer questions about included materials, labor or installation scope to the invoice, installation sheet or authorized service provider.
+
+4.2 Reinstallation or relocation
+Supplied note: Any reinstallation or shifting of the unit is chargeable.
+
+Handling guidance:
+- Record the requested change: relocation within the same premises, transfer to another address, dismantling, reinstallation or replacement of piping.
+- Explain that charges may apply according to the authorized service quotation and written terms.
+- Do not quote a price unless a current official rate is available.
+- Confirm whether the customer needs dismantling, transport, new mounting, piping, drainage or electrical work, and route the request for a formal estimate.
+- A relocation can affect installation quality and warranty conditions; ask the authorized provider to explain the applicable policy before work begins.
+
+4.3 Leakage within the first year
+Supplied note: Gas leakage within 1 year of installation due to joint failure is covered under the installation warranty.
+
+Handling guidance:
+- Confirm the installation date and who performed the installation.
+- Record the reported leak symptoms without treating them as a confirmed refrigerant leak.
+- Arrange an authorized inspection to identify the leak source and cause.
+- Confirm that the fault is a qualifying joint failure and that the claim falls within the written installation warranty.
+- Do not promise coverage before the inspection and policy review.
+- Do not tell the customer to open flare joints or handle refrigerant.
+
+5. CLAIM PROCESS
+
+The following process expands the supplied claim notes into a service workflow. Actual submission channels, required documents and review timelines must be confirmed with LG Electronics India or the authorized service provider.
+
+Step 1 — Register the issue
+- Capture customer contact details through the approved service system.
+- Record product model, serial number, purchase date and installation date.
+- Record the error code, symptoms and when they began.
+- Ask whether the product has been moved, repaired or modified since installation.
+
+Step 2 — Collect proof
+Supplied note requires:
+- Original invoice.
+- Warranty card.
+
+Additional evidence may be requested depending on the claim:
+- Compressor warranty registration confirmation.
+- Installation receipt or service record.
+- Authorized technician's diagnosis.
+- Photos of the product nameplate or visible damage, if safely obtained.
+- Previous service job numbers.
+Do not present additional documents as mandatory unless the official process requires them.
+
+Step 3 — Verify coverage
+- Match model and serial number with the invoice and registration.
+- Confirm the applicable warranty start date and coverage period.
+- Confirm any component-specific or extended warranty terms.
+- Check whether the claim involves a listed exclusion or requires cause assessment.
+- If the policy is unclear, escalate for official confirmation.
+
+Step 4 — Arrange inspection
+- Refer the product to an authorized service channel where required.
+- Ask the technician to document the diagnosis and the likely cause.
+- Do not ask the customer to conduct electrical measurements or open the unit.
+- Keep the claim status as “inspection/verification pending” until the relevant evidence is available.
+
+Step 5 — Review the decision
+- Apply the written terms to the confirmed fault and evidence.
+- Separate component coverage from labor, refrigerant, transport or other charges.
+- Explain the decision and any applicable estimate clearly.
+- If declined, state the documented reason and the appropriate review/escalation route.
+
+Step 6 — Complete and record
+- Record the repair or replacement performed.
+- Record the parts and charges, if any.
+- Record the service outcome and any follow-up action.
+- Retain the claim/job reference through the approved service system.
+
+6. CUSTOMER SERVICE WORKFLOW
+
+Use the following sequence when handling a warranty question.
+
+A. Identify the request
+- New product warranty question.
+- Compressor extended warranty question.
+- PCB or other component claim.
+- Installation or relocation charge question.
+- Suspected installation-related leak.
+- Claim rejected or disputed.
+- Missing invoice or warranty registration.
+
+B. Gather only the information needed
+1. What is the product model and serial number?
+2. What is the purchase date?
+3. Is the invoice available?
+4. Is the warranty card or registration confirmation available?
+5. What issue has occurred, and when did it begin?
+6. Has the product been relocated or repaired previously?
+7. Has an authorized technician inspected it?
+
+C. Classify the status
+- Potentially within standard warranty — verification required.
+- Potentially within extended compressor warranty — registration and terms to verify.
+- Potential installation claim — installation date, cause and terms to verify.
+- Potential exclusion — cause and written policy to verify.
+- Out of warranty according to confirmed records.
+- Insufficient information — request missing evidence.
+- Safety-critical — stop use and arrange service.
+
+D. Explain the next step
+Give the customer a clear next action, what information is needed and whether an inspection is required. Do not guarantee a claim outcome before verification.
+
+7. WARRANTY DECISION GUIDE
+
+Case: Product fault reported within the first year
+- Ask for the invoice and warranty card.
+- Confirm the purchase date and product identity.
+- Record the symptom and arrange authorized diagnosis if needed.
+- Do not promise that every part, accessory or charge is covered.
+
+Case: Compressor fault reported after the first year
+- Ask for the invoice and compressor warranty registration proof.
+- Verify the extended warranty and its conditions.
+- Arrange diagnosis to confirm that the compressor is the failed component.
+- Clarify the difference between compressor-part coverage and any non-covered charges according to the written terms.
+
+Case: PCB failure
+- Verify the purchase date and applicable PCB warranty period.
+- Obtain an authorized diagnosis.
+- Do not treat an error code as proof of PCB failure.
+
+Case: Suspected power-surge damage
+- Record the event and symptoms.
+- Stop operation if there is a safety concern.
+- Arrange an authorized inspection.
+- Apply the exclusion only after checking the cause and written policy.
+
+Case: Suspected refrigerant leakage
+- Do not ask the customer to handle refrigerant.
+- Record installation/relocation history and symptoms.
+- Arrange an authorized leak assessment.
+- Determine whether it is a qualifying installation joint failure or another cause.
+
+Case: Corrosion or pest damage
+- Record the visible issue from a safe position.
+- Arrange inspection and review the applicable terms.
+- Do not make a final coverage decision from a photo or location alone unless the official policy explicitly permits it.
+
+Case: Reinstallation or relocation
+- Explain that the supplied policy notes say charges apply.
+- Gather the scope and location details.
+- Request a formal authorized quotation.
+- Do not invent prices.
+
+Case: Missing invoice or warranty card
+- Explain that the supplied notes list these documents for a claim.
+- Ask whether the customer can retrieve a duplicate invoice or registration record from the original seller or approved channel.
+- Confirm whether alternative proof is accepted under the current official policy.
+- Do not automatically reject the claim without checking the official process.
+
+Case: Third-party repair has occurred
+- Record what work was done, by whom and when.
+- The supplied notes state that unauthorized third-party repairs void the remaining warranty.
+- Verify the exact warranty wording and circumstances before stating the effect on the customer's claim.
+- Escalate if the customer disputes the authorization status or the scope of the alleged impact.
+
+8. REQUIRED DOCUMENTS AND INFORMATION
+
+Supplied notes explicitly name:
+[ ] Original invoice
+[ ] Warranty card
+
+Depending on the claim and official process, verification may also require:
+[ ] Product model and serial number
+[ ] Purchase date
+[ ] Installation date and installation receipt
+[ ] Compressor warranty registration proof
+[ ] Previous authorized service records
+[ ] Technician diagnosis
+[ ] Photos of the nameplate or damage, where safely available
+[ ] Job number or claim reference
+[ ] Other evidence specifically requested by the authorized service team
+
+Privacy and handling
+- Collect only information needed for the service case.
+- Use approved service channels for customer contact and documents.
+- Do not request payment-card details, passwords or unrelated sensitive information.
+- Do not store identity documents or personal information in an unsecured text file or chatbot knowledge base.
+
+9. COMMUNICATION GUIDELINES
+
+Use cautious, clear language:
+- “Based on the information provided, this may be eligible; the official warranty terms and diagnosis need to be checked.”
+- “The extended compressor warranty in the supplied policy notes requires product registration. We need to verify your registration and the applicable terms.”
+- “An authorized technician needs to confirm the cause before coverage can be determined.”
+- “Relocation charges depend on the approved service quotation and the actual work required.”
+- “Please keep the invoice and warranty documents available for verification.”
+
+Avoid unsupported promises:
+- “Your repair is definitely free.”
+- “Your warranty is automatically void.”
+- “All compressor repairs are free for ten years.”
+- “A stabilizer is always compulsory.”
+- “Every refrigerant leak is excluded.”
+- “Every PCB error means the PCB will be replaced.”
+- “This claim will be approved today.”
+Do not promise specific processing times, prices or claim outcomes unless current official information supports them.
+
+10. ESCALATION AND DISPUTE HANDLING
+
+Escalate to the authorized warranty/service team when:
+- The invoice date and system record disagree.
+- Compressor registration cannot be confirmed.
+- The customer disputes an exclusion.
+- A technician's diagnosis and the initial symptom report conflict.
+- A third-party repair's impact on warranty is unclear.
+- Installation-related leakage is alleged.
+- The applicable warranty terms are unavailable or ambiguous.
+- The customer requests a formal written rejection reason or review.
+
+When escalating, include:
+- Customer's issue summary.
+- Model and serial number.
+- Purchase and installation dates.
+- Relevant warranty/registration evidence.
+- Error code and service history.
+- Technician findings, if available.
+- Exact policy clause requiring interpretation.
+- Requested resolution.
+
+Do not alter a claim decision, promise an exception or state a policy interpretation as official without authorization.
+
+11. CUSTOMER FAQ
+
+Q: How long is the standard product warranty?
+A: The supplied policy notes state one year of comprehensive product warranty from the purchase date. Please verify the invoice and the warranty terms for your exact model.
+
+Q: Is the compressor covered for ten years?
+A: The supplied notes state ten years of compressor warranty for registered products. Registration, coverage scope and any conditions must be confirmed from the official warranty documents.
+
+Q: Are PCBs covered for ten years?
+A: No such coverage is stated in the supplied notes. They state a one-year PCB warranty. Check the actual warranty terms for the product.
+
+Q: What documents are needed for a claim?
+A: The supplied notes list the original invoice and warranty card. Additional documents may be required depending on the claim and official process.
+
+Q: Is damage from a power surge covered?
+A: The supplied notes list power-fluctuation or surge damage without a stabilizer as an exclusion. The cause and applicable written policy must be verified before deciding the claim.
+
+Q: Is every refrigerant leak excluded?
+A: The supplied notes specifically list leakage due to poor installation or external physical damage as excluded, while separately stating that a joint failure within one year of installation may be covered under the installation warranty. The actual cause and applicable terms must be checked.
+
+Q: Is relocation free?
+A: The supplied notes state that reinstallation or shifting is chargeable. Request an authorized quotation for the required work.
+
+Q: What if the unit has been repaired by a third party?
+A: The supplied notes state that unauthorized third-party repairs void the remaining warranty. The exact effect on the claim should be verified against the official terms and the work performed.
+
+Q: Can a warranty claim be approved based only on an error code?
+A: No. The code helps describe the fault, but diagnosis and applicable warranty conditions need to be verified.
+
+Q: What if I have lost my invoice?
+A: Ask the original seller or approved service channel whether a duplicate invoice or another accepted proof of purchase can be obtained. The accepted alternatives must be confirmed through the official process.
+
+12. WARRANTY CASE RECORD TEMPLATE
+
+Customer/case reference: ______________________________
+Date received: _______________________________________
+Product model/full code: _______________________________
+Serial number: _______________________________________
+Purchase date: _______________________________________
+Installation date: ____________________________________
+Invoice available: Yes / No
+Warranty card available: Yes / No
+Compressor registration verified: Yes / No / Not applicable
+Customer-reported issue: ______________________________
+Error code, if any: ____________________________________
+Prior relocation or repair: _____________________________
+Authorized technician diagnosis: ________________________
+Potential policy clause: _______________________________
+Evidence still required: ________________________________
+Current status:
+[ ] Information pending
+[ ] Inspection pending
+[ ] Warranty verification pending
+[ ] Potentially covered — not yet approved
+[ ] Potential exclusion — review required
+[ ] Approved by authorized team
+[ ] Declined by authorized team
+[ ] Escalated for review
+
+Decision and policy reference: _________________________
+Customer communication summary: ______________________
+Next action/owner: ____________________________________
+Date of follow-up: ____________________________________
+
+13. POLICY VERIFICATION CHECKLIST
+
+Before deploying this document as a customer-facing chatbot knowledge source, verify:
+
+[ ] One-year comprehensive product warranty
+[ ] Warranty start date and covered components
+[ ] Ten-year compressor warranty and registration requirements
+[ ] One-year PCB warranty
+[ ] Power fluctuation/surge exclusion wording
+[ ] Refrigerant leakage exclusion wording
+[ ] Coastal corrosion/saline exposure wording
+[ ] Pest damage exclusion wording
+[ ] Filter, remote and battery coverage and the stated one-month period
+[ ] Free standard installation scope
+[ ] Reinstallation and relocation charges
+[ ] Installation joint-failure coverage within one year
+[ ] Required claim documents
+[ ] Annual servicing proof requirements for compressor claims, if applicable
+[ ] Third-party repair and warranty-impact wording
+[ ] Current official claim channel and escalation process
+[ ] Model-specific and purchase-date-specific terms
+
+FINAL NOTE
+This document is an expanded version of the warranty notes supplied by the requester, not a verified statement of current LG Electronics India policy. The stated durations, exclusions, installation terms and claim requirements should be checked against the official warranty card and terms applicable to the exact product and purchase. A chatbot should explain the supplied rules, gather relevant information and route uncertain cases for official verification; it should not independently guarantee or deny a claim.

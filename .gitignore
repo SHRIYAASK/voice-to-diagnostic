@@ -1,0 +1,68 @@
+# Dependencies
+node_modules/
+*/node_modules/
+.pnp
+.pnp.*
+
+# Next.js build output
+.next/
+*/.next/
+out/
+build/
+dist/
+*/dist/
+
+# Uploads & temporary runtime files
+backend/uploads/*
+!backend/uploads/.gitkeep
+uploads/
+tmp/
+temp/
+
+# Environment files and credentials
+.env
+.env*.local
+.env.production
+.env.development
+*.env
+!*.env.example
+
+# Model checkpoints and large binaries
+tmp_model/
+*.ckpt
+*.pt
+*.pth
+*.bin
+*.onnx
+
+# Python
+__pycache__/
+*/__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+ENV/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Logs and debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+*.log
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# OS & Editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

@@ -1,0 +1,1254 @@
+{
+  "schema_version": "1.0",
+  "description": "Shared refrigerator diagnostic decision trees for issue families common to single-door and double-door refrigerators.",
+  "appliance_category": "Refrigerator",
+  "appliance_type": "common",
+  "model_code": null,
+  "issue_scope": "REF01-REF15",
+  "issue_count": 15,
+  "issues": {
+    "REF01": {
+      "issue_id": "REF01",
+      "title": "No Cooling",
+      "start_node": "q1_power",
+      "nodes": [
+        {
+          "id": "q1_power",
+          "type": "question",
+          "text_en": "Is the refrigerator receiving power and showing any sign of operation?",
+          "text_hi": "",
+          "options": [
+            {
+              "label": "Yes",
+              "next_node": "q2_cooling_extent"
+            },
+            {
+              "label": "No",
+              "next_node": "q_power_source"
+            },
+            {
+              "label": "Not sure",
+              "next_node": "q_power_source"
+            }
+          ]
+        },
+        {
+          "id": "q_power_source",
+          "type": "question",
+          "text_en": "Is power available at the household outlet or to other appliances in the same area?",
+          "text_hi": "",
+          "options": [
+            {
+              "label": "No, household power is unavailable",
+              "resolution": "resolved_external_power_outage"
+            },
+            {
+              "label": "Yes, other appliances have power",
+              "conclusion": "diag_power_service"
+            },
+            {
+              "label": "Not sure",
+              "conclusion": "diag_power_service"
+            }
+          ]
+        },
+        {
+          "id": "q2_cooling_extent",
+          "type": "question",
+          "text_en": "Are both the refrigerator compartment and any freezer/chiller compartment warm?",
+          "text_hi": "",
+          "options": [
+            {
+              "label": "Yes, all compartments are warm",
+              "next_node": "q3_recent_event"
+            },
+            {
+              "label": "Only one area is warm",
+              "next_node": "q3_recent_event"
+            },
+            {
+              "label": "Not sure",
+              "next_node": "q3_recent_event"
+            }
+          ]
+        },
+        {
+          "id": "q3_recent_event",
+          "type": "question",
+          "text_en": "Was the refrigerator recently installed, moved, unplugged, or loaded with a large amount of food?",
+          "text_hi": "",
+          "options": [
+            {
+              "label": "Yes",
+              "action": "instruct_check_manual_stabilization_and_allow_cooling_time",
+              "next_node": "q4_recovered"
+            },
+            {
+              "label": "No",
+              "next_node": "q4_recovered"
+            },
+            {
+              "label": "Not sure",
+              "next_node": "q4_recovered"
+            }
+          ]
+        },
+        {
+          "id": "q4_recovered",
+          "type": "question",
+          "text_en": "After checking the power and allowing the model's recommended cooling time, has cooling returned?",
+          "text_hi": "",
+          "options": [
+            {
+              "label": "Yes",
+              "resolution": "resolved_after_power_or_stabilization_check"
+            },
+            {
+              "label": "No",
+              "conclusion": "diag_no_cooling_service"
+            },
+            {
+              "label": "Cooling is still uncertain",
+              "conclusion": "diag_no_cooling_service"
+            }
+          ]
+        }
+      ],
+      "conclusions": {
+        "diag_power_service": {
+          "probable_cause": "Power supply, plug, socket, or refrigerator electrical fault requires inspection; the symptom alone does not identify the failed component.",
+          "confidence": 0.7,
+          "parts": [],
+          "priority": "High",
+          "safety_flag": true,
+          "rag_query": "refrigerator no power safe power supply inspection",
+          "technician_note": "Do not open electrical covers. Verify supply safely and arrange qualified service if the outlet has power but the refrigerator remains inactive."
+        },
+        "diag_no_cooling_service": {
+          "probable_cause": "Cooling-system or control fault is possible; the exact cause cannot be confirmed from customer observations alone.",
+          "confidence": 0.6,
+          "parts": [],
+          "priority": "High",
+          "safety_flag": false,
+          "rag_query": "refrigerator running but not cooling authorized service diagnosis",
+          "technician_note": "Check model manual and inspect sealed-system and control components using approved service procedures. Do not ask the customer to handle refrigerant or internal wiring."
+        }
+      }
+    },
+    "REF02": {
+      "issue_id": "REF02",
+      "title": "Low or Insufficient Cooling",
+      "start_node": "q1_setting",
+      "nodes": [
+        {
+          "id": "q1_setting",
+          "type": "question",
+          "text_en": "Is the temperature control set to a normal recommended cooling setting for this model?",
+          "text_hi": "",
+          "options": [
+            {
+              "label": "Yes",
+              "next_node": "q2_door"
+            },
+            {
+              "label": "No / Not sure",
+              "action": "instruct_set_recommended_temperature_from_model_manual",
+              "next_node": "q3_result"
+            }
+          ]
+        },
+        {
+          "id": "q2_door",
+          "type": "question",
+          "text_en": "Is the door closing fully, and is the gasket making contact around the door?",
+          "text_hi": "",
+          "options": [
+            {
+              "label": "Yes",
+              "next_node": "q2_airflow_load"
+            },
+            {
+              "label": "No",
+              "redirect_issue": "REF07"
+            }
+          ]
+        },
+        {
+          "id": "q2_airflow_load",
+          "type": "question",
+          "text_en": "Is the refrigerator overfilled or are food items blocking internal air passages or the cooling area?",
+          "text_hi": "",
+          "options": [
+            {
+              "label": "Yes",
+              "action": "instruct_rearrange_food_without_blocking_airflow",
+              "next_node": "q3_result"
+            },
+            {
+              "label": "No",
+              "next_node": "q3_result"
+            },
+            {
+              "label": "Not sure",
+              "next_node": "q3_result"
+            }
+          ]
+        },
+        {
+          "id": "q3_result",
+          "type": "question",
+          "text_en": "After correcting the setting, door closure, or food placement and allowing time to cool, has cooling improved?",
+          "text_hi": "",
+          "options": [
+            {
+              "label": "Yes",
+              "resolution": "resolved_setting_or_loading"
+            },
+            {
+              "label": "No",
+              "conclusion": "diag_weak_cooling_service"
+            }
+          ]
+        }
+      ],
+      "conclusions": {
+        "diag_weak_cooling_service": {
+          "probable_cause": "Persistent weak cooling may involve airflow, temperature control, installation conditions, or a cooling-system fault; further inspection is required.",
+          "confidence": 0.6,
+          "parts": [],
+          "priority": "Medium",
+          "safety_flag": false,
+          "rag_query": "refrigerator weak cooling diagnosis airflow temperature control",
+          "technician_note": "Verify actual compartment temperatures and model-specific guidance before testing components. Do not infer refrigerant loss from weak cooling alone."
+        }
+      }
+    },
+    "REF03": {
+      "issue_id": "REF03",
+      "title": "Power / Refrigerator Not Starting",
+      "start_node": "q1_power_signs",
+      "nodes": [
+        {
+          "id": "q1_power_signs",
+          "type": "question",
+          "text_en": "Are the interior light or other normal operating signs present when the door is opened?",
+          "text_hi": "",
+          "options": [
+            {
+              "label": "Yes",
+              "next_node": "q2_starting"
+            },
+            {
+              "label": "No",
+              "next_node": "q3_house_power"
+            }
+          ]
+        },
+        {
+          "id": "q2_starting",
+          "type": "question",
+          "text_en": "Does the refrigerator appear to run, but cooling does not start or remain stable?",
+          "text_hi": "",
+          "options": [
+            {
+              "label": "Yes",
+              "redirect_issue": "REF01"
+            },
+            {
+              "label": "No, it is operating normally",
+              "resolution": "no_starting_issue_observed"
+            },
+            {
+              "label": "It starts and stops repeatedly",
+              "conclusion": "diag_intermittent_operation"
+            }
+          ]
+        },
+        {
+          "id": "q3_house_power",
+          "type": "question",
+          "text_en": "Is household power available and is the plug/supply connection visibly undamaged?",
+          "text_hi": "",
+          "options": [
+            {
+              "label": "Power is unavailable",
+              "resolution": "resolved_external_power_outage"
+            },
+            {
+              "label": "Power is available and connection looks undamaged",
+              "conclusion": "diag_no_power_service"
+            },
+            {
+              "label": "Cable, plug, or socket looks damaged / smells burnt",
+              "conclusion": "diag_electrical_hazard"
+            }
+          ]
+        }
+      ],
+      "conclusions": {
+        "diag_intermittent_operation": {
+          "probable_cause": "Repeated stopping may relate to supply, control, or operating conditions; cause requires service diagnosis.",
+          "confidence": 0.6,
+          "parts": [],
+          "priority": "High",
+          "safety_flag": false,
+          "rag_query": "refrigerator starts stops intermittently diagnosis",
+          "technician_note": "Record when operation stops and any unusual sound. Do not remove covers or test live components."
+        },
+        "diag_no_power_service": {
+          "probable_cause": "Internal power or control fault is possible after external supply is checked.",
+          "confidence": 0.65,
+          "parts": [],
+          "priority": "High",
+          "safety_flag": true,
+          "rag_query": "refrigerator no power authorized service",
+          "technician_note": "Disconnect only if safe and follow the manual; arrange qualified service. Do not open the electrical compartment."
+        },
+        "diag_electrical_hazard": {
+          "probable_cause": "Potential electrical hazard at the plug, cable, or socket.",
+          "confidence": 0.95,
+          "parts": [],
+          "priority": "Critical",
+          "safety_flag": true,
+          "rag_query": "refrigerator damaged power cord burning smell safety",
+          "technician_note": "Stop using the appliance. Do not touch damaged or wet electrical parts; isolate power only if safe and contact a qualified electrician/service provider."
+        }
+      }
+    },
+    "REF04": {
+      "issue_id": "REF04",
+      "title": "Unusual Noise",
+      "start_node": "q1_noise_type",
+      "nodes": [
+        {
+          "id": "q1_noise_type",
+          "type": "question",
+          "text_en": "Which best describes the sound?",
+          "text_hi": "",
+          "options": [
+            {
+              "label": "Soft humming or occasional clicks",
+              "next_node": "q2_noise_context"
+            },
+            {
+              "label": "Loud, grinding, repeated knocking, or new persistent noise",
+              "next_node": "q2_leveling"
+            },
+            {
+              "label": "Cracking, popping, or brief expansion sounds",
+              "next_node": "q2_noise_context"
+            },
+            {
+              "label": "Burning, electrical buzzing, or sound with smoke",
+              "conclusion": "diag_noise_safety"
+            }
+          ]
+        },
+        {
+          "id": "q2_noise_context",
+          "type": "question",
+          "text_en": "Does the noise occur briefly during normal operation and then stop, with cooling otherwise normal?",
+          "text_hi": "",
+          "options": [
+            {
+              "label": "Yes",
+              "resolution": "possible_normal_operating_sound_explained"
+            },
+            {
+              "label": "No, it is persistent or cooling is affected",
+              "next_node": "q2_leveling"
+            }
+          ]
+        },
+        {
+          "id": "q2_leveling",
+          "type": "question",
+          "text_en": "Is the refrigerator stable and clear of nearby objects that could vibrate against it?",
+          "text_hi": "",
+          "options": [
+            {
+              "label": "No",
+              "action": "instruct_check_stability_and_clear_external_objects_safely",
+              "next_node": "q3_result"
+            },
+            {
+              "label": "Yes",
+              "conclusion": "diag_noise_service"
+            }
+          ]
+        },
+        {
+          "id": "q3_result",
+          "type": "question",
+          "text_en": "After stabilizing the refrigerator and moving nearby objects, has the noise stopped?",
+          "text_hi": "",
+          "options": [
+            {
+              "label": "Yes",
+              "resolution": "resolved_external_vibration"
+            },
+            {
+              "label": "No",
+              "conclusion": "diag_noise_service"
+            }
+          ]
+        }
+      ],
+      "conclusions": {
+        "diag_noise_safety": {
+          "probable_cause": "Possible electrical or overheating hazard associated with the reported sound.",
+          "confidence": 0.95,
+          "parts": [],
+          "priority": "Critical",
+          "safety_flag": true,
+          "rag_query": "refrigerator unusual electrical buzzing noise safety",
+          "technician_note": "Stop using the refrigerator if safe to do so and contact qualified service. Do not open panels."
+        },
+        "diag_noise_service": {
+          "probable_cause": "Persistent abnormal noise may come from a component, mounting, or contact issue; inspection is needed.",
+          "confidence": 0.6,
+          "parts": [],
+          "priority": "Medium",
+          "safety_flag": false,
+          "rag_query": "refrigerator loud persistent noise authorized service",
+          "technician_note": "Record sound type and operating conditions. Do not diagnose a compressor or fan failure from sound alone."
+        }
+      }
+    },
+    "REF05": {
+      "issue_id": "REF05",
+      "title": "Excessive Vibration",
+      "start_node": "q1_stable",
+      "nodes": [
+        {
+          "id": "q1_stable",
+          "type": "question",
+          "text_en": "Does the refrigerator rock or wobble when gently checked from the outside?",
+          "text_hi": "",
+          "options": [
+            {
+              "label": "Yes",
+              "action": "instruct_check_floor_and_leveling_per_manual",
+              "next_node": "q2_result"
+            },
+            {
+              "label": "No",
+              "next_node": "q1_clearance"
+            }
+          ]
+        },
+        {
+          "id": "q1_clearance",
+          "type": "question",
+          "text_en": "Is the cabinet touching a wall, cabinet, or object that could transmit vibration?",
+          "text_hi": "",
+          "options": [
+            {
+              "label": "Yes",
+              "action": "instruct_clear_required_external_clearance_per_manual",
+              "next_node": "q2_result"
+            },
+            {
+              "label": "No",
+              "conclusion": "diag_vibration_service"
+            }
+          ]
+        },
+        {
+          "id": "q2_result",
+          "type": "question",
+          "text_en": "After correcting stability or external contact, has vibration reduced?",
+          "text_hi": "",
+          "options": [
+            {
+              "label": "Yes",
+              "resolution": "resolved_stability_or_clearance"
+            },
+            {
+              "label": "No",
+              "conclusion": "diag_vibration_service"
+            }
+          ]
+        }
+      ],
+      "conclusions": {
+        "diag_vibration_service": {
+          "probable_cause": "Persistent vibration may involve mounting or an internal operating component; inspection is required.",
+          "confidence": 0.6,
+          "parts": [],
+          "priority": "Medium",
+          "safety_flag": false,
+          "rag_query": "refrigerator excessive vibration inspection",
+          "technician_note": "Check installation and mounting using the model manual. Do not remove covers or touch moving parts."
+        }
+      }
+    },
+    "REF06": {
+      "issue_id": "REF06",
+      "title": "Water Leakage",
+      "start_node": "q1_water_location",
+      "nodes": [
+        {
+          "id": "q1_water_location",
+          "type": "question",
+          "text_en": "Where is the water visible?",
+          "text_hi": "",
+          "options": [
+            {
+              "label": "Inside the refrigerator compartment",
+              "next_node": "q2_internal_source"
+            },
+            {
+              "label": "On the floor or outside the cabinet",
+              "next_node": "q2_external_source"
+            },
+            {
+              "label": "Water is near a plug, socket, or electrical cable",
+              "conclusion": "diag_water_electrical_safety"
+            }
+          ]
+        },
+        {
+          "id": "q2_internal_source",
+          "type": "question",
+          "text_en": "Is there visible condensation, spilled liquid, or water associated with a defrosted ice buildup?",
+          "text_hi": "",
+          "options": [
+            {
+              "label": "Yes / likely",
+              "action": "instruct_wipe_spill_and_check_food_containers_safely",
+              "next_node": "q3_result"
+            },
+            {
+              "label": "No / not sure",
+              "conclusion": "diag_internal_leak_service"
+            }
+          ]
+        },
+        {
+          "id": "q2_external_source",
+          "type": "question",
+          "text_en": "Is the water clearly from a spill or recent cleaning rather than from the refrigerator?",
+          "text_hi": "",
+          "options": [
+            {
+              "label": "Yes",
+              "resolution": "resolved_external_spill"
+            },
+            {
+              "label": "No / not sure",
+              "conclusion": "diag_external_leak_service"
+            }
+          ]
+        },
+        {
+          "id": "q3_result",
+          "type": "question",
+          "text_en": "After wiping the water and checking containers, has it stopped returning?",
+          "text_hi": "",
+          "options": [
+            {
+              "label": "Yes",
+              "resolution": "resolved_spill_or_condensation"
+            },
+            {
+              "label": "No",
+              "conclusion": "diag_internal_leak_service"
+            }
+          ]
+        }
+      ],
+      "conclusions": {
+        "diag_water_electrical_safety": {
+          "probable_cause": "Water near electrical connections creates a potential shock hazard.",
+          "confidence": 0.98,
+          "parts": [],
+          "priority": "Critical",
+          "safety_flag": true,
+          "rag_query": "refrigerator water leak near electrical outlet safety",
+          "technician_note": "Do not touch wet electrical parts. Stop using the appliance and isolate power only if safe; contact qualified service/electrician."
+        },
+        "diag_internal_leak_service": {
+          "probable_cause": "Recurring internal water may involve a drainage, defrost, seal, or condensation issue depending on model type.",
+          "confidence": 0.6,
+          "parts": [],
+          "priority": "Medium",
+          "safety_flag": false,
+          "rag_query": "refrigerator water inside recurring leak diagnosis",
+          "technician_note": "Inspect the exact model's approved drainage/defrost design. Do not assume a drain component exists on every model."
+        },
+        "diag_external_leak_service": {
+          "probable_cause": "Recurring external water source is unconfirmed and requires inspection.",
+          "confidence": 0.55,
+          "parts": [],
+          "priority": "Medium",
+          "safety_flag": false,
+          "rag_query": "refrigerator water pooling underneath external leak",
+          "technician_note": "Check model documentation and installation conditions. Avoid tilting or dismantling the appliance."
+        }
+      }
+    },
+    "REF07": {
+      "issue_id": "REF07",
+      "title": "Door Not Closing or Opening Properly",
+      "start_node": "q1_obstruction",
+      "nodes": [
+        {
+          "id": "q1_obstruction",
+          "type": "question",
+          "text_en": "Is a food container, shelf, drawer, or other item preventing the door from closing?",
+          "text_hi": "",
+          "options": [
+            {
+              "label": "Yes",
+              "action": "instruct_reposition_items_and_shelves",
+              "next_node": "q2_close"
+            },
+            {
+              "label": "No",
+              "next_node": "q1_alignment"
+            }
+          ]
+        },
+        {
+          "id": "q1_alignment",
+          "type": "question",
+          "text_en": "Does the refrigerator appear stable, and is the door aligned normally?",
+          "text_hi": "",
+          "options": [
+            {
+              "label": "No / unsure",
+              "action": "instruct_check_leveling_and_installation_manual",
+              "next_node": "q2_close"
+            },
+            {
+              "label": "Yes",
+              "redirect_issue": "REF08"
+            }
+          ]
+        },
+        {
+          "id": "q2_close",
+          "type": "question",
+          "text_en": "After removing the obstruction or checking installation, does the door close fully?",
+          "text_hi": "",
+          "options": [
+            {
+              "label": "Yes",
+              "resolution": "resolved_obstruction_or_alignment"
+            },
+            {
+              "label": "No",
+              "redirect_issue": "REF08"
+            }
+          ]
+        }
+      ],
+      "conclusions": {
+        "diag_door_service": {
+          "probable_cause": "Persistent door closure issue may involve hinge, alignment, or door assembly; service inspection is needed.",
+          "confidence": 0.6,
+          "parts": [],
+          "priority": "Medium",
+          "safety_flag": false,
+          "rag_query": "refrigerator door will not close hinge alignment inspection",
+          "technician_note": "Do not force the door or attempt hinge adjustment unless the model manual explicitly permits it."
+        }
+      }
+    },
+    "REF08": {
+      "issue_id": "REF08",
+      "title": "Door Gasket / Sealing Problem",
+      "start_node": "q1_gasket",
+      "nodes": [
+        {
+          "id": "q1_gasket",
+          "type": "question",
+          "text_en": "Is the rubber door gasket visibly dirty, folded, detached, or damaged?",
+          "text_hi": "",
+          "options": [
+            {
+              "label": "Dirty",
+              "action": "instruct_clean_gasket_using_manual_approved_method",
+              "next_node": "q2_result"
+            },
+            {
+              "label": "Folded or detached",
+              "action": "instruct_reseat_only_if_manual_permits",
+              "next_node": "q2_result"
+            },
+            {
+              "label": "Damaged / torn",
+              "conclusion": "diag_gasket_service"
+            },
+            {
+              "label": "Looks normal / not sure",
+              "next_node": "q2_close_test"
+            }
+          ]
+        },
+        {
+          "id": "q2_close_test",
+          "type": "question",
+          "text_en": "Does the door close evenly without a visible gap around the gasket?",
+          "text_hi": "",
+          "options": [
+            {
+              "label": "Yes",
+              "resolution": "no_obvious_gasket_issue"
+            },
+            {
+              "label": "No",
+              "conclusion": "diag_gasket_service"
+            }
+          ]
+        },
+        {
+          "id": "q2_result",
+          "type": "question",
+          "text_en": "After cleaning or safe repositioning, does the gasket contact the cabinet evenly and the door close fully?",
+          "text_hi": "",
+          "options": [
+            {
+              "label": "Yes",
+              "resolution": "resolved_gasket_cleaning_or_repositioning"
+            },
+            {
+              "label": "No",
+              "conclusion": "diag_gasket_service"
+            }
+          ]
+        }
+      ],
+      "conclusions": {
+        "diag_gasket_service": {
+          "probable_cause": "Door gasket, hinge, or alignment issue is possible; the exact failed part needs inspection.",
+          "confidence": 0.65,
+          "parts": [],
+          "priority": "Medium",
+          "safety_flag": false,
+          "rag_query": "refrigerator gasket damaged door seal inspection",
+          "technician_note": "Confirm the model-specific gasket and hinge design before ordering parts. Replace or adjust only using approved service instructions."
+        }
+      }
+    },
+    "REF09": {
+      "issue_id": "REF09",
+      "title": "Ice Formation Problem",
+      "start_node": "q1_ice_type",
+      "nodes": [
+        {
+          "id": "q1_ice_type",
+          "type": "question",
+          "text_en": "What ice-related problem are you noticing?",
+          "text_hi": "",
+          "options": [
+            {
+              "label": "Ice is not forming where expected",
+              "next_node": "q2_temp"
+            },
+            {
+              "label": "Unexpected ice forms on food or surfaces",
+              "redirect_issue": "REF13"
+            },
+            {
+              "label": "Ice forms excessively on a cooling plate or compartment wall",
+              "redirect_issue": "REF10"
+            },
+            {
+              "label": "Ice maker issue",
+              "conclusion": "diag_ice_maker_not_applicable_or_service"
+            }
+          ]
+        },
+        {
+          "id": "q2_temp",
+          "type": "question",
+          "text_en": "Is the temperature setting appropriate and has the appliance had enough time to reach its normal operating temperature?",
+          "text_hi": "",
+          "options": [
+            {
+              "label": "Yes",
+              "conclusion": "diag_ice_formation_service"
+            },
+            {
+              "label": "No / not sure",
+              "action": "instruct_verify_setting_and_stabilization_per_manual",
+              "next_node": "q3_result"
+            }
+          ]
+        },
+        {
+          "id": "q3_result",
+          "type": "question",
+          "text_en": "After following the model's recommended setting and stabilization guidance, is ice formation normal?",
+          "text_hi": "",
+          "options": [
+            {
+              "label": "Yes",
+              "resolution": "resolved_temperature_or_stabilization"
+            },
+            {
+              "label": "No",
+              "conclusion": "diag_ice_formation_service"
+            }
+          ]
+        }
+      ],
+      "conclusions": {
+        "diag_ice_maker_not_applicable_or_service": {
+          "probable_cause": "The selected refrigerator may not include an automatic ice maker; confirm model features before diagnosing.",
+          "confidence": 0.5,
+          "parts": [],
+          "priority": "Low",
+          "safety_flag": false,
+          "rag_query": "refrigerator model ice maker feature confirmation",
+          "technician_note": "Verify exact model configuration. If the feature is present and malfunctioning, use its model-specific service instructions."
+        },
+        "diag_ice_formation_service": {
+          "probable_cause": "Ice formation behaviour requires model-specific inspection; no particular component failure can be inferred from the symptom alone.",
+          "confidence": 0.55,
+          "parts": [],
+          "priority": "Medium",
+          "safety_flag": false,
+          "rag_query": "refrigerator abnormal ice formation diagnosis",
+          "technician_note": "Check the model's documented cooling/ice-making design and measured temperatures before identifying parts."
+        }
+      }
+    },
+    "REF10": {
+      "issue_id": "REF10",
+      "title": "Excessive Frost / Ice Buildup",
+      "start_node": "q1_frost_area",
+      "nodes": [
+        {
+          "id": "q1_frost_area",
+          "type": "question",
+          "text_en": "Where is the excessive frost or ice forming?",
+          "text_hi": "",
+          "options": [
+            {
+              "label": "On a visible cooling plate / freezer surface",
+              "next_node": "q2_door"
+            },
+            {
+              "label": "Around the door or gasket",
+              "redirect_issue": "REF08"
+            },
+            {
+              "label": "Inside a Frost Free compartment",
+              "next_node": "q2_door"
+            },
+            {
+              "label": "Not sure",
+              "next_node": "q2_door"
+            }
+          ]
+        },
+        {
+          "id": "q2_door",
+          "type": "question",
+          "text_en": "Is the door closing fully and is it usually kept closed except when needed?",
+          "text_hi": "",
+          "options": [
+            {
+              "label": "No",
+              "redirect_issue": "REF07"
+            },
+            {
+              "label": "Yes",
+              "next_node": "q3_defrost"
+            }
+          ]
+        },
+        {
+          "id": "q3_defrost",
+          "type": "question",
+          "text_en": "Does the model manual describe a user-permitted defrost process for the observed ice buildup?",
+          "text_hi": "",
+          "options": [
+            {
+              "label": "Yes",
+              "action": "instruct_follow_exact_model_manual_defrost_only",
+              "next_node": "q4_result"
+            },
+            {
+              "label": "No / unsure",
+              "conclusion": "diag_frost_service"
+            }
+          ]
+        },
+        {
+          "id": "q4_result",
+          "type": "question",
+          "text_en": "After completing only the manual-approved defrost process, does the frost return unusually quickly?",
+          "text_hi": "",
+          "options": [
+            {
+              "label": "No",
+              "resolution": "resolved_manual_defrost"
+            },
+            {
+              "label": "Yes",
+              "conclusion": "diag_frost_service"
+            }
+          ]
+        }
+      ],
+      "conclusions": {
+        "diag_frost_service": {
+          "probable_cause": "Recurring excessive frost may be related to door sealing, usage conditions, or a model-specific defrost/cooling issue.",
+          "confidence": 0.6,
+          "parts": [],
+          "priority": "Medium",
+          "safety_flag": false,
+          "rag_query": "refrigerator excessive frost recurring service diagnosis",
+          "technician_note": "Identify Direct Cool versus Frost Free design first. Never chip ice with sharp tools or dismantle the cooling system."
+        }
+      }
+    },
+    "REF11": {
+      "issue_id": "REF11",
+      "title": "Bad Smell / Odor",
+      "start_node": "q1_odor",
+      "nodes": [
+        {
+          "id": "q1_odor",
+          "type": "question",
+          "text_en": "Is the smell clearly coming from spilled food, a container, or spoiled food inside the refrigerator?",
+          "text_hi": "",
+          "options": [
+            {
+              "label": "Yes",
+              "action": "instruct_remove_spoiled_food_and_clean_per_manual",
+              "next_node": "q2_result"
+            },
+            {
+              "label": "No / not sure",
+              "next_node": "q3_odor_type"
+            }
+          ]
+        },
+        {
+          "id": "q3_odor_type",
+          "type": "question",
+          "text_en": "Does the smell resemble burning plastic/electrical insulation, or is there smoke?",
+          "text_hi": "",
+          "options": [
+            {
+              "label": "Yes",
+              "conclusion": "diag_odor_electrical_safety"
+            },
+            {
+              "label": "No, it is a food/musty odor",
+              "conclusion": "diag_odor_persistent"
+            }
+          ]
+        },
+        {
+          "id": "q2_result",
+          "type": "question",
+          "text_en": "After removing the source and cleaning according to the manual, has the odor gone?",
+          "text_hi": "",
+          "options": [
+            {
+              "label": "Yes",
+              "resolution": "resolved_odor_cleaning"
+            },
+            {
+              "label": "No",
+              "conclusion": "diag_odor_persistent"
+            }
+          ]
+        }
+      ],
+      "conclusions": {
+        "diag_odor_electrical_safety": {
+          "probable_cause": "Burning/electrical odor may indicate an unsafe electrical condition.",
+          "confidence": 0.98,
+          "parts": [],
+          "priority": "Critical",
+          "safety_flag": true,
+          "rag_query": "refrigerator burning smell electrical safety",
+          "technician_note": "Stop using the appliance if safe, do not open panels, and contact qualified service. If there is smoke or fire, follow local emergency procedures."
+        },
+        "diag_odor_persistent": {
+          "probable_cause": "Persistent odor may require a deeper cleaning or service inspection; source is not confirmed.",
+          "confidence": 0.55,
+          "parts": [],
+          "priority": "Low",
+          "safety_flag": false,
+          "rag_query": "refrigerator persistent bad smell cleaning inspection",
+          "technician_note": "Use only cleaning agents and procedures permitted by the model manual. Do not mix chemicals."
+        }
+      }
+    },
+    "REF12": {
+      "issue_id": "REF12",
+      "title": "Interior Light Not Working",
+      "start_node": "q1_light",
+      "nodes": [
+        {
+          "id": "q1_light",
+          "type": "question",
+          "text_en": "Does the refrigerator otherwise appear to be operating and cooling?",
+          "text_hi": "",
+          "options": [
+            {
+              "label": "Yes",
+              "next_node": "q2_door_light"
+            },
+            {
+              "label": "No / not sure",
+              "redirect_issue": "REF03"
+            }
+          ]
+        },
+        {
+          "id": "q2_door_light",
+          "type": "question",
+          "text_en": "Does the light remain off when the door is opened and closed normally?",
+          "text_hi": "",
+          "options": [
+            {
+              "label": "Yes",
+              "conclusion": "diag_light_service"
+            },
+            {
+              "label": "It works intermittently",
+              "conclusion": "diag_light_service"
+            },
+            {
+              "label": "It now works normally",
+              "resolution": "light_operating_normally"
+            }
+          ]
+        }
+      ],
+      "conclusions": {
+        "diag_light_service": {
+          "probable_cause": "The light, door switch/sensor, or associated circuit may need inspection; exact design varies by model.",
+          "confidence": 0.6,
+          "parts": [],
+          "priority": "Low",
+          "safety_flag": false,
+          "rag_query": "refrigerator interior light not working service",
+          "technician_note": "Confirm whether the model uses an LED module, bulb, or door sensor. Do not expose internal wiring; use authorized service if needed."
+        }
+      }
+    },
+    "REF13": {
+      "issue_id": "REF13",
+      "title": "Food Freezing Unexpectedly",
+      "start_node": "q1_food_location",
+      "nodes": [
+        {
+          "id": "q1_food_location",
+          "type": "question",
+          "text_en": "Are the frozen items touching a cooling plate, cold-air outlet, or the coldest area identified in the model manual?",
+          "text_hi": "",
+          "options": [
+            {
+              "label": "Yes / likely",
+              "action": "instruct_reposition_food_per_manual",
+              "next_node": "q2_setting"
+            },
+            {
+              "label": "No / not sure",
+              "next_node": "q2_setting"
+            }
+          ]
+        },
+        {
+          "id": "q2_setting",
+          "type": "question",
+          "text_en": "Is the temperature control set colder than the recommended normal setting?",
+          "text_hi": "",
+          "options": [
+            {
+              "label": "Yes / not sure",
+              "action": "instruct_set_recommended_temperature_from_manual",
+              "next_node": "q3_result"
+            },
+            {
+              "label": "No",
+              "next_node": "q3_result"
+            }
+          ]
+        },
+        {
+          "id": "q3_result",
+          "type": "question",
+          "text_en": "After repositioning food and using the recommended setting, does unexpected freezing stop?",
+          "text_hi": "",
+          "options": [
+            {
+              "label": "Yes",
+              "resolution": "resolved_food_placement_or_setting"
+            },
+            {
+              "label": "No",
+              "conclusion": "diag_food_freezing_service"
+            }
+          ]
+        }
+      ],
+      "conclusions": {
+        "diag_food_freezing_service": {
+          "probable_cause": "Persistent freezing may involve temperature control, sensor, airflow, or another model-specific issue.",
+          "confidence": 0.6,
+          "parts": [],
+          "priority": "Medium",
+          "safety_flag": false,
+          "rag_query": "refrigerator food freezing unexpectedly temperature control diagnosis",
+          "technician_note": "Measure temperatures and follow the exact model's service procedure before attributing the problem to a sensor or control."
+        }
+      }
+    },
+    "REF14": {
+      "issue_id": "REF14",
+      "title": "Condensation / Moisture",
+      "start_node": "q1_moisture",
+      "nodes": [
+        {
+          "id": "q1_moisture",
+          "type": "question",
+          "text_en": "Is moisture limited to occasional droplets during humid weather or after frequent door opening?",
+          "text_hi": "",
+          "options": [
+            {
+              "label": "Yes",
+              "next_node": "q2_door"
+            },
+            {
+              "label": "No, moisture is persistent or pooling",
+              "next_node": "q2_door"
+            },
+            {
+              "label": "Moisture is near electrical parts",
+              "conclusion": "diag_moisture_safety"
+            }
+          ]
+        },
+        {
+          "id": "q2_door",
+          "type": "question",
+          "text_en": "Does the door close fully and is the gasket clean and in good condition?",
+          "text_hi": "",
+          "options": [
+            {
+              "label": "No",
+              "redirect_issue": "REF07"
+            },
+            {
+              "label": "Yes",
+              "next_node": "q3_result"
+            }
+          ]
+        },
+        {
+          "id": "q3_result",
+          "type": "question",
+          "text_en": "After drying surfaces, limiting door-open time, and checking the seal, does moisture return excessively?",
+          "text_hi": "",
+          "options": [
+            {
+              "label": "No",
+              "resolution": "resolved_normal_condensation_or_usage"
+            },
+            {
+              "label": "Yes",
+              "conclusion": "diag_moisture_service"
+            }
+          ]
+        }
+      ],
+      "conclusions": {
+        "diag_moisture_safety": {
+          "probable_cause": "Moisture near electrical parts may create an electrical hazard.",
+          "confidence": 0.98,
+          "parts": [],
+          "priority": "Critical",
+          "safety_flag": true,
+          "rag_query": "refrigerator condensation water near electrical parts safety",
+          "technician_note": "Do not touch wet electrical parts. Stop using the appliance and contact qualified service if water may have reached electrical components."
+        },
+        "diag_moisture_service": {
+          "probable_cause": "Persistent condensation may involve sealing, installation, or a model-specific cooling/drainage issue.",
+          "confidence": 0.55,
+          "parts": [],
+          "priority": "Medium",
+          "safety_flag": false,
+          "rag_query": "refrigerator excessive condensation moisture inspection",
+          "technician_note": "Check door seal and model installation requirements; inspect further if moisture persists."
+        }
+      }
+    },
+    "REF15": {
+      "issue_id": "REF15",
+      "title": "Cleaning / Maintenance",
+      "start_node": "q1_task",
+      "nodes": [
+        {
+          "id": "q1_task",
+          "type": "question",
+          "text_en": "What maintenance task do you need help with?",
+          "text_hi": "",
+          "options": [
+            {
+              "label": "Cleaning interior or gasket",
+              "next_node": "q2_manual"
+            },
+            {
+              "label": "Defrosting frost/ice",
+              "redirect_issue": "REF10"
+            },
+            {
+              "label": "Cleaning exterior or rear area",
+              "next_node": "q2_manual"
+            },
+            {
+              "label": "Appliance has a fault after cleaning",
+              "redirect_issue": "REF01"
+            }
+          ]
+        },
+        {
+          "id": "q2_manual",
+          "type": "question",
+          "text_en": "Do you have the manual for the exact refrigerator model available?",
+          "text_hi": "",
+          "options": [
+            {
+              "label": "Yes",
+              "action": "instruct_follow_model_manual_cleaning",
+              "resolution": "maintenance_guidance_provided"
+            },
+            {
+              "label": "No / not sure",
+              "conclusion": "diag_maintenance_manual"
+            }
+          ]
+        }
+      ],
+      "conclusions": {
+        "diag_maintenance_manual": {
+          "probable_cause": "Maintenance steps must be confirmed against the exact model manual before proceeding.",
+          "confidence": 0.55,
+          "parts": [],
+          "priority": "Low",
+          "safety_flag": false,
+          "rag_query": "refrigerator model manual cleaning maintenance",
+          "technician_note": "Do not use sharp tools, pour water into electrical areas, remove panels, or use unapproved chemicals. Obtain model-specific instructions."
+        }
+      }
+    }
+  },
+  "runtime_notes": [
+    "Ask one question at a time and use the selected option to follow next_node.",
+    "If redirect_issue is present, transfer to that issue in the common or model-specific knowledge base.",
+    "Treat conclusion.probable_cause as a provisional triage hypothesis, not a confirmed component failure.",
+    "Use only actions supported by the exact model manual; do not instruct customers to open panels, handle wiring, or work on refrigerant systems.",
+    "Internal issue IDs are ApplianceCare AI identifiers, not manufacturer error codes."
+  ]
+}

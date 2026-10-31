@@ -1,0 +1,170 @@
+{
+  "issue_id": "AC07",
+  "title": "Noise / Vibration",
+  "start_node": "q1_noise_category",
+  "nodes": [
+    {
+      "id": "q1_noise_category",
+      "type": "question",
+      "text_en": "What kind of noise is your AC making?",
+      "text_hi": "Aapke AC se kis tarah ki ajeeb awaaz aa rahi hai?",
+      "options": [
+        {
+          "label": "Rattling / Shaking / Heavy Vibration",
+          "next_node": "q2_unit_vibration_location"
+        },
+        {
+          "label": "Grinding / Squeaking / Screeching",
+          "conclusion": "diag_bearing_wear"
+        },
+        {
+          "label": "Loud Humming / Buzzing / Drone",
+          "next_node": "q3_humming_pattern"
+        },
+        {
+          "label": "Hissing / Gurgling / Water sound",
+          "next_node": "q4_gurgling_sound"
+        }
+      ]
+    },
+    {
+      "id": "q2_unit_vibration_location",
+      "type": "question",
+      "text_en": "Is the rattling coming from the indoor wall unit or the outdoor unit?",
+      "text_hi": "Rattling ki awaaz indoor unit se aa rahi hai ya bahar wale outdoor unit se?",
+      "options": [
+        {
+          "label": "Indoor Unit (Panel / Filter loose)",
+          "next_node": "q5_indoor_panel_check"
+        },
+        {
+          "label": "Outdoor Unit (Wall bracket / Stand shaking)",
+          "conclusion": "diag_outdoor_mounting_unbalanced"
+        }
+      ]
+    },
+    {
+      "id": "q5_indoor_panel_check",
+      "type": "question",
+      "text_en": "Is the front grill or air filter firmly snapped in place?",
+      "text_hi": "Kya indoor front grill aur filter theek se band hai?",
+      "options": [
+        {
+          "label": "Was loose; snapped it back",
+          "resolution": "resolved_panel_reseated"
+        },
+        {
+          "label": "Panel is tight, noise is inside fan",
+          "conclusion": "diag_blower_wheel_debris_unbalance"
+        }
+      ]
+    },
+    {
+      "id": "q3_humming_pattern",
+      "type": "question",
+      "text_en": "Does the loud humming occur continuously when compressor starts or only at turn on?",
+      "text_hi": "Kya tezz humming awaaz compressor start hote hi aati hai?",
+      "options": [
+        {
+          "label": "Continuous loud drone / Compressor strain",
+          "conclusion": "diag_compressor_strain_low_voltage"
+        },
+        {
+          "label": "Humming with click then stops",
+          "conclusion": "diag_capacitor_contactor_buzz"
+        }
+      ]
+    },
+    {
+      "id": "q4_gurgling_sound",
+      "type": "question",
+      "text_en": "Is the gurgling/hissing heard during defrosting / right after turning off?",
+      "text_hi": "Kya gurgling/hissing ki awaaz AC band hone ya mode badalne par aati hai?",
+      "options": [
+        {
+          "label": "Yes, brief sound after stop (Normal gas equalization)",
+          "resolution": "resolved_normal_refrigerant_flow"
+        },
+        {
+          "label": "Continuous loud hissing during cooling",
+          "conclusion": "diag_refrigerant_expansion_noise"
+        }
+      ]
+    }
+  ],
+  "conclusions": {
+    "diag_outdoor_mounting_unbalanced": {
+      "probable_cause": "Outdoor Stand Vibration Dampers Degraded / Loose Anchor Bolts",
+      "confidence": 0.9,
+      "parts": [
+        "Anti-Vibration Rubber Pads (Set of 4)",
+        "Heavy Duty Wall Brackets",
+        "Anchor Fasteners"
+      ],
+      "priority": "Medium",
+      "safety_flag": false,
+      "rag_query": "LG AC outdoor unit shaking vibration pad installation",
+      "technician_note": "Tighten mounting anchor bolts and place 20mm rubber vibration dampeners under outdoor unit feet."
+    },
+    "diag_blower_wheel_debris_unbalance": {
+      "probable_cause": "Indoor Cross-Flow Blower Fan Unbalanced by Dust Clumps or Broken Blade",
+      "confidence": 0.9,
+      "parts": [
+        "Indoor Cross-Flow Blower Wheel",
+        "Blower Bearing Bush"
+      ],
+      "priority": "Medium",
+      "safety_flag": false,
+      "rag_query": "LG AC indoor blower wheel rattling balance clip",
+      "technician_note": "Inspect blower wheel balance weight clip and clean accumulated dust clumps from blade curve."
+    },
+    "diag_bearing_wear": {
+      "probable_cause": "Motor Ball Bearing Wear in Blower Motor or Outdoor Fan Motor",
+      "confidence": 0.95,
+      "parts": [
+        "BLDC Fan Motor (Indoor/Outdoor)",
+        "Motor Bearing 608ZZ"
+      ],
+      "priority": "High",
+      "safety_flag": false,
+      "rag_query": "LG AC squeaking grinding bearing noise replacement",
+      "technician_note": "Spin shaft by hand to check for radial play or grinding resistance. Replace defective fan motor."
+    },
+    "diag_compressor_strain_low_voltage": {
+      "probable_cause": "Compressor Running Under High Load Strain or Low Operating Voltage",
+      "confidence": 0.85,
+      "parts": [
+        "4kVA Voltage Stabilizer",
+        "Condenser Coil Wash"
+      ],
+      "priority": "High",
+      "safety_flag": true,
+      "rag_query": "LG AC loud compressor humming low voltage vibration",
+      "technician_note": "Measure running voltage and current. Ensure condenser is free of obstruction."
+    },
+    "diag_capacitor_contactor_buzz": {
+      "probable_cause": "Weak Run Capacitor or Chattering Magnetic Relay",
+      "confidence": 0.85,
+      "parts": [
+        "Start/Run Capacitor",
+        "Main Power Relay"
+      ],
+      "priority": "High",
+      "safety_flag": true,
+      "rag_query": "LG AC outdoor humming click not starting capacitor",
+      "technician_note": "Test capacitor microfarad rating against rated spec."
+    },
+    "diag_refrigerant_expansion_noise": {
+      "probable_cause": "Refrigerant Partial Restriction at Expansion Valve / Capillary",
+      "confidence": 0.75,
+      "parts": [
+        "Electronic Expansion Valve (EEV)",
+        "Refrigerant Filter Drier"
+      ],
+      "priority": "Medium",
+      "safety_flag": false,
+      "rag_query": "LG AC hissing restriction EEV valve",
+      "technician_note": "Check temperature differential across EEV / capillary tube."
+    }
+  }
+}

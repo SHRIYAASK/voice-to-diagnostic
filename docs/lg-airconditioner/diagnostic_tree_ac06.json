@@ -1,0 +1,187 @@
+{
+  "issue_id": "AC06",
+  "title": "Bad Smell / Odor",
+  "start_node": "q1_smell_type",
+  "nodes": [
+    {
+      "id": "q1_smell_type",
+      "type": "question",
+      "text_en": "What type of smell do you notice coming from the AC?",
+      "text_hi": "AC se kis tarah ki badboo aa rahi hai?",
+      "options": [
+        {
+          "label": "Musty / Moldy / Stale Water smell",
+          "next_node": "q2_musty_filter_drain"
+        },
+        {
+          "label": "Burning / Electrical / Plastic smell",
+          "next_node": "q_burning_safety"
+        },
+        {
+          "label": "Chemical / Gas-like / Sour smell",
+          "conclusion": "diag_chemical_refrigerant_odor"
+        },
+        {
+          "label": "Dead rodent / Foul pest smell",
+          "conclusion": "diag_pest_in_blower"
+        }
+      ]
+    },
+    {
+      "id": "q_burning_safety",
+      "type": "question",
+      "text_en": "Is there any visible smoke, sparks, or is the burning smell intense?",
+      "text_hi": "Kya koi dhuan, chingari ya bahut tezz jalne ki badboo aa rahi hai?",
+      "options": [
+        {
+          "label": "Yes, strong burning / smoke",
+          "conclusion": "diag_burning_wire_motor"
+        },
+        {
+          "label": "No smoke, just faint warm plastic smell on initial turn-on",
+          "next_node": "q3_recent_turn_on"
+        }
+      ]
+    },
+    {
+      "id": "q2_musty_filter_drain",
+      "type": "question",
+      "text_en": "When was the air filter and indoor cooling coil last cleaned?",
+      "text_hi": "Air filter aur indoor coil aakhri baar kab saaf kiye gaye the?",
+      "options": [
+        {
+          "label": "More than a month ago / Dirty",
+          "action": "instruct_deep_clean_filter_coil",
+          "next_node": "q_musty_resolution"
+        },
+        {
+          "label": "Cleaned recently",
+          "next_node": "q4_drain_pan_standing_water"
+        }
+      ]
+    },
+    {
+      "id": "q_musty_resolution",
+      "type": "question",
+      "text_en": "Did cleaning the filter and running the AC on Fan Mode for 30 minutes eliminate the musty odor?",
+      "text_hi": "Filter saaf karke 30 minute Fan Mode chalane se kya badboo khatam hui?",
+      "options": [
+        {
+          "label": "Yes, smell is gone",
+          "resolution": "resolved_filter_dryout"
+        },
+        {
+          "label": "No, mold smell persists",
+          "next_node": "q4_drain_pan_standing_water"
+        }
+      ]
+    },
+    {
+      "id": "q4_drain_pan_standing_water",
+      "type": "question",
+      "text_en": "Does the odor smell like stagnant drain water coming from the indoor drain tray?",
+      "text_hi": "Kya drain tray mein jama paani ya keechad jaisi badboo aa rahi hai?",
+      "options": [
+        {
+          "label": "Yes, stagnant water smell",
+          "conclusion": "diag_drain_pan_mold_bacteria"
+        },
+        {
+          "label": "No, general stale air",
+          "conclusion": "diag_evaporator_coil_foam_clean"
+        }
+      ]
+    },
+    {
+      "id": "q3_recent_turn_on",
+      "type": "question",
+      "text_en": "Is this a brand new AC or first time turning on after winter season?",
+      "text_hi": "Kya ye naya AC hai ya lambe samay baad pehli baar chalu kiya hai?",
+      "options": [
+        {
+          "label": "Yes, new AC or seasonal start",
+          "action": "instruct_ventilate_run_fan_1hr",
+          "resolution": "resolved_normal_initial_burnoff"
+        },
+        {
+          "label": "No, running regularly",
+          "conclusion": "diag_blower_motor_friction"
+        }
+      ]
+    }
+  ],
+  "conclusions": {
+    "diag_burning_wire_motor": {
+      "probable_cause": "Burnt Terminal Block Wiring, Fan Motor Stator, or PCB Relay",
+      "confidence": 0.95,
+      "parts": [
+        "Indoor Main PCB",
+        "BLDC Blower Motor",
+        "Terminal Wiring Block"
+      ],
+      "priority": "Critical",
+      "safety_flag": true,
+      "rag_query": "LG AC burning electrical smell safety hazard shutoff",
+      "technician_note": "CRITICAL FIRE HAZARD: Disconnect MCB immediately. Check terminal block and motor windings for burnt insulation."
+    },
+    "diag_drain_pan_mold_bacteria": {
+      "probable_cause": "Stagnant Water and Bacterial Algae in Condensate Drain Pan",
+      "confidence": 0.9,
+      "parts": [
+        "Antimicrobial Drain Pan Tablets",
+        "Drain Line Flush Kit"
+      ],
+      "priority": "Medium",
+      "safety_flag": false,
+      "rag_query": "LG AC musty smell drain pan algae cleaning",
+      "technician_note": "Flush drain line with disinfectant solution and verify slope of drain hose."
+    },
+    "diag_evaporator_coil_foam_clean": {
+      "probable_cause": "Fungal & Mold Growth Deep Inside Evaporator Fin Pack",
+      "confidence": 0.85,
+      "parts": [
+        "AC Coil Cleaning Foam Spray",
+        "Blower Wheel Deep Service"
+      ],
+      "priority": "Medium",
+      "safety_flag": false,
+      "rag_query": "LG AC evaporator deep chemical foam cleaning",
+      "technician_note": "Perform high pressure jet wash with anti-fungal chemical foam on indoor evaporator."
+    },
+    "diag_pest_in_blower": {
+      "probable_cause": "Deceased Pest or Insect Hive Inside Blower Housing",
+      "confidence": 0.85,
+      "parts": [
+        "Indoor Blower Wheel Disassembly Service"
+      ],
+      "priority": "High",
+      "safety_flag": true,
+      "rag_query": "LG AC foul dead animal odor blower wheel removal",
+      "technician_note": "Dismantle indoor fascia and blower wheel to sanitize casing thoroughly."
+    },
+    "diag_chemical_refrigerant_odor": {
+      "probable_cause": "Formaldehyde / Volatile Organic Compounds or Refrigerant Oil Mist Leak",
+      "confidence": 0.75,
+      "parts": [
+        "Electronic Leak Detector",
+        "R32 Gas"
+      ],
+      "priority": "High",
+      "safety_flag": true,
+      "rag_query": "LG AC chemical vinegar sour smell evaporator leak",
+      "technician_note": "Sniff test evaporator coil for formicary corrosion pinholes using halogen/ultrasonic leak detector."
+    },
+    "diag_blower_motor_friction": {
+      "probable_cause": "Blower Motor Bush Bearing Friction Heating",
+      "confidence": 0.8,
+      "parts": [
+        "Blower Motor Bushing Rubber",
+        "BLDC Motor"
+      ],
+      "priority": "Medium",
+      "safety_flag": true,
+      "rag_query": "LG AC blower motor plastic friction smell",
+      "technician_note": "Check rubber damper cushion on indoor blower motor mount."
+    }
+  }
+}

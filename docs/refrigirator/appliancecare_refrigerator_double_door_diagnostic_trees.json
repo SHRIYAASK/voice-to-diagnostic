@@ -1,0 +1,352 @@
+{
+  "schema_version": "1.0",
+  "description": "Double-door Frost Free diagnostic extensions. Intended for the selected GL-N292RDSY example; verify all features and procedures against its exact manual before deployment. Common REF issues are referenced, not duplicated.",
+  "appliance_category": "Refrigerator",
+  "appliance_type": "double_door",
+  "model_code": "GL-N292RDSY",
+  "issue_scope": "DDF01-DDF05",
+  "issue_count": 5,
+  "issues": {
+    "DDF01": {
+      "issue_id": "DDF01",
+      "title": "Double-Door Compartment Temperature Settings",
+      "start_node": "q1_controls",
+      "nodes": [
+        {
+          "id": "q1_controls",
+          "type": "question",
+          "text_en": "Does the exact model provide separate or distinct refrigerator/freezer temperature controls?",
+          "text_hi": "",
+          "options": [
+            {
+              "label": "Yes",
+              "next_node": "q2_settings"
+            },
+            {
+              "label": "No / not sure",
+              "conclusion": "diag_verify_compartment_controls"
+            }
+          ]
+        },
+        {
+          "id": "q2_settings",
+          "type": "question",
+          "text_en": "Are the relevant compartment settings at the recommended levels shown in the model manual?",
+          "text_hi": "",
+          "options": [
+            {
+              "label": "No / not sure",
+              "action": "instruct_set_compartment_temperatures_per_manual",
+              "next_node": "q3_result"
+            },
+            {
+              "label": "Yes",
+              "next_node": "q3_result"
+            }
+          ]
+        },
+        {
+          "id": "q3_result",
+          "type": "question",
+          "text_en": "After allowing the recommended stabilization time, are both compartments at the expected temperature?",
+          "text_hi": "",
+          "options": [
+            {
+              "label": "Yes",
+              "resolution": "resolved_compartment_setting"
+            },
+            {
+              "label": "No",
+              "redirect_issue": "DDF02"
+            }
+          ]
+        }
+      ],
+      "conclusions": {
+        "diag_verify_compartment_controls": {
+          "probable_cause": "The control arrangement is not confirmed for the exact model.",
+          "confidence": 0.5,
+          "parts": [],
+          "priority": "Low",
+          "safety_flag": false,
+          "rag_query": "double door refrigerator verify compartment temperature controls model",
+          "technician_note": "Check the model manual before telling the customer which control changes which compartment."
+        }
+      }
+    },
+    "DDF02": {
+      "issue_id": "DDF02",
+      "title": "Freezer Cooling Versus Refrigerator Cooling",
+      "start_node": "q1_compartment",
+      "nodes": [
+        {
+          "id": "q1_compartment",
+          "type": "question",
+          "text_en": "Which compartment is not cooling properly?",
+          "text_hi": "",
+          "options": [
+            {
+              "label": "Freezer only",
+              "next_node": "q2_door_airflow"
+            },
+            {
+              "label": "Refrigerator compartment only",
+              "next_node": "q2_door_airflow"
+            },
+            {
+              "label": "Both compartments",
+              "redirect_issue": "REF01"
+            },
+            {
+              "label": "Not sure",
+              "next_node": "q2_door_airflow"
+            }
+          ]
+        },
+        {
+          "id": "q2_door_airflow",
+          "type": "question",
+          "text_en": "Are doors closing properly and are food items kept clear of the air outlets identified in the manual?",
+          "text_hi": "",
+          "options": [
+            {
+              "label": "No",
+              "redirect_issue": "REF07"
+            },
+            {
+              "label": "Yes",
+              "next_node": "q3_result"
+            }
+          ]
+        },
+        {
+          "id": "q3_result",
+          "type": "question",
+          "text_en": "After correcting door closure or food placement, does the affected compartment cool normally?",
+          "text_hi": "",
+          "options": [
+            {
+              "label": "Yes",
+              "resolution": "resolved_door_or_airflow_obstruction"
+            },
+            {
+              "label": "No",
+              "conclusion": "diag_compartment_cooling_service"
+            }
+          ]
+        }
+      ],
+      "conclusions": {
+        "diag_compartment_cooling_service": {
+          "probable_cause": "A compartment-specific cooling or air-circulation issue is possible; component failure is not confirmed.",
+          "confidence": 0.6,
+          "parts": [],
+          "priority": "High",
+          "safety_flag": false,
+          "rag_query": "Frost Free double door refrigerator one compartment not cooling",
+          "technician_note": "Record which compartment is affected and measured temperatures. A qualified technician should check the model-specific airflow and cooling system."
+        }
+      }
+    },
+    "DDF03": {
+      "issue_id": "DDF03",
+      "title": "Frost Free Automatic-Defrost Concern",
+      "start_node": "q1_frost_free",
+      "nodes": [
+        {
+          "id": "q1_frost_free",
+          "type": "question",
+          "text_en": "Is the exact refrigerator model confirmed as Frost Free?",
+          "text_hi": "",
+          "options": [
+            {
+              "label": "Yes",
+              "next_node": "q2_frost_pattern"
+            },
+            {
+              "label": "No / not sure",
+              "conclusion": "diag_verify_frost_free_design"
+            }
+          ]
+        },
+        {
+          "id": "q2_frost_pattern",
+          "type": "question",
+          "text_en": "Is there persistent heavy frost/ice inside the freezer or evidence that airflow is being blocked?",
+          "text_hi": "",
+          "options": [
+            {
+              "label": "Yes",
+              "next_node": "q3_door"
+            },
+            {
+              "label": "No",
+              "redirect_issue": "REF10"
+            }
+          ]
+        },
+        {
+          "id": "q3_door",
+          "type": "question",
+          "text_en": "Are the freezer door and gasket closing properly without obvious gaps?",
+          "text_hi": "",
+          "options": [
+            {
+              "label": "No",
+              "redirect_issue": "REF07"
+            },
+            {
+              "label": "Yes",
+              "conclusion": "diag_auto_defrost_service"
+            }
+          ]
+        }
+      ],
+      "conclusions": {
+        "diag_verify_frost_free_design": {
+          "probable_cause": "Frost Free design is not confirmed; do not apply automatic-defrost guidance until model identity is verified.",
+          "confidence": 0.5,
+          "parts": [],
+          "priority": "Low",
+          "safety_flag": false,
+          "rag_query": "refrigerator verify Frost Free model design",
+          "technician_note": "Confirm the model number and manufacturer manual."
+        },
+        "diag_auto_defrost_service": {
+          "probable_cause": "Persistent internal frost in a confirmed Frost Free model may indicate an airflow, door-sealing, or defrost-system issue; further diagnosis is required.",
+          "confidence": 0.6,
+          "parts": [],
+          "priority": "High",
+          "safety_flag": false,
+          "rag_query": "Frost Free refrigerator excessive internal frost automatic defrost inspection",
+          "technician_note": "Do not instruct the customer to remove internal panels or test heaters/sensors. A qualified technician should follow the exact service manual."
+        }
+      }
+    },
+    "DDF04": {
+      "issue_id": "DDF04",
+      "title": "Air Circulation Between Compartments",
+      "start_node": "q1_blockage",
+      "nodes": [
+        {
+          "id": "q1_blockage",
+          "type": "question",
+          "text_en": "Are food containers or packages blocking the model's documented air outlets or return paths?",
+          "text_hi": "",
+          "options": [
+            {
+              "label": "Yes",
+              "action": "instruct_rearrange_items_keep_air_paths_clear",
+              "next_node": "q2_result"
+            },
+            {
+              "label": "No / not sure",
+              "next_node": "q2_result"
+            }
+          ]
+        },
+        {
+          "id": "q2_result",
+          "type": "question",
+          "text_en": "After arranging items without blocking air paths and allowing stabilization time, has cooling become more even?",
+          "text_hi": "",
+          "options": [
+            {
+              "label": "Yes",
+              "resolution": "resolved_airflow_obstruction"
+            },
+            {
+              "label": "No",
+              "redirect_issue": "DDF02"
+            }
+          ]
+        }
+      ],
+      "conclusions": {
+        "diag_airflow_service": {
+          "probable_cause": "Airflow imbalance is unresolved; the exact air path and system design must be verified for the model.",
+          "confidence": 0.55,
+          "parts": [],
+          "priority": "Medium",
+          "safety_flag": false,
+          "rag_query": "Frost Free double door refrigerator air circulation compartment temperature imbalance",
+          "technician_note": "Do not assume a specific fan or damper exists without verifying the exact model documentation."
+        }
+      }
+    },
+    "DDF05": {
+      "issue_id": "DDF05",
+      "title": "Separate Compartment Temperature Imbalance",
+      "start_node": "q1_imbalance",
+      "nodes": [
+        {
+          "id": "q1_imbalance",
+          "type": "question",
+          "text_en": "Is one compartment much warmer or colder than the other during normal use?",
+          "text_hi": "",
+          "options": [
+            {
+              "label": "Yes",
+              "next_node": "q2_recent_change"
+            },
+            {
+              "label": "No / not sure",
+              "redirect_issue": "REF02"
+            }
+          ]
+        },
+        {
+          "id": "q2_recent_change",
+          "type": "question",
+          "text_en": "Did the imbalance begin after a setting change, a large food load, or a door being left open?",
+          "text_hi": "",
+          "options": [
+            {
+              "label": "Yes",
+              "action": "instruct_restore_recommended_settings_and_allow_stabilization",
+              "next_node": "q3_result"
+            },
+            {
+              "label": "No",
+              "next_node": "q3_result"
+            }
+          ]
+        },
+        {
+          "id": "q3_result",
+          "type": "question",
+          "text_en": "After checking settings, door closure, and allowing stabilization, does the imbalance remain?",
+          "text_hi": "",
+          "options": [
+            {
+              "label": "No, temperatures are now normal",
+              "resolution": "resolved_operating_conditions"
+            },
+            {
+              "label": "Yes",
+              "redirect_issue": "DDF02"
+            }
+          ]
+        }
+      ],
+      "conclusions": {
+        "diag_imbalance_service": {
+          "probable_cause": "Persistent compartment temperature imbalance requires measured temperatures and model-specific diagnosis.",
+          "confidence": 0.55,
+          "parts": [],
+          "priority": "Medium",
+          "safety_flag": false,
+          "rag_query": "double door refrigerator refrigerator freezer temperature imbalance diagnosis",
+          "technician_note": "Document measured temperatures and the affected compartment. Do not assume fan, damper, sensor, or defrost failure without testing."
+        }
+      }
+    }
+  },
+  "runtime_notes": [
+    "Ask one question at a time and use the selected option to follow next_node.",
+    "If redirect_issue is present, transfer to that issue in the common or model-specific knowledge base.",
+    "Treat conclusion.probable_cause as a provisional triage hypothesis, not a confirmed component failure.",
+    "Use only actions supported by the exact model manual; do not instruct customers to open panels, handle wiring, or work on refrigerant systems.",
+    "Internal issue IDs are ApplianceCare AI identifiers, not manufacturer error codes."
+  ]
+}

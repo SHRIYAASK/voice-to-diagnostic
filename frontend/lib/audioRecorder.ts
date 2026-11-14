@@ -25,6 +25,7 @@ export class AudioRecorder {
   private mediaStream: MediaStream | null = null;
   private sourceNode: MediaStreamAudioSourceNode | null = null;
   private processorNode: ScriptProcessorNode | AudioWorkletNode | null = null;
+  private analyserNode: AnalyserNode | null = null;
   private isRecording = false;
   private isMuted = false;
   private options: AudioRecorderOptions;
@@ -152,6 +153,22 @@ export class AudioRecorder {
     }
 
     return buffer;
+  }
+
+  /**
+   * Read-only tap for UI level meters. Fans out from the existing source node;
+   * it does not alter the capture graph. Returns null until recording has started.
+   */
+  public getAnalyser(): AnalyserNode | null {
+    if (!this.audioContext || !this.sourceNode) return null;
+    if (!this.analyserNode) {
+      const analyser = this.audioContext.createAnalyser();
+      analyser.fftSize = 1024;
+      analyser.smoothingTimeConstant = 0;
+      this.sourceNode.connect(analyser);
+      this.analyserNode = analyser;
+    }
+    return this.analyserNode;
   }
 
   /**

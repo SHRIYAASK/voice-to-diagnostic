@@ -30,7 +30,7 @@ import {
 } from 'lucide-react';
 
 export default function Home() {
-  const [activeTab, setActiveTab] = useState<string>('home');
+  const [requestedTab, setActiveTab] = useState<string>('home');
   const [selectedAppliance, setSelectedAppliance] = useState<string>('air-conditioner');
   const [selectedModel, setSelectedModel] = useState<string>('UW-Q18WUZA');
   const [bookingContext, setBookingContext] = useState<BookingContext>({});
@@ -39,6 +39,9 @@ export default function Home() {
 
   // Authentication State (Customer, Technician, Admin)
   const [currentUser, setCurrentUser] = useState<UserProfile | null>(null);
+  // The chat/voice diagnosis page is only available after login; guests always see the Home page instead
+  const activeTab = requestedTab === 'diagnostic' && !currentUser ? 'home' : requestedTab;
+
   const [isAuthModalOpen, setIsAuthModalOpen] = useState<boolean>(false);
   const [authInitialRole, setAuthInitialRole] = useState<'customer' | 'technician' | 'admin'>('customer');
 
@@ -88,7 +91,7 @@ export default function Home() {
   };
 
   return (
-    <div className={`min-h-screen ${activeTab === 'diagnostic' ? 'h-dvh overflow-hidden' : ''} flex md:flex-row flex-col bg-[#f8fafc] text-slate-800 antialiased selection:bg-teal-600 selection:text-white`}>
+    <div className={`min-h-screen ${activeTab === 'diagnostic' ? 'h-dvh overflow-hidden' : ''} flex md:flex-row flex-col bg-paper text-ink antialiased selection:bg-accent selection:text-white pb-16 md:pb-0`}>
       {/* Universal Sidebar Navigation */}
       <Navbar
         activeTab={activeTab}
@@ -109,7 +112,11 @@ export default function Home() {
           <HomePage
             currentUser={currentUser}
             onOpenAuth={handleOpenAuth}
-            onSelectAppliance={handleSelectAppliance}
+            onSelectAppliance={(id) => {
+              handleSelectAppliance(id);
+              if (currentUser) setActiveTab('diagnostic');
+              else handleOpenAuth('customer');
+            }}
             onNavigateToTab={(tabId) => {
               setActiveTab(tabId);
               window.scrollTo({ top: 0, behavior: 'smooth' });

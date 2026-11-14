@@ -1,23 +1,10 @@
 'use client';
 
 import React from 'react';
-import { 
-  Sparkles, 
-  Wrench, 
-  Search, 
-  ShieldCheck, 
-  Calendar, 
-  ArrowRight, 
-  CheckCircle2, 
-  Zap, 
-  Layers, 
-  Cpu, 
-  Activity,
-  UserCheck,
-  AlertTriangle
-} from 'lucide-react';
-import { APPLIANCE_CATEGORIES, ApplianceCategory } from '../lib/appliances';
+import { ArrowRight, ArrowUpRight, Check, Mic, ShieldAlert } from 'lucide-react';
+import { APPLIANCE_CATEGORIES } from '../lib/appliances';
 import { UserProfile } from '../lib/api';
+import { ApplianceGlyph } from './diagnose/ApplianceGlyph';
 
 interface HomePageProps {
   currentUser: UserProfile | null;
@@ -26,194 +13,144 @@ interface HomePageProps {
   onNavigateToTab: (tabId: string) => void;
 }
 
-export const HomePage: React.FC<HomePageProps> = ({
-  currentUser,
-  onOpenAuth,
-  onSelectAppliance,
-  onNavigateToTab,
-}) => {
+// Static bar heights for the illustrative waveform in the preview (not live audio)
+const BARS = [4, 9, 6, 14, 22, 12, 28, 18, 34, 20, 30, 14, 24, 10, 18, 8, 12, 5, 8, 4];
+
+const STEPS = [
+  { n: '01', t: 'Say what’s wrong', d: 'Talk or type, in English, Hindi or Tamil. No forms, no menus to dig through.' },
+  { n: '02', t: 'We check it with you', d: 'One simple question at a time, taken from the manufacturer’s own troubleshooting steps.' },
+  { n: '03', t: 'You decide what’s next', d: 'Fix it yourself if it’s safe. If it isn’t, a technician gets your job card, so you never explain twice.' },
+];
+
+export const HomePage: React.FC<HomePageProps> = ({ currentUser, onOpenAuth, onSelectAppliance, onNavigateToTab }) => {
+  const primary = () => (currentUser ? onNavigateToTab('diagnostic') : onOpenAuth('customer'));
+
   return (
-    <div className="w-full">
-      {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-slate-900 via-slate-850 to-slate-900 text-white py-16 sm:py-24 px-4 sm:px-6 lg:px-8 border-b border-slate-800">
-        <div className="max-w-5xl mx-auto text-center relative z-10">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-teal-500/15 border border-teal-400/30 text-teal-300 text-xs font-bold uppercase tracking-wider mb-6 animate-fade-in">
-            <Sparkles className="w-3.5 h-3.5 text-teal-400" />
-            <span>Multi-Appliance Diagnostic Engine</span>
-          </div>
-
-          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white mb-4">
-            ApplianceCare AI
+    <div className="w-full text-ink">
+      {/* HERO */}
+      <section className="px-6 sm:px-10 lg:px-14 pt-12 sm:pt-16 pb-16 max-w-7xl mx-auto grid grid-cols-[minmax(0,1fr)] lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] gap-12 lg:gap-16 items-center">
+        <div>
+          <p className="text-[14px] font-semibold text-accent tracking-wide uppercase">ApplianceCare</p>
+          <h1 className="font-display font-semibold text-[48px] sm:text-[68px] leading-[0.98] mt-4">
+            Tell us what’s wrong.
+            <br />
+            <span className="text-ink/55">We’ll work out why.</span>
           </h1>
-          <p className="text-xl sm:text-2xl font-semibold text-teal-300 mb-4">
-            Smart Appliance Diagnostics &amp; Troubleshooting
+          <p className="mt-6 text-[19px] leading-relaxed text-ink/75 max-w-xl">
+            Diagnose your air conditioner, fridge, washing machine, microwave or dishwasher by talking to it like you would a technician. If it needs a visit, they arrive already knowing the problem.
           </p>
-          <p className="text-slate-300 text-sm sm:text-base max-w-2xl mx-auto mb-8 leading-relaxed">
-            Diagnose smarter. Troubleshoot confidently. Get the right support. An independent intelligent troubleshooting prototype across five core household appliances.
-          </p>
-
-          <div className="flex flex-wrap items-center justify-center gap-3">
-            {currentUser ? (
-              <button
-                onClick={() => onNavigateToTab('diagnostic')}
-                className="px-6 py-3.5 rounded-xl bg-teal-600 hover:bg-teal-500 text-white font-extrabold text-sm transition-all shadow-lg hover:shadow-teal-900/40 hover:scale-105 cursor-pointer flex items-center gap-2"
-              >
-                <span>Go to Guided Diagnosis</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
-            ) : (
-              <>
-                <button
-                  onClick={() => onOpenAuth('customer')}
-                  className="px-6 py-3.5 rounded-xl bg-teal-600 hover:bg-teal-500 text-white font-extrabold text-sm transition-all shadow-lg hover:shadow-teal-900/40 hover:scale-105 cursor-pointer flex items-center gap-2"
-                >
-                  <span>Sign In / Create Account</span>
-                  <ArrowRight className="w-4 h-4" />
-                </button>
-                <button
-                  onClick={() => onNavigateToTab('diagnostic')}
-                  className="px-6 py-3.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-extrabold text-sm border border-slate-700 transition-all hover:scale-105 cursor-pointer"
-                >
-                  Explore Diagnostics as Guest
-                </button>
-              </>
-            )}
+          <div className="mt-8 flex flex-wrap items-center gap-3">
+            <button onClick={primary} className="px-6 py-3.5 rounded-xl bg-accent hover:bg-accent-hover text-white text-[16px] font-semibold inline-flex items-center gap-2 cursor-pointer transition-colors">
+              {currentUser ? 'Start a diagnosis' : 'Sign in to start'}
+              <ArrowRight className="w-4 h-4" strokeWidth={2} />
+            </button>
+            <button onClick={() => onNavigateToTab('error-codes')} className="px-6 py-3.5 rounded-xl border border-ink/20 hover:border-ink text-[16px] font-semibold cursor-pointer transition-colors">
+              Look up an error code
+            </button>
           </div>
+          <p className="mt-4 text-[14px] text-muted">Error codes and care guides are open to everyone. Diagnosis needs a free account.</p>
+        </div>
+
+        {/* Product preview with sample content */}
+        <div className="relative" aria-hidden="true">
+          <div className="rounded-3xl bg-white border border-line p-6 shadow-[0_30px_60px_-30px_rgba(20,26,34,0.35)]">
+            <div className="flex items-baseline justify-between">
+              <span className="font-display text-[26px] font-semibold">Job card</span>
+              <span className="text-[12px] px-2.5 py-1 rounded-full bg-paper text-muted font-medium">Draft</span>
+            </div>
+            <dl className="mt-4 pt-3 border-t border-line text-[15px] space-y-1.5">
+              <div className="flex gap-4"><dt className="w-24 text-muted">Appliance</dt><dd className="font-medium">Split AC</dd></div>
+              <div className="flex gap-4"><dt className="w-24 text-muted">Brand</dt><dd className="font-medium">Samsung</dd></div>
+              <div className="flex gap-4"><dt className="w-24 text-muted">Problem</dt><dd className="font-medium">Not cooling, room stays warm</dd></div>
+            </dl>
+            <ul className="mt-4 pt-3 border-t border-line space-y-3 text-[15px]">
+              <li className="flex gap-3"><span className="mt-0.5 w-5 h-5 rounded-full bg-[#e2f3e8] text-ok grid place-items-center shrink-0"><Check className="w-3 h-3" strokeWidth={3} /></span><div><div className="font-medium">Power and display</div><div className="text-[13px] text-muted">On, showing 24 °C</div></div></li>
+              <li className="flex gap-3"><span className="mt-0.5 w-5 h-5 rounded-full bg-[#e2f3e8] text-ok grid place-items-center shrink-0"><Check className="w-3 h-3" strokeWidth={3} /></span><div><div className="font-medium">Air filter</div><div className="text-[13px] text-muted">Cleaned 2 to 3 months ago</div></div></li>
+              <li className="flex gap-3"><span className="mt-0.5 w-5 h-5 rounded-full border-2 border-accent grid place-items-center shrink-0"><span className="w-2 h-2 rounded-full bg-accent" /></span><div><div className="font-medium">Outdoor unit fan</div><div className="text-[13px] text-accent">Asking now</div></div></li>
+            </ul>
+          </div>
+          <div className="mt-4 ml-6 sm:ml-12 rounded-2xl bg-ink text-white px-5 py-4 flex items-center gap-4 shadow-[0_20px_40px_-20px_rgba(20,26,34,0.6)]">
+            <div className="flex items-center gap-[3px] h-9 shrink-0">
+              {BARS.map((h, i) => (
+                <span key={i} className="w-[3px] rounded-full bg-voice" style={{ height: h }} />
+              ))}
+            </div>
+            <div className="min-w-0 flex-1">
+              <div className="font-semibold text-[15px]">Speaking</div>
+              <div className="text-[13px] text-[#9da8b6] truncate">Is the big fan on the side spinning?</div>
+            </div>
+            <span className="w-11 h-11 rounded-full border border-voice/50 grid place-items-center shrink-0"><Mic className="w-5 h-5" strokeWidth={1.75} /></span>
+          </div>
+          <p className="mt-3 text-right text-[12px] text-muted">Sample conversation</p>
         </div>
       </section>
 
-      {/* Five-Appliance Category Cards */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8 relative z-20">
-        <div className="bg-white rounded-3xl shadow-xl border border-slate-200 p-6 sm:p-8">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-6 pb-4 border-b border-slate-100">
-            <div>
-              <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
-                Select Your Appliance Category
-              </h2>
-              <p className="text-slate-500 text-xs sm:text-sm mt-0.5">
-                Choose an appliance to load its tailored diagnostic decision trees, model specs, and error codes.
-              </p>
-            </div>
-            <span className="text-xs font-bold text-teal-700 bg-teal-50 px-3 py-1 rounded-full border border-teal-200 self-start sm:self-auto">
-              5 Appliances Supported
-            </span>
+      {/* APPLIANCES */}
+      <section className="bg-white border-y border-line">
+        <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-14 py-16 grid grid-cols-[minmax(0,1fr)] lg:grid-cols-[320px_minmax(0,1fr)] gap-10">
+          <div>
+            <h2 className="font-display text-[36px] font-semibold leading-tight">What needs fixing?</h2>
+            <p className="mt-3 text-muted text-[16px] leading-relaxed">Pick an appliance. We’ll load its troubleshooting steps and error codes.</p>
           </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-            {APPLIANCE_CATEGORIES.map((cat) => (
-              <div
-                key={cat.id}
-                onClick={() => onSelectAppliance(cat.id)}
-                className="group p-5 rounded-2xl border border-slate-200 hover:border-teal-500 hover:bg-teal-50/30 transition-all cursor-pointer shadow-2xs hover:shadow-md flex flex-col justify-between"
-              >
-                <div>
-                  <div className="text-3xl mb-3 group-hover:scale-110 transition-transform">
-                    {cat.icon}
-                  </div>
-                  <h3 className="font-extrabold text-slate-900 text-base mb-1 group-hover:text-teal-700 transition-colors">
-                    {cat.name}
-                  </h3>
-                  <p className="text-xs text-slate-500 line-clamp-3 leading-relaxed mb-4">
-                    {cat.description}
-                  </p>
-                </div>
-
-                <div className="flex items-center justify-between pt-3 border-t border-slate-100 text-xs font-bold text-teal-700">
-                  <span>{cat.errorCodes.length} Codes &bull; Models</span>
-                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-                </div>
-              </div>
+          <ul className="divide-y divide-line border-y border-line">
+            {APPLIANCE_CATEGORIES.map((a) => (
+              <li key={a.id}>
+                <button onClick={() => onSelectAppliance(a.id)} className="group w-full flex items-center gap-5 py-5 text-left cursor-pointer">
+                  <span className="w-12 h-12 rounded-xl bg-paper text-ink grid place-items-center shrink-0 group-hover:bg-accent-soft group-hover:text-accent transition-colors">
+                    <ApplianceGlyph id={a.id} className="w-6 h-6" />
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block font-display text-[24px] font-semibold leading-tight">{a.name}</span>
+                    <span className="block text-[15px] text-muted truncate">{a.description}</span>
+                  </span>
+                  <span className="hidden sm:block text-[14px] text-muted shrink-0">{a.errorCodes.length} error codes</span>
+                  <ArrowUpRight className="w-5 h-5 text-muted group-hover:text-accent group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all shrink-0" strokeWidth={1.75} />
+                </button>
+              </li>
             ))}
-          </div>
+          </ul>
         </div>
       </section>
 
-      {/* Feature Value Props */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="text-center max-w-3xl mx-auto mb-12">
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-            Independent Intelligent Troubleshooting Architecture
-          </h2>
-          <p className="text-slate-500 text-sm mt-2">
-            Engineered to prioritize safe customer self-resolution while seamlessly escalating hardware faults to certified technicians.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
-            <div className="w-12 h-12 rounded-xl bg-teal-100 text-teal-700 flex items-center justify-center font-bold mb-4">
-              <Activity className="w-6 h-6" />
+      {/* HOW IT WORKS */}
+      <section className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-14 py-16">
+        <h2 className="font-display text-[36px] font-semibold">How it works</h2>
+        <div className="mt-8 grid grid-cols-[minmax(0,1fr)] md:grid-cols-3 gap-x-10 gap-y-8">
+          {STEPS.map((s) => (
+            <div key={s.n} className="border-t-2 border-ink pt-4">
+              <div className="font-display text-[15px] font-semibold text-accent">{s.n}</div>
+              <h3 className="font-display text-[26px] font-semibold leading-tight mt-1">{s.t}</h3>
+              <p className="mt-2 text-[16px] text-ink/70 leading-relaxed">{s.d}</p>
             </div>
-            <h3 className="font-extrabold text-slate-900 text-base mb-2">
-              Bilingual Decision Trees
-            </h3>
-            <p className="text-xs text-slate-500 leading-relaxed">
-              Step-by-step interactive branching in English and Hindi. Guides users to clean filters, check drains, and resolve common faults safely in under 3 minutes.
-            </p>
-          </div>
-
-          <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
-            <div className="w-12 h-12 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center font-bold mb-4">
-              <Search className="w-6 h-6" />
-            </div>
-            <h3 className="font-extrabold text-slate-900 text-base mb-2">
-              Multi-Appliance Error Code Database
-            </h3>
-            <p className="text-xs text-slate-500 leading-relaxed">
-              Instantly look up alphanumeric error codes across ACs, Refrigerators, Washing Machines, Microwaves, and Dishwashers with clear severity ratings and parts checklists.
-            </p>
-          </div>
-
-          <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
-            <div className="w-12 h-12 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center font-bold mb-4">
-              <ShieldCheck className="w-6 h-6" />
-            </div>
-            <h3 className="font-extrabold text-slate-900 text-base mb-2">
-              High-Voltage Safety Gates
-            </h3>
-            <p className="text-xs text-slate-500 leading-relaxed">
-              Strictly halts dangerous customer self-repair on 230V circuits, high-pressure refrigerants, or microwave capacitors, enforcing certified technician dispatch.
-            </p>
-          </div>
+          ))}
         </div>
       </section>
 
-      {/* Role Navigation Portal CTA Banner */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
-        <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-teal-950 rounded-3xl p-8 sm:p-12 text-white shadow-xl flex flex-col md:flex-row items-center justify-between gap-8">
-          <div className="max-w-xl">
-            <span className="text-xs font-bold uppercase tracking-wider text-teal-400">
-              Role-Based Workspaces
-            </span>
-            <h3 className="text-2xl sm:text-3xl font-extrabold tracking-tight mt-1 mb-2">
-              Ready to Troubleshoot or Manage Service Requests?
-            </h3>
-            <p className="text-slate-300 text-xs sm:text-sm leading-relaxed">
-              Customers can register for personalized tracking. Technicians and Administrators have dedicated operational dashboards.
+      {/* SAFETY */}
+      <section className="px-6 sm:px-10 lg:px-14 pb-16 max-w-7xl mx-auto">
+        <div className="rounded-3xl bg-ink text-white p-8 sm:p-12 grid grid-cols-[minmax(0,1fr)] md:grid-cols-[auto_minmax(0,1fr)] gap-6 md:gap-10 items-start">
+          <ShieldAlert className="w-10 h-10 text-[#f2b84b]" strokeWidth={1.5} />
+          <div>
+            <h2 className="font-display text-[34px] font-semibold leading-tight">We’ll tell you when to stop.</h2>
+            <p className="mt-3 text-[17px] text-[#c4ccd6] leading-relaxed max-w-3xl">
+              Some repairs are not for the home. Mains wiring, refrigerant gas and a microwave’s capacitor can hurt you. When a check points there, we say so plainly, switch you to a certified technician and pass them everything you’ve told us.
             </p>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-3">
-            <button
-              onClick={() => onOpenAuth('customer')}
-              className="px-5 py-3 rounded-xl bg-teal-600 hover:bg-teal-500 text-white font-extrabold text-xs transition-all shadow-md cursor-pointer"
-            >
-              Customer Portal
-            </button>
-            <button
-              onClick={() => onOpenAuth('technician')}
-              className="px-5 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-extrabold text-xs border border-slate-700 transition-all cursor-pointer"
-            >
-              Technician Portal
-            </button>
-            <button
-              onClick={() => onOpenAuth('admin')}
-              className="px-5 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-extrabold text-xs border border-slate-700 transition-all cursor-pointer"
-            >
-              Admin Command
-            </button>
+            <div className="mt-6 flex flex-wrap gap-3">
+              <button onClick={primary} className="h-11 px-5 rounded-xl bg-white text-ink text-[15px] font-semibold cursor-pointer hover:bg-[#f1f3f6]">
+                {currentUser ? 'Go to diagnosis' : 'Create a free account'}
+              </button>
+              <button onClick={() => onNavigateToTab('maintenance')} className="h-11 px-5 rounded-xl border border-white/25 text-[15px] font-semibold cursor-pointer hover:border-white">
+                Read the care guide
+              </button>
+            </div>
           </div>
         </div>
+        <p className="mt-6 text-[14px] text-muted">
+          Service team?{' '}
+          <button onClick={() => onOpenAuth('technician')} className="underline underline-offset-2 hover:text-ink cursor-pointer">Technician sign in</button>
+          {' · '}
+          <button onClick={() => onOpenAuth('admin')} className="underline underline-offset-2 hover:text-ink cursor-pointer">Admin sign in</button>
+        </p>
       </section>
     </div>
   );

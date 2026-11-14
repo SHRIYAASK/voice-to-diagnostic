@@ -1,72 +1,96 @@
 @import "tailwindcss";
 
+/* ---------- Design tokens ---------- */
+@theme {
+  --font-sans: var(--font-barlow), var(--font-devanagari), var(--font-tamil), system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: var(--font-barlow-condensed), var(--font-barlow), var(--font-devanagari), var(--font-tamil), system-ui, sans-serif;
+
+  --color-ink: #141a22;
+  --color-ink-2: #1f2833;
+  --color-paper: #ebeef2;
+  --color-surface: #ffffff;
+  --color-line: #dde2e9;
+  --color-muted: #566170;
+  --color-accent: #2f4bdb;
+  --color-accent-hover: #2540bd;
+  --color-accent-soft: #eef1ff;
+  --color-voice: #8ea3ff;
+  --color-ok: #1f8a4c;
+  --color-warn: #b7791f;
+  --color-bad: #c53030;
+
+  /* Legacy screens still use teal-*: map them to the accent scale so the whole app reads as one system. */
+  --color-teal-50: #eef1ff;
+  --color-teal-100: #e0e6ff;
+  --color-teal-200: #c5cfff;
+  --color-teal-300: #9daeff;
+  --color-teal-400: #7088f5;
+  --color-teal-500: #4b65e8;
+  --color-teal-600: #2f4bdb;
+  --color-teal-700: #2540bd;
+  --color-teal-800: #1e3296;
+  --color-teal-900: #1a2a78;
+  --color-teal-950: #121c52;
+
+  --animate-fade-in: fade-in 0.28s ease-out both;
+  @keyframes fade-in {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: none; }
+  }
+}
+
 @layer base {
   :root {
-    --ac-primary: #0284c7;
-    --ac-primary-hover: #0369a1;
-    --ac-teal: #0d9488;
-    --ac-teal-light: #f0fdfa;
-    --ac-dark: #0f172a;
-    --ac-slate: #1e293b;
-    --ac-gray-bg: #f8fafc;
-    --ac-card-bg: #ffffff;
-    --ac-border: #e2e8f0;
-    --ac-success: #10b981;
-    --ac-warning: #f59e0b;
-    --ac-danger: #ef4444;
-    --ac-info: #3b82f6;
+    --ac-gray-bg: #ebeef2;
+    --ac-slate: #141a22;
   }
 
   body {
-    background-color: var(--ac-gray-bg);
-    color: var(--ac-slate);
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
   }
+
+  h1, h2, h3 {
+    font-family: var(--font-display);
+    letter-spacing: -0.01em;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
 }
 
-/* Glassmorphism & Shadow Accents */
-.glass-panel {
-  background: rgba(255, 255, 255, 0.88);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(226, 232, 240, 0.85);
+/* Hide scrollbars on horizontal chip rows */
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
+.no-scrollbar::-webkit-scrollbar { display: none; }
 
-.card-hover-effect {
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.card-hover-effect:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 24px -10px rgba(13, 148, 136, 0.15), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
-}
-
-/* Smooth pulse animation */
-@keyframes softPulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.6; }
-}
-
-.animate-soft-pulse {
-  animation: softPulse 2.5s infinite ease-in-out;
-}
+.card-hover-effect { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+.card-hover-effect:hover { transform: translateY(-2px); box-shadow: 0 10px 22px -12px rgba(20, 26, 34, 0.25); }
 
 /* Custom scrollbars */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #c3cad4; border-radius: 9999px; }
+::-webkit-scrollbar-thumb:hover { background: #9aa4b2; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
 }
 
-::-webkit-scrollbar-track {
-  background: #f1f5f9;
+@media print {
+  .no-print { display: none !important; }
+  body { background: #fff; }
 }
 
-::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 9999px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
-}
+/* Inline "working on it" dots used in the transcript */
+.vd-dots-inline { display: inline-flex; gap: 6px; }
+.vd-dots-inline i { width: 7px; height: 7px; border-radius: 50%; background: var(--color-voice); animation: vd-dot 1.1s ease-in-out infinite; }
+.vd-dots-inline i:nth-child(2) { animation-delay: 0.14s; }
+.vd-dots-inline i:nth-child(3) { animation-delay: 0.28s; }

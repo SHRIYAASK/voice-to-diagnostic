@@ -1108,6 +1108,46 @@ export const chatService = {
       }
     }
 
+    // 1c. Post-booking: the visit is already booked, so don't restart diagnosis on small talk.
+    // Acknowledge the booking; only fall through if the user describes a new problem or picks an action.
+    if (session.bookingState && session.bookingState.step === 'COMPLETED' && !input.specialAction && input.optionIndex === undefined) {
+      const looksLikeNewProblem =
+        /\b(cool|cooling|leak|leaking|noise|noisy|smell|smoke|spark|error|code|ch\s?\d+|not working|won'?t|doesn'?t|ice|frost|trip|tripping|mcb|remote|display|thanda|garam|band|awaaz|paani|problem|issue|another|new)\b/i.test(text) ||
+        /\b(ac|fridge|refrigerator|washing machine)\b.*\b(not|nahi|band|kharab)\b/i.test(text);
+      if (!looksLikeNewProblem) {
+        const confirmed = [...session.messages].reverse().find((m) => m.ticketId);
+        const t = confirmed?.ticket;
+        const when = t?.scheduledDate ? `${t.scheduledDate}${t.scheduledSlot ? ` (${t.scheduledSlot})` : ''}` : '';
+        const who = t?.assignedTechnician?.name || t?.technicianName || '';
+        const lang = (session.language || 'en').toLowerCase();
+        const hinglish = /[ऀ-ॿ]/.test(text) || /\b(haan|nahi|kyon|kyun|hai|hain|karo|raho|aap|mein|kiya|sir|bhai|tum|shukriya|theek)\b/i.test(text);
+        const ref = confirmed?.ticketId || '';
+        let reply: string;
+        if (lang === 'ta') {
+          reply = `உங்கள் சேவை வருகை ஏற்கனவே பதிவாகிவிட்டது${ref ? ` (டிக்கெட்: ${ref})` : ''}. வேறு AC பிரச்சனை இருந்தால் சொல்லுங்கள்.`;
+        } else if (lang === 'hi' || hinglish) {
+          reply = `Aapki service visit book ho chuki hai${ref ? ` (Ticket: ${ref})` : ''}${who ? `, technician ${who}` : ''}${when ? `, ${when}` : ''}. Technician aapko aane se pehle call karenge. Koi nayi problem ho to bataiye, ya neeche se option chuniye.`;
+        } else {
+          reply = `Your visit is already booked${ref ? ` (Ticket ${ref})` : ''}${who ? ` with ${who}` : ''}${when ? ` on ${when}` : ''}. The technician will call you before arriving. If something else is wrong, just tell me, or choose below.`;
+        }
+        const ack: ChatMessage = {
+          id: uuid(),
+          sender: 'bot',
+          text: reply,
+          timestamp: new Date().toISOString(),
+          chips: [
+            { label: '🔍 Track Ticket Status', value: 'TRACK_TICKET' },
+            { label: '🔄 Start New Diagnostic', value: 'RESTART' },
+          ],
+        };
+        session.messages.push(ack);
+        botMessages.push(ack);
+        return { session, botMessages };
+      }
+      // New problem after booking: allow a fresh diagnosis (and a fresh booking later)
+      session.bookingState.step = 'IDLE';
+    }
+
     // 2. Handle Pending User Confirmation (e.g. from previous ambiguous query or option reconfirmation)
     if (session.pendingConfirmation && text) {
       const lower = text.toLowerCase().trim();
@@ -1260,7 +1300,16 @@ export const chatService = {
       cu?.clarificationQuestion?.text &&
       lastBotText.startsWith(cu.clarificationQuestion.text.slice(0, 40));
 
-    if (cu && cu.requiresClarification && cu.clarificationQuestion && !session.diagnosticSessionId && !clarificationAlreadyAsked) {
+    // Earlier customer statements (excluding the one just recorded). If the customer has already told us
+    // about their problem, never fall back to the canned "what's wrong?" question; keep the thread instead.
+    const priorUserStatements = session.messages
+      .filter((m) => m.sender === 'user' && m.text && m.text.trim())
+      .slice(0, -1)
+      .slice(-6)
+      .map((m) => m.text.trim().slice(0, 200));
+    const hasReportedProblem = priorUserStatements.length > 0;
+
+    if (cu && cu.requiresClarification && cu.clarificationQuestion && !session.diagnosticSessionId && !clarificationAlreadyAsked && !hasReportedProblem) {
       const clarifyMsg: ChatMessage = {
         id: uuid(),
         sender: 'bot',
@@ -1499,7 +1548,12 @@ export const chatService = {
             switchRoute.route === 'SYMPTOM_TROUBLESHOOTING' &&
             switchRoute.targetId &&
             isNodeOrTreeSwitch &&
-            (isSymptomCorrection || switchRoute.confidence >= 0.85)
+            // A short reply ("the power button") answers the open question; only longer, confident statements may switch trees
+            (isSymptomCorrection ||
+              (switchRoute.confidence >= 0.85 &&
+                text.trim().split(/\s+/).length > 4 &&
+                // Replies that start like a refinement ("only the power button works") continue the same problem
+                !/^(only|just|also|but|and|yes|yeah|no|nope|not really|it|its|it's)\b/i.test(text.trim())))
           ) {
             const res = chatService.startTreeInChat(sessionId, switchRoute.targetId);
             let localizedStart = res.stepMessage.text;
@@ -1884,7 +1938,7 @@ export const chatService = {
 
       // 9. Top-Level Symptom Disambiguation via Groq NLU
       // Check if input is a spoken natural language symptom (e.g. "The fan is running, but it isn't running outside.")
-      const symptomClass = await groqService.classifySymptom(text, session.appliance);
+      const symptomClass = await groqService.classifySymptom(text, session.appliance, priorUserStatements.join(' | '));
       if (symptomClass.treeId) {
         const canonicalId = normalizeAcIssueId(symptomClass.treeId) || symptomClass.treeId;
         const tree = getTree(canonicalId);
@@ -2005,7 +2059,11 @@ export const chatService = {
       let responseText = routeRes.responseText;
       const isGreetingOrIntro = /\b(hey|hello|hi|who are you|who are u|who r u|your name|shriya|good morning|good evening|how are you)\b/i.test(text);
       if (isGreetingOrIntro || !responseText || responseText.includes('MFL72020508') || responseText.includes('Copyright') || responseText.includes('TABLE OF CONTENTS')) {
-        responseText = await groqService.generateConversationalReply(text, session.model);
+        responseText = await groqService.generateConversationalReply(
+          text,
+          session.model,
+          session.messages.map((m) => ({ sender: m.sender as 'user' | 'bot', text: m.text }))
+        );
       }
 
       const generalMsg: ChatMessage = {

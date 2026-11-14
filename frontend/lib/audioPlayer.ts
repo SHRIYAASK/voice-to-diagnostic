@@ -19,12 +19,19 @@ export interface AudioPlayerMetrics {
   sampleRate: number;
 }
 
+// Head start given to the first chunk of an utterance so the chunks that follow it have time to arrive
+const PLAYBACK_START_LEAD_SECONDS = 0.06;
+
 export class AudioQueuePlayer {
   private audioContext: AudioContext | null = null;
   private gainNode: GainNode | null = null;
+  private analyserNode: AnalyserNode | null = null;
   private queue: AudioBuffer[] = [];
   private isPlaying = false;
-  private currentSource: AudioBufferSourceNode | null = null;
+  // Chunks already scheduled on the audio clock (in play order) that have not finished playing yet
+  private scheduledSources: AudioBufferSourceNode[] = [];
+  // AudioContext time at which the next chunk has to start so it butts up against the previous one
+  private nextStartTime = 0;
   private onStateChange?: (isPlaying: boolean) => void;
   private onError?: (error: Error, stage: string) => void;
   private totalChunksEnqueued = 0;
@@ -48,13 +55,13 @@ export class AudioQueuePlayer {
   }
 
   public getQueueDepth(): number {
-    return this.queue.length;
+    return this.queue.length + this.scheduledSources.length;
   }
 
   public getMetrics(): AudioPlayerMetrics {
     return {
       audioContextState: this.audioContext ? this.audioContext.state : 'uninitialized',
-      queueDepth: this.queue.length,
+      queueDepth: this.queue.length + this.scheduledSources.length,
       totalChunksEnqueued: this.totalChunksEnqueued,
       totalChunksPlayed: this.totalChunksPlayed,
       isPlaying: this.isPlaying,
@@ -75,6 +82,22 @@ export class AudioQueuePlayer {
       this.audioContext.resume().catch(() => {});
     }
     return this.audioContext;
+  }
+
+  /**
+   * Read-only tap for UI level meters. Taps the master gain node; playback routing is unchanged.
+   */
+  public getAnalyser(): AnalyserNode | null {
+    const ctx = this.audioContext;
+    if (!ctx || ctx.state === 'closed' || !this.gainNode) return null;
+    if (!this.analyserNode || this.analyserNode.context !== ctx) {
+      const analyser = ctx.createAnalyser();
+      analyser.fftSize = 1024;
+      analyser.smoothingTimeConstant = 0;
+      this.gainNode.connect(analyser);
+      this.analyserNode = analyser;
+    }
+    return this.analyserNode;
   }
 
   /**
@@ -213,9 +236,8 @@ export class AudioQueuePlayer {
       if (audioBuffer) {
         this.totalChunksEnqueued++;
         this.queue.push(audioBuffer);
-        if (!this.isPlaying) {
-          this.playNext();
-        }
+        // Schedule every chunk as soon as it arrives (not only when idle) so playback stays gapless
+        this.playNext();
       }
     } catch (err: any) {
       console.warn('[AudioQueuePlayer] Failed to process audio chunk:', err.message);
@@ -248,15 +270,12 @@ export class AudioQueuePlayer {
   }
 
   /**
-   * Plays the next AudioBuffer in queue
+   * Schedules every queued AudioBuffer on the AudioContext clock, each starting exactly where the
+   * previous one ends. Starting chunks from `onended` leaves a gap of a few ms between ~10-85 ms
+   * chunks, and each gap is a hard cut in the waveform, heard as crackling.
    */
   private playNext(): void {
-    if (this.queue.length === 0) {
-      this.isPlaying = false;
-      this.currentSource = null;
-      if (this.onStateChange) this.onStateChange(false);
-      return;
-    }
+    if (this.queue.length === 0) return;
 
     const ctx = this.getContext();
     if (ctx.state === 'suspended') {
@@ -264,24 +283,38 @@ export class AudioQueuePlayer {
       return;
     }
 
-    this.isPlaying = true;
-    if (this.onStateChange) this.onStateChange(true);
+    while (this.queue.length > 0) {
+      const buffer = this.queue.shift();
+      if (!buffer) break;
 
-    const buffer = this.queue.shift();
-    if (!buffer) return;
+      const lead = this.scheduledSources.length === 0 ? PLAYBACK_START_LEAD_SECONDS : 0;
+      const startAt = Math.max(this.nextStartTime, ctx.currentTime + lead);
+      this.nextStartTime = startAt + buffer.duration;
 
-    this.totalChunksPlayed++;
-    const source = ctx.createBufferSource();
-    source.buffer = buffer;
-    source.connect(this.gainNode || ctx.destination);
+      const source = ctx.createBufferSource();
+      source.buffer = buffer;
+      source.connect(this.gainNode || ctx.destination);
 
-    this.currentSource = source;
+      source.onended = () => {
+        const index = this.scheduledSources.indexOf(source);
+        if (index !== -1) this.scheduledSources.splice(index, 1);
+        this.totalChunksPlayed++;
+        if (this.scheduledSources.length > 0) {
+          if (this.onStateChange) this.onStateChange(true);
+        } else {
+          this.isPlaying = false;
+          if (this.onStateChange) this.onStateChange(false);
+        }
+      };
 
-    source.onended = () => {
-      this.playNext();
-    };
+      this.scheduledSources.push(source);
+      source.start(startAt);
 
-    source.start(0);
+      if (!this.isPlaying) {
+        this.isPlaying = true;
+        if (this.onStateChange) this.onStateChange(true);
+      }
+    }
   }
 
   /**
@@ -289,13 +322,18 @@ export class AudioQueuePlayer {
    */
   public stop(): void {
     this.queue = [];
-    if (this.currentSource) {
+    // Chunks are scheduled ahead of time, so cancel every one of them; detach onended first
+    // so stale callbacks can't fire after the stop.
+    const scheduled = this.scheduledSources;
+    this.scheduledSources = [];
+    for (const source of scheduled) {
       try {
-        this.currentSource.stop();
-        this.currentSource.disconnect();
+        source.onended = null;
+        source.stop();
+        source.disconnect();
       } catch {}
-      this.currentSource = null;
     }
+    this.nextStartTime = 0;
     if (this.gainNode && this.audioContext && this.audioContext.state !== 'closed') {
       try {
         const now = this.audioContext.currentTime;

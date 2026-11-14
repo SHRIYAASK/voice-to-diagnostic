@@ -459,7 +459,8 @@ export const groqService = {
    */
   classifySymptom: async (
     userText: string,
-    _appliance: string = 'air-conditioner'
+    _appliance: string = 'air-conditioner',
+    priorContext: string = ''
   ): Promise<SymptomClassificationResult> => {
     const clean = (userText || '').trim();
     if (!clean) {
@@ -482,7 +483,8 @@ export const groqService = {
       `Rules:\n` +
       `1. "The fan is running, but it isn't running outside" -> AC01 (Cooling Performance / Outdoor unit issue) or AC07 (Airflow), confidence ~0.80, needs_reconfirmation: true.\n` +
       `2. If the user mentions multiple symptoms (e.g. noise and warm air), list both candidate trees and set needs_reconfirmation: true.\n` +
-      `3. If the input is not a diagnostic symptom, set treeId: null.`;
+      `3. If the input is not a diagnostic symptom, set treeId: null.\n` +
+      `4. If earlier customer statements are given, treat the latest message as a continuation of them (short answers refine the same problem) and classify the overall problem.`;
 
     // ── Primary Path: Groq Qwen Fast Symptom Triage (Sub-200ms) ────────────────
     if (_groqClient) {
@@ -498,7 +500,12 @@ export const groqService = {
             model: modelToTry,
             messages: [
               { role: 'system', content: systemPrompt },
-              { role: 'user', content: `User Symptom: "${clean}"` },
+              {
+                role: 'user',
+                content: priorContext
+                  ? `Earlier customer statements: ${priorContext}\nLatest message: "${clean}"`
+                  : `User Symptom: "${clean}"`,
+              },
             ],
             temperature: 0.1,
             max_tokens: 150,
@@ -526,7 +533,10 @@ export const groqService = {
     }
 
     // ── Local Rule Fallback for Symptom Classification ─────────────────────────
-    const matched = KNOWN_AC_TREES.filter(t => t.keywords.test(clean));
+    let matched = KNOWN_AC_TREES.filter(t => t.keywords.test(clean));
+    if (matched.length === 0 && priorContext) {
+      matched = KNOWN_AC_TREES.filter(t => t.keywords.test(priorContext));
+    }
     if (matched.length === 1) {
       return {
         treeId: matched[0].treeId,
@@ -560,16 +570,26 @@ export const groqService = {
    * Generates a warm, concise conversational response for greetings, general introductions,
    * or off-topic conversational chat using Qwen on Groq.
    */
-  generateConversationalReply: async (userText: string, model: string = 'UW-Q18WUZA'): Promise<string> => {
+  generateConversationalReply: async (
+    userText: string,
+    model: string = 'UW-Q18WUZA',
+    history: Array<{ sender: 'user' | 'bot'; text: string }> = []
+  ): Promise<string> => {
     if (_groqClient) {
       try {
+        // Recent turns (excluding the current message, which is sent separately) so the reply keeps the thread.
+        const prior = history.slice(0, -1).slice(-8).map((m) => ({
+          role: (m.sender === 'user' ? 'user' : 'assistant') as 'user' | 'assistant',
+          content: (m.text || '').slice(0, 500),
+        }));
         const completion = await _groqClient.chat.completions.create({
           model: process.env.GROQ_MODEL || 'qwen/qwen3.8-27b',
           messages: [
             {
               role: 'system',
-              content: `You are ApplianceCare AI, a smart, friendly, and expert diagnostic assistant for LG Dual Inverter Air Conditioners (${model}). Provide a concise, warm 1 to 2 sentence reply. If introduced or greeted, say hello warmly and ask how you can help with their air conditioner today.`
+              content: `You are ApplianceCare AI, a smart, friendly, and expert diagnostic assistant for LG Dual Inverter Air Conditioners (${model}). Provide a concise, warm 1 to 2 sentence reply. If introduced or greeted for the first time, say hello warmly and ask how you can help with their air conditioner today. If the conversation already contains a reported problem, stay on that problem: use what the customer already told you, never ask them to repeat it or to start over, and ask at most one specific follow-up.`
             },
+            ...prior,
             { role: 'user', content: userText }
           ],
           temperature: 0.6,

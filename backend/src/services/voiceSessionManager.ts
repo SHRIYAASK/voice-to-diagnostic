@@ -92,6 +92,8 @@ export interface VoiceClientState {
   streamingVad: StreamingVad;
   qualityTracker: AudioQualityTracker;
   isDucked: boolean;
+  /** Turn carrying the welcome greeting. Energy/VAD-based interruption is disabled for it (speaker echo is not the user). */
+  welcomeTurnId?: number;
 }
 
 export class VoiceSessionManager {
@@ -226,7 +228,8 @@ export class VoiceSessionManager {
     state.qualityTracker.processFrame(int16Samples, maxProb);
 
     // Two-stage VAD barge-in evaluation while assistant is speaking or playing
-    if (state.isAssistantSpeaking || state.isAudioPlaying) {
+    const inWelcomeTurn = state.welcomeTurnId !== undefined && state.turnId === state.welcomeTurnId;
+    if ((state.isAssistantSpeaking || state.isAudioPlaying) && !inWelcomeTurn) {
       for (const pred of vadPredictions) {
         const vadDecision = state.bargeInController.evaluateVadStream(pred.probability, 32, state.turnId);
         if (vadDecision.action === 'duck' && !state.isDucked) {
@@ -248,7 +251,7 @@ export class VoiceSessionManager {
     const vad = state.endpointDetector.processFrame(filteredPayload);
 
     // Evaluate user barge-in while assistant is speaking
-    if ((state.isAssistantSpeaking || state.isAudioPlaying) && !state.isDucked) {
+    if ((state.isAssistantSpeaking || state.isAudioPlaying) && !state.isDucked && !inWelcomeTurn) {
       const decision = state.bargeInController.evaluateAudioFrame(vad.isVoiced, state.turnId);
       if (decision.isConfirmedInterruption) {
         console.log(`[Voice] Interrupted via VAD audio energy (turn ${decision.previousTurnId} -> ${decision.newTurnId})`);
@@ -289,6 +292,7 @@ export class VoiceSessionManager {
         state.streamingVad.reset();
         state.qualityTracker.reset();
         state.isDucked = false;
+        state.welcomeTurnId = undefined;
 
         // Connect or get existing chat session
         const initLang = state.detectedLanguage || 'en';
@@ -349,6 +353,7 @@ export class VoiceSessionManager {
         const abortCtrl = new AbortController();
         state.activeAbortController = abortCtrl;
         state.bargeInController.setActiveAbortController(abortCtrl);
+        state.welcomeTurnId = state.turnId;
         state.isAssistantSpeaking = true;
         state.isAudioPlaying = true;
         state.bargeInController.setPlaybackState(true);
@@ -507,7 +512,8 @@ export class VoiceSessionManager {
       if (state.isAssistantSpeaking || state.isAudioPlaying) {
         const interruption = state.bargeInController.evaluateTranscriptInterruption(
           transcript,
-          state.turnId
+          state.turnId,
+          state.welcomeTurnId !== undefined && state.turnId === state.welcomeTurnId
         );
         if (interruption.isConfirmedInterruption) {
           console.log(`[Voice] Interrupted by user transcript: "${transcript}"`);

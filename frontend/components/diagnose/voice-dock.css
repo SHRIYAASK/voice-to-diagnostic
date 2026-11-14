@@ -1,0 +1,63 @@
+/* ApplianceCare voice dock: motion that isn't driven by audio. */
+
+/* Thinking: five dots pulse left to right */
+.vd-dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.vd-dots span {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #8ea3ff;
+  animation: vd-dot 1.1s ease-in-out infinite;
+}
+@keyframes vd-dot {
+  0%, 100% { transform: scale(0.55); opacity: 0.45; }
+  50% { transform: scale(1); opacity: 1; }
+}
+
+/* Listening: the mic button grows with the user's voice level.
+   VoiceWave writes --voice-level (0..1) onto the wrapper via levelTarget. */
+.vd-mic {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  --voice-level: 0;
+}
+.vd-mic::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid rgba(241, 243, 246, 0.55);
+  transform: scale(calc(1 + var(--voice-level) * 0.35));
+  transition: transform 60ms linear;
+}
+
+/* Sending: a ring draws around the mic during the end-of-turn wait.
+   Restart it by toggling the class; remove the class the moment speech resumes. */
+.vd-endturn circle.progress {
+  stroke-dasharray: 195;
+  stroke-dashoffset: 195;
+  animation: vd-draw var(--endturn-ms, 800ms) linear forwards;
+}
+@keyframes vd-draw {
+  to { stroke-dashoffset: 0; }
+}
+
+/* Live transcript: newest word stays grey until the recogniser marks it final */
+.vd-interim { color: #9da8b6; }
+
+/* Assistant karaoke in the transcript: words not yet spoken */
+.vd-unspoken { color: #5f6975; transition: color 120ms linear; }
+
+@media (prefers-reduced-motion: reduce) {
+  .vd-dots span, .vd-endturn circle.progress { animation: none; }
+  .vd-endturn circle.progress { stroke-dashoffset: 0; }
+  .vd-mic::before { transition: none; }
+}

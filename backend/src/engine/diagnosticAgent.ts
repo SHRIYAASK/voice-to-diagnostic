@@ -9,6 +9,7 @@
  * responses asking the next question directly to the user.
  */
 
+import { createGroqClient, GroqChatClient } from './groqClient';
 import Groq from 'groq-sdk';
 import dotenv from 'dotenv';
 import { groqService } from './groqService';
@@ -66,11 +67,8 @@ export type DiagnosticAgentAction =
       reply: string;
     };
 
-const GROQ_API_KEY = process.env.GROQ_API_KEY;
-let _groqClient: Groq | null = null;
-if (GROQ_API_KEY && GROQ_API_KEY.startsWith('gsk_')) {
-  _groqClient = new Groq({ apiKey: GROQ_API_KEY, timeout: 2500 });
-}
+// Shared client with automatic failover to GROQ_API_KEY_2 when the primary key is rate limited
+const _groqClient: GroqChatClient | null = createGroqClient();
 
 // Model identifier on Groq LPU
 const ORCHESTRATOR_MODEL = process.env.GROQ_MODEL || 'llama-3.3-70b-versatile';
@@ -339,16 +337,40 @@ Rules for Starting Diagnosis:
 - If the user's utterance is unclear, ambiguous, a greeting, audio trouble, or does not describe a clear symptom, call 'ask_diagnostic_clarification' to politely clarify what issue they are experiencing with their air conditioner.`;
     }
 
+    // CONVERSATION MEMORY: everything the customer has reported so far, so the agent never loses the thread
+    // (the short message window below can scroll the original problem out of view).
+    const allHistory = context.recentHistory || [];
+    const customerStatements = allHistory
+      .filter((m) => m.sender === 'user' && m.text && m.text.trim())
+      .map((m) => m.text.trim().slice(0, 200));
+    const lastConclusion = [...allHistory]
+      .reverse()
+      .find((m) => m.sender === 'bot' && /probable cause/i.test(m.text || ''));
+    if (customerStatements.length > 0) {
+      systemPrompt += `
+
+CONVERSATION MEMORY (what the customer has told you so far, oldest first):
+${customerStatements.slice(-10).map((t, i) => `${i + 1}. "${t}"`).join(String.fromCharCode(10))}
+${lastConclusion ? `
+Last diagnostic conclusion given to the customer: ${lastConclusion.text.replace(/\s+/g, ' ').slice(0, 300)}` : ''}
+
+MEMORY RULES:
+- The customer's reported problem stays the topic until THEY clearly change it. Short answers ("yes", "the power button", "completely unresponsive") are about that same problem, never a new one.
+- NEVER say "let's start fresh", "start over" or ask the customer to repeat or re-describe the problem they already told you. Use the memory above.
+- If the customer disputes or refines your conclusion ("you are wrong", "only one button is not working"), accept it, keep the same problem, and ask ONE specific follow-up that narrows it down.
+- If the customer asks what they told you before, briefly recap it from the memory above.`;
+    }
+
     const messages: Groq.Chat.Completions.ChatCompletionMessageParam[] = [
       { role: 'system', content: systemPrompt },
     ];
 
     // Add recent context history if available
     if (context.recentHistory && context.recentHistory.length > 0) {
-      for (const msg of context.recentHistory.slice(-4)) {
+      for (const msg of context.recentHistory.slice(-10)) {
         messages.push({
           role: msg.sender === 'user' ? 'user' : 'assistant',
-          content: msg.text,
+          content: (msg.text || '').slice(0, 600),
         });
       }
     }
@@ -438,6 +460,20 @@ Rules for Starting Diagnosis:
     } catch (err: any) {
       console.error('[DiagnosticAgent] Error during LLM tool call:', err.message);
 
+      // The model sometimes names a tool that is not in the request (e.g. "ask_clarification"), which Groq rejects
+      // with a 400. Its intended question is still in the rejected generation, so use it instead of discarding it.
+      const failed: string = err?.error?.error?.failed_generation || err?.error?.failed_generation || '';
+      if (err?.status === 400 && failed) {
+        const m = failed.match(/<parameter=(?:clarification_question|conversational_reply)>\s*([\s\S]*?)\s*<\/parameter>/);
+        if (m && m[1] && m[1].trim().length > 3) {
+          return {
+            type: 'ask_diagnostic_clarification',
+            clarificationQuestion: m[1].trim(),
+            explanation: 'Recovered from a malformed tool call.',
+          };
+        }
+      }
+
       // Deterministic Fallback 0: Check if booking is requested
       if (/\b(book|schedule|call|send|arrange|need|want|request|get)\b[\s\S]{0,30}\b(technician|tech|mechanic|engineer|expert|service|repair|visit|appointment)\b/i.test(userText)) {
         return {
@@ -455,12 +491,15 @@ Rules for Starting Diagnosis:
           switchRoute.route === 'SYMPTOM_TROUBLESHOOTING' &&
           switchRoute.targetId &&
           switchRoute.targetId !== context.activeTree.issueId &&
-          (isCorrection || switchRoute.confidence >= 0.85)
+          (isCorrection ||
+            (switchRoute.confidence >= 0.85 &&
+              // A reply that starts like a refinement ("only the power button works") continues the same problem
+              !/^(only|just|also|but|and|yes|yeah|no|nope|not really|it|its|it's)\b/i.test(userText.trim())))
         ) {
           return {
             type: 'start_diagnostic_tree',
             treeId: switchRoute.targetId,
-            conversationalReply: `Understood, let us troubleshoot the ${switchRoute.targetId} issue.`,
+            conversationalReply: 'Understood, let us look at that.',
             reasoning: switchRoute.rationale,
           };
         }
@@ -519,7 +558,7 @@ Rules for Starting Diagnosis:
 
       return {
         type: 'conversational_response',
-        reply: 'Could you please describe what you are observing with your air conditioner?',
+        reply: 'Sorry, I had a brief hiccup understanding that. Could you say it once more?',
       };
     }
   },

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   X, 
   User, 
@@ -32,6 +32,12 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   initialRole = 'customer',
 }) => {
   const [selectedRole, setSelectedRole] = useState<'customer' | 'technician' | 'admin'>(initialRole);
+  // Re-apply the requested role each time the modal is opened (the component stays mounted)
+  useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
+    if (isOpen) handleRoleChange(initialRole);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen, initialRole]);
   const [isSignUp, setIsSignUp] = useState<boolean>(false);
 
   // Form Fields

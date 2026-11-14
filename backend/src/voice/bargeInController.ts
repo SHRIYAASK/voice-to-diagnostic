@@ -51,8 +51,17 @@ export class BargeInController {
     return this._isAssistantPlaying;
   }
 
+  /** Lowercase, strip punctuation/symbols (keeps letters and digits in any script), collapse spaces. */
+  private normalizeSpeech(text: string): string {
+    return (text || '')
+      .toLowerCase()
+      .replace(/[^\p{L}\p{N}\s]/gu, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
   public registerAssistantSpeech(text: string): void {
-    const clean = (text || '').trim().toLowerCase();
+    const clean = this.normalizeSpeech(text);
     if (!clean) return;
     this._recentAssistantSpeech.push(clean);
     if (this._recentAssistantSpeech.length > 5) {
@@ -196,12 +205,13 @@ export class BargeInController {
    */
   public evaluateTranscriptInterruption(
     userText: string,
-    currentTurnId: number
+    currentTurnId: number,
+    lenientEcho = false
   ): BargeInDecision {
-    const clean = (userText || '').trim().toLowerCase();
+    const clean = this.normalizeSpeech(userText);
 
     // 1. Check if userText is an acoustic echo of what assistant just spoke
-    if (this.isAcousticEcho(clean)) {
+    if (this.isAcousticEcho(clean, lenientEcho)) {
       return {
         isConfirmedInterruption: false,
         reason: 'Suppressed acoustic echo of assistant speech',
@@ -269,18 +279,21 @@ export class BargeInController {
   /**
    * Detects whether the transcript matches recent assistant speech
    */
-  private isAcousticEcho(transcript: string): boolean {
+  private isAcousticEcho(transcript: string, lenient = false): boolean {
     if (!transcript) return false;
-    const words = transcript.split(/\s+/).filter((w) => w.length > 2);
+    const words = transcript.split(' ').filter(Boolean);
     if (words.length === 0) return false;
+    // Short fragments ("hello", "hi") are matched as whole words; the overlap bar is lower for the
+    // welcome greeting, where the echo canceller has not converged yet.
+    const threshold = lenient ? 0.5 : 0.7;
 
     for (const recent of this._recentAssistantSpeech) {
-      if (recent.includes(transcript) || transcript.includes(recent)) {
+      if (` ${recent} `.includes(` ${transcript} `) || ` ${transcript} `.includes(` ${recent} `)) {
         return true;
       }
-      // Check word overlap ratio
-      const matchCount = words.filter((w) => recent.includes(w)).length;
-      if (matchCount / words.length >= 0.7) {
+      const recentWords = new Set(recent.split(' '));
+      const matchCount = words.filter((w) => recentWords.has(w) || (w.length > 3 && recent.includes(w))).length;
+      if (matchCount / words.length >= threshold) {
         return true;
       }
     }

@@ -10,16 +10,16 @@ import { pool } from './connection';
 
 function resolveDataPath(filename: string): string {
   const candidates = [
-    path.resolve(process.cwd(), '../docs/lg-airconditioner', filename),
+    path.resolve(__dirname, '../../docs/lg-airconditioner', filename),
     path.resolve(process.cwd(), 'docs/lg-airconditioner', filename),
     path.resolve(__dirname, '../../../docs/lg-airconditioner', filename),
-    path.resolve(__dirname, '../../docs/lg-airconditioner', filename),
+    path.resolve(process.cwd(), '../docs/lg-airconditioner', filename),
     path.resolve(__dirname, '../docs/lg-airconditioner', filename),
   ];
   for (const c of candidates) {
     if (fs.existsSync(c)) return c;
   }
-  return path.resolve(process.cwd(), '../docs/lg-airconditioner', filename);
+  return path.resolve(__dirname, '../../docs/lg-airconditioner', filename);
 }
 
 export async function runSeeding() {

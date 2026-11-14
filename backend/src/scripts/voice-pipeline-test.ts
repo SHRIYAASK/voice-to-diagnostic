@@ -62,24 +62,24 @@ async function runVoiceTests() {
     `Model: ${hfEvonService.getModelId()}, Endpoint: ${hfEvonService.getBaseUrl()}`
   );
 
-  // 4. Test Gnani STT Language Auto-Resolution (indic-auto)
+  // 4. Test Gnani STT Language Auto-Resolution (en-IN English only)
   assert(
-    'resolveSttLanguage correctly maps "auto", "indic-auto", or empty to "indic-auto"',
-    resolveSttLanguage('auto') === 'indic-auto' &&
-    resolveSttLanguage('indic-auto') === 'indic-auto' &&
-    resolveSttLanguage('') === 'indic-auto' &&
-    resolveSttLanguage('hi-IN') === 'hi-IN',
+    'resolveSttLanguage correctly maps "auto", "indic-auto", or empty to "en-IN"',
+    resolveSttLanguage('auto') === 'en-IN' &&
+    resolveSttLanguage('indic-auto') === 'en-IN' &&
+    resolveSttLanguage('') === 'en-IN' &&
+    resolveSttLanguage('hi-IN') === 'en-IN',
     `auto -> ${resolveSttLanguage('auto')}, hi-IN -> ${resolveSttLanguage('hi-IN')}`
   );
 
-  // 5. Test Dynamic Language Detection (Tamil, Tanglish, Hindi, English)
+  // 5. Test Voice Agent Language Policy (English only)
   const tamilDetected = detectLanguageFromTranscript('ஏசி கூலிங் வரல, சூடான காத்து வருது');
   const tanglishDetected = detectLanguageFromTranscript('ac cooling varala enna pannunga');
   const hindiDetected = detectLanguageFromTranscript('एसी में कूलिंग नहीं हो रही है');
   const englishDetected = detectLanguageFromTranscript('The AC is not cooling the room');
   assert(
-    'detectLanguageFromTranscript detects Tamil, Tanglish, Hindi, and English accurately',
-    tamilDetected === 'ta-IN' && tanglishDetected === 'ta-IN' && hindiDetected === 'hi-IN' && englishDetected === 'en-IN',
+    'detectLanguageFromTranscript adheres to English-only policy for voice agent',
+    tamilDetected === 'en-IN' && tanglishDetected === 'en-IN' && hindiDetected === 'en-IN' && englishDetected === 'en-IN',
     `Tamil -> ${tamilDetected}, Tanglish -> ${tanglishDetected}, Hindi -> ${hindiDetected}, English -> ${englishDetected}`
   );
 
@@ -133,7 +133,7 @@ async function runVoiceTests() {
 
   assert('Voice WebSocket server accepts client connections', wsConnected, 'Connected to ws://localhost:4005/api/voice-test');
 
-  // Test start_session message with 'auto' language
+  // Test start_session message with 'en-IN' language
   const sessionReady = await new Promise<any>((resolve) => {
     wsClient.on('message', (msg) => {
       try {
@@ -143,14 +143,14 @@ async function runVoiceTests() {
     });
     wsClient.send(JSON.stringify({
       type: 'start_session',
-      language: 'auto',
+      language: 'en-IN',
       model: 'UW-Q18WUZA'
     }));
   });
 
   assert(
-    'start_session initializes session with auto language detection',
-    Boolean(sessionReady && sessionReady.language === 'auto' && sessionReady.sessionId),
+    'start_session initializes session with English language setting',
+    Boolean(sessionReady && sessionReady.language === 'en-IN' && sessionReady.sessionId),
     `Session ID: ${sessionReady?.sessionId}, Language: ${sessionReady?.language}`
   );
 

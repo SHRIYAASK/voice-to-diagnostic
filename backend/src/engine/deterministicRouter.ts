@@ -21,6 +21,9 @@ import { errorCodeRegistry, ChRegistryEntry } from '../data/errorCodeRegistry';
 import { instructionResolver, InstructionResolutionResult } from './instructionResolver';
 import { retrievalService, RetrievalTelemetry } from './retrievalService';
 import { StructuredEvidence, EvidenceItem, createEmptyEvidence } from './evidence';
+import { safetyEngine, SafetyCheckResult } from './safetyEngine';
+import { ConversationUnderstanding } from './conversationUnderstanding';
+import { treeIndexService } from './treeIndexService';
 
 export type DeterministicRouteType =
   | 'EXPLICIT_ERROR_CODE'
@@ -28,7 +31,11 @@ export type DeterministicRouteType =
   | 'INSTRUCTION_REQUEST'
   | 'TECHNICAL_SPECIFICATION'
   | 'WARRANTY_POLICY'
-  | 'GENERAL_APPLIANCE';
+  | 'GENERAL_APPLIANCE'
+  | 'BOOKING'
+  | 'REPAIR_STATUS'
+  | 'FOLLOW_UP'
+  | 'UNKNOWN';
 
 export interface RouteResolution {
   route: DeterministicRouteType;
@@ -48,26 +55,6 @@ export interface RouteResolution {
   evidence: StructuredEvidence;
 }
 
-// Symptom regex definitions mapping directly to AC01 - AC16 decision trees
-const SYMPTOM_TREE_TRIGGERS: Array<{ treeId: string; pattern: RegExp; description: string }> = [
-  { treeId: 'AC01', pattern: /\b(cooling|not cool|warm air|poor cool|no cooling|slow cooling|temperature not dropping|isn'?t getting cool|not getting cool|room stays hot|cool the room)\b/i, description: 'Cooling Performance Issue' },
-  { treeId: 'AC02', pattern: /\b(power|won'?t turn on|isn'?t turning on|not turning on|not powering|dead|no power|switch off|won'?t start|doesn'?t start|no lights)\b/i, description: 'Power Failure & No Display' },
-  { treeId: 'AC03', pattern: /\b(mcb trip|breaker trip|breaker trips|mcb trips|tripping|short circuit|fuse trip|trips every time)\b/i, description: 'MCB Tripping & Electrical Safety' },
-  { treeId: 'AC04', pattern: /\b(water leak|water dripping|leaking|drain leak|water falling|water overflow)\b/i, description: 'Indoor Water Leakage' },
-  { treeId: 'AC05', pattern: /\b(smell|odor|odour|burning smell|foul smell|musty|rotten)\b/i, description: 'Abnormal Odor or Burning Smell' },
-  { treeId: 'AC06', pattern: /\b(noise|loud sound|vibrat|rattl|humming|grinding noise|squeak)\b/i, description: 'Abnormal Noise & Vibration' },
-  { treeId: 'AC07', pattern: /\b(airflow|low air|weak fan|fan slow|air not coming|blower weak)\b/i, description: 'Airflow & Blower Issues' },
-  { treeId: 'AC08', pattern: /\b(remote|remote not working|remote control|no response to remote|remote buttons)\b/i, description: 'Remote Control Malfunction' },
-  { treeId: 'AC09', pattern: /\b(ice|frost|frozen|freezing|ice on pipe|coil freezing)\b/i, description: 'Ice Formation & Coil Freezing' },
-  { treeId: 'AC10', pattern: /\b(compressor cycling|frequent start|frequent stop|compressor cuts off)\b/i, description: 'Compressor Frequent Cycling' },
-  { treeId: 'AC11', pattern: /\b(display blink|flashing lights|led blink|blinking light|display flicker)\b/i, description: 'Display & LED Blinking' },
-  { treeId: 'AC12', pattern: /\b(clean filter|filter dirty|mesh clean|filter indicator)\b/i, description: 'Air Filter Cleaning & Maintenance' },
-  { treeId: 'AC13', pattern: /\b(sensor fault|thermistor|temperature reading wrong|room temp wrong)\b/i, description: 'Temperature Sensor & Thermistor' },
-  { treeId: 'AC14', pattern: /\b(grille broken|cabinet damage|body broken|front panel loose)\b/i, description: 'Cabinet & Physical Enclosure' },
-  { treeId: 'AC15', pattern: /\b(wifi|thinq|connect to app|smart thinq|pairing wifi)\b/i, description: 'Smart Connectivity & ThinQ Setup' },
-  { treeId: 'AC16', pattern: /\b(hardware fail|emergency|smoke|spark|fire|blast|electric shock)\b/i, description: 'Hardware Failure & Emergency Escalation' },
-];
-
 export const deterministicRouter = {
   /**
    * Deterministically routes user input into one of the 6 categories
@@ -78,92 +65,83 @@ export const deterministicRouter = {
       model?: string;
       audience?: 'customer' | 'technician';
       appliance_type?: string;
-    } = {}
+      language?: string;
+    } = {},
+    understanding?: ConversationUnderstanding
   ): RouteResolution => {
     const raw = (input || '').trim();
     const audience = options.audience || 'customer';
     const model = options.model || 'UW-Q18WUZA';
     const appliance = options.appliance_type || 'air-conditioner';
 
-    // ── GATING 0: Critical Emergency Hazard Check & Safety Policy Refusals ─────
-    // SP01, SP02: Smoke, Fire, Sparks, Burning
-    // SP04: Water leaking near electrical socket
-    // SP07: Damaged wires outside
-    // SP10, BP12: Live electrical panel disassembly refusal
-    // SP08: DIY Refrigerant refill prohibition
-    const isWaterNearSocket = /\bwater\b[\s\S]*\b(socket|plug|outlet|switch|breaker|electrical)\b/i.test(raw);
-    const isDamagedWires = /\b(damaged|exposed|bare|chewed|cut)\s+wires?\b/i.test(raw);
-    const isLiveDisassembly = /\b(open|opened|touch|see|remove|ignore.*safety)\b[\s\S]*\b(live|panel|circuit board|pcb|capacitors?)\b/i.test(raw) || /\bhow to open the live electrical panel\b/i.test(raw);
-    const isDiyRefrigerant = /\b(how to\s+)?(refill|charge|top up|fill)\b[\s\S]*\b(gas|refrigerant|freon)\b/i.test(raw);
-    const isFireEmergency = /\b(smoke|spark|sparks|fire|flame|burning smell|electric shock|blast)\b/i.test(raw);
-
-    if (isFireEmergency || isWaterNearSocket || isDamagedWires || isLiveDisassembly || isDiyRefrigerant) {
+    // ── GATING 0: Independent Safety Engine Check ─────────────────────────────
+    const safetyResult: SafetyCheckResult = safetyEngine.check(raw);
+    if (safetyResult.detected) {
+      const isCritical = safetyResult.level === 'CRITICAL';
       const evidence = createEmptyEvidence('SYMPTOM_TROUBLESHOOTING', { appliance, model, audience, selectedPath: 'AC16_EMERGENCY' });
       evidence.safetyConstraints = {
         safetyAlert: true,
-        lethalHazardBlocked: true,
+        lethalHazardBlocked: isCritical,
         escalationRequired: true,
       };
-
-      let safetyText =
-        '🚨 **CRITICAL SAFETY EMERGENCY: IMMEDIATE POWER SHUTDOWN REQUIRED**\n\n' +
-        '1. Turn OFF the dedicated MCB electrical breaker supplying power to your air conditioner immediately.\n' +
-        '2. Do NOT touch the indoor or outdoor unit.\n' +
-        '3. Do NOT attempt DIY repair.\n\n' +
-        'An authorized technician must inspect electrical wiring and compressor components before restoring power.';
-
-      if (isWaterNearSocket) {
-        safetyText =
-          '🚨 **CRITICAL ELECTRICAL HAZARD: WATER NEAR ELECTRICAL SOCKET**\n\n' +
-          '1. **DO NOT touch** the wet wall, socket, plug, or air conditioner switch.\n' +
-          '2. Immediately isolate power at the **main house electrical distribution board (MCB)**.\n' +
-          '3. Do NOT restore power until a certified electrician and LG technician inspect the installation.';
-      } else if (isDamagedWires) {
-        safetyText =
-          '🚨 **SAFETY WARNING: DAMAGED ELECTRICAL WIRING DETECTED**\n\n' +
-          '1. Turn OFF power at the MCB breaker immediately.\n' +
-          '2. **DO NOT touch or inspect** the damaged outdoor wiring.\n' +
-          '3. Professional servicing is required to replace the wiring harness with OEM parts.';
-      } else if (isLiveDisassembly) {
-        safetyText =
-          '⚠️ **SAFETY POLICY REFUSAL: LETHAL VOLTAGE HAZARD**\n\n' +
-          'Disassembling the outer cabinet or touching internal circuit boards exposes lethal 230V mains and high-voltage DC bus charges.\n' +
-          'Manufacturer safety policy strictly forbids customer opening of live electrical compartments. Please schedule an authorized LG technician.';
-      } else if (isDiyRefrigerant) {
-        safetyText =
-          '⚠️ **SAFETY & REGULATORY NOTICE: REFRIGERANT HANDLING**\n\n' +
-          'Ice formation on copper pipes can be caused by air filter clogs, blower motor malfunction, or refrigerant leakage.\n' +
-          'Refilling R32 / R410A refrigerant requires specialized pressure gauges, vacuum pumps, and certified handling under safety regulations. DIY gas refilling is prohibited. Please schedule professional servicing.';
-      }
 
       return {
         route: 'SYMPTOM_TROUBLESHOOTING',
         confidence: 1.0,
-        rationale: 'Critical safety hazard or dangerous procedure refusal detected.',
+        rationale: `Safety hazard detected: ${safetyResult.hazardType || 'hazard'}`,
         targetId: 'AC16',
         safetyAlert: true,
-        responseText: safetyText,
+        responseText: safetyResult.responseText || 'Emergency safety hazard detected.',
         evidence,
       };
     }
 
-    // ── GATING 0.5: Wrong Appliance Detection (BP05) ───────────────────────────
-    const wrongApplianceMatch = raw.match(/\b(fridge|refrigerator|washing machine|dryer|microwave|dishwasher|oven|geyser|tv|television)\b/i);
-    if (wrongApplianceMatch && !/\b(ac|air conditioner|dual inverter)\b/i.test(raw)) {
-      const detected = wrongApplianceMatch[1].toLowerCase();
-      const evidence = createEmptyEvidence('GENERAL_APPLIANCE', { appliance, model, audience, selectedPath: 'WRONG_APPLIANCE' });
-      evidence.conflicts.push(`Query intended for ${detected}, not air conditioner`);
+    // ── GATING 0.2: Direct Understanding Injected Routes (if passed) ───────────
+    if (understanding) {
+      if (understanding.intent.primary === 'BOOKING') {
+        const evidence = createEmptyEvidence('BOOKING', { appliance, model, audience, selectedPath: 'BOOKING_WORKFLOW' });
+        return {
+          route: 'BOOKING',
+          confidence: understanding.intent.confidence,
+          rationale: 'Customer requested technician booking workflow.',
+          safetyAlert: false,
+          responseText: 'Opening Service Booking form with your diagnostic findings attached. You can pick an LG certified technician and time slot.',
+          evidence,
+        };
+      }
 
-      return {
-        route: 'GENERAL_APPLIANCE',
-        confidence: 0.95,
-        rationale: `Detected query for ${detected} on air conditioner diagnostic agent.`,
-        safetyAlert: false,
-        responseText:
-          `You mentioned a **${detected}**. This diagnostic assistant is currently set up for your **LG Dual Inverter Air Conditioner (${model})**.\n\n` +
-          `Please select the appropriate appliance from the top navigation bar or ask a question regarding your air conditioner.`,
-        evidence,
-      };
+      if (understanding.intent.primary === 'REPAIR_STATUS') {
+        const evidence = createEmptyEvidence('REPAIR_STATUS', { appliance, model, audience, selectedPath: 'REPAIR_STATUS_LOOKUP' });
+        return {
+          route: 'REPAIR_STATUS',
+          confidence: understanding.intent.confidence,
+          rationale: 'Customer requested repair ticket status lookup.',
+          safetyAlert: false,
+          responseText: 'To check your existing service ticket status, please provide your service request number or phone number registered with the booking.',
+          evidence,
+        };
+      }
+    }
+
+    // ── GATING 0.5: Wrong Appliance Detection (BP05) ───────────────────────────
+    if (appliance === 'air-conditioner') {
+      const wrongApplianceMatch = raw.match(/\b(fridge|refrigerator|washing machine|dryer|microwave|dishwasher|oven|geyser|tv|television)\b/i);
+      if (wrongApplianceMatch && !/\b(ac|air conditioner|dual inverter)\b/i.test(raw)) {
+        const detected = wrongApplianceMatch[1].toLowerCase();
+        const evidence = createEmptyEvidence('GENERAL_APPLIANCE', { appliance, model, audience, selectedPath: 'WRONG_APPLIANCE' });
+        evidence.conflicts.push(`Query intended for ${detected}, not air conditioner`);
+
+        return {
+          route: 'GENERAL_APPLIANCE',
+          confidence: 0.95,
+          rationale: `Detected query for ${detected} on air conditioner diagnostic agent.`,
+          safetyAlert: false,
+          responseText:
+            `You mentioned a **${detected}**. This diagnostic assistant is currently set up for your **LG Dual Inverter Air Conditioner (${model})**.\n\n` +
+            `Please select the appropriate appliance from the top navigation bar or ask a question regarding your air conditioner.`,
+          evidence,
+        };
+      }
     }
 
     // ── ROUTE 1: Explicit Error Code Check ─────────────────────────────────────
@@ -247,10 +225,10 @@ export const deterministicRouter = {
       }
     }
 
-    // ── ROUTE 2: Direct AC Issue ID Check (e.g. AC01, AC_01, ac-03) ────────────
+    // ── ROUTE 2: Direct Issue ID Check (e.g. AC01) ─────────────────────────────
     const acIssueId = normalizeAcIssueId(raw);
-    if (acIssueId) {
-      const matchedTrigger = SYMPTOM_TREE_TRIGGERS.find((t) => t.treeId === acIssueId);
+    if (acIssueId && treeIndexService.hasTree(acIssueId)) {
+      const topicTitle = treeIndexService.getTopicTitle(acIssueId);
       const isSafetyAlert = acIssueId === 'AC16' || acIssueId === 'AC03';
       const evidence = createEmptyEvidence('SYMPTOM_TROUBLESHOOTING', { appliance, model, audience, selectedPath: `TREE_${acIssueId}` });
       evidence.activeNodeId = acIssueId;
@@ -259,7 +237,7 @@ export const deterministicRouter = {
         sourceId: 'lg_ac_diagnostic_trees_combined.json',
         documentType: 'decision_tree',
         verificationStatus: 'verified',
-        contentSnippet: `Diagnostic Flow ${acIssueId}: ${matchedTrigger?.description || 'Diagnostic Checklist'}`,
+        contentSnippet: `Diagnostic Flow ${acIssueId}: ${topicTitle}`,
       });
 
       return {
@@ -268,7 +246,7 @@ export const deterministicRouter = {
         rationale: `Direct internal diagnostic issue ID matched: ${acIssueId}.`,
         targetId: acIssueId,
         safetyAlert: isSafetyAlert,
-        responseText: `Starting diagnostic evaluation for **${acIssueId}: ${matchedTrigger?.description || 'Diagnostic Flow'}**. Let's proceed with the step-by-step checklist:`,
+        responseText: `Let's troubleshoot your **${topicTitle}**. Here are a few quick checks:`,
         evidence,
       };
     }
@@ -442,41 +420,28 @@ export const deterministicRouter = {
       };
     }
 
-    // Check for negated symptoms: e.g. "not making noise", "isn't leaking", "no smell"
-    for (const item of SYMPTOM_TREE_TRIGGERS) {
-      if (item.pattern.test(raw)) {
-        // Negation guard: "not making noise", "no noise", "not leaking"
-        if (item.treeId === 'AC06' && /\b(not|no|isn'?t|aren'?t|won'?t|doesn'?t|without|never)\s+(?:making\s+|having\s+|any\s+)?(noise|sound|vibration|rattl)/i.test(raw)) {
-          continue;
-        }
-        if (item.treeId === 'AC04' && /\b(not|no|isn'?t|aren'?t|won'?t|doesn'?t|without|never)\s+(?:leaking|dripping|leak)/i.test(raw)) {
-          continue;
-        }
-        if (item.treeId === 'AC05' && /\b(not|no|isn'?t|aren'?t|won'?t|doesn'?t|without|never)\s+(?:smell|odor|odour)/i.test(raw)) {
-          continue;
-        }
+    // ── ROUTE 3: Declarative Dynamic Symptom Match ────────────────────────────
+    const symptomMatch = treeIndexService.findTargetForSymptom(raw, appliance);
+    if (symptomMatch) {
+      const evidence = createEmptyEvidence('SYMPTOM_TROUBLESHOOTING', { appliance, model, audience, selectedPath: `SYMPTOM_${symptomMatch.canonicalIssueId}` });
+      evidence.activeNodeId = symptomMatch.targetId;
+      evidence.safetyConstraints.safetyAlert = symptomMatch.safetyAlert;
+      evidence.evidenceItems.push({
+        sourceId: 'lg_ac_diagnostic_trees_combined.json',
+        documentType: 'decision_tree',
+        verificationStatus: 'verified',
+        contentSnippet: `Matched symptom pattern: ${symptomMatch.displayTopic}`,
+      });
 
-        const isSafetyAlert = item.treeId === 'AC03' || item.treeId === 'AC16';
-        const evidence = createEmptyEvidence('SYMPTOM_TROUBLESHOOTING', { appliance, model, audience, selectedPath: `SYMPTOM_${item.treeId}` });
-        evidence.activeNodeId = item.treeId;
-        evidence.safetyConstraints.safetyAlert = isSafetyAlert;
-        evidence.evidenceItems.push({
-          sourceId: 'lg_ac_diagnostic_trees_combined.json',
-          documentType: 'decision_tree',
-          verificationStatus: 'verified',
-          contentSnippet: `Matched symptom pattern: ${item.description}`,
-        });
-
-        return {
-          route: 'SYMPTOM_TROUBLESHOOTING',
-          confidence: 0.88,
-          rationale: `Natural language symptoms matched to diagnostic tree ${item.treeId}: ${item.description}.`,
-          targetId: item.treeId,
-          safetyAlert: isSafetyAlert,
-          responseText: `It sounds like you are experiencing a **${item.description}** with your ${model}. Let's troubleshoot this step by step:`,
-          evidence,
-        };
-      }
+      return {
+        route: 'SYMPTOM_TROUBLESHOOTING',
+        confidence: symptomMatch.confidence,
+        rationale: symptomMatch.rationale,
+        targetId: symptomMatch.targetId,
+        safetyAlert: symptomMatch.safetyAlert,
+        responseText: `It sounds like you're experiencing a **${symptomMatch.displayTopic.toLowerCase()}** with your air conditioner. Let's check a few quick things step by step:`,
+        evidence,
+      };
     }
 
     // ── ROUTE 7: General Appliance Question Fallback (RAG) ─────────────────────
@@ -514,14 +479,20 @@ export const deterministicRouter = {
 
     // Fallback: Default to triage guidance without inventing diagnosis
     evidence.conflicts.push('Unrecognized query falling back to safe triage choices.');
+    const lang = (options as any)?.language || understanding?.language || 'en';
+    let fallbackText = 'Could you please describe what is happening with your air conditioner?';
+    if (lang === 'ta') {
+      fallbackText = 'உங்க AC-ல என்ன பிரச்சனை-ன்னு சொல்லுங்க?';
+    } else if (lang === 'hi') {
+      fallbackText = 'Aapke AC mein kya problem ho rahi hai bataiye?';
+    }
+
     return {
       route: 'GENERAL_APPLIANCE',
       confidence: 0.4,
       rationale: 'Unrecognized query falling back to safe triage choices.',
       safetyAlert: false,
-      responseText:
-        `I want to make sure I guide you accurately for your ${model}.\n\n` +
-        `Could you please describe what is happening (e.g. "not cooling", "water leaking", or "CH 05 on display")?`,
+      responseText: fallbackText,
       evidence,
     };
   },

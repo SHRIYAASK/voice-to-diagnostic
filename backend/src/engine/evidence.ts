@@ -12,7 +12,12 @@ export type RouteIntent =
   | 'INSTRUCTION_REQUEST'
   | 'TECHNICAL_SPECIFICATION'
   | 'WARRANTY_POLICY'
-  | 'GENERAL_APPLIANCE';
+  | 'GENERAL_APPLIANCE'
+  // Extended intents added by conversationUnderstanding layer
+  | 'BOOKING'
+  | 'REPAIR_STATUS'
+  | 'FOLLOW_UP'
+  | 'UNKNOWN';
 
 export type VerificationStatus =
   | 'verified'

@@ -96,7 +96,13 @@ class HybridRetrievalEngine {
   public buildIndex(): void {
     if (this.isIndexed) return;
 
-    const dataDir = path.resolve(__dirname, '../../../docs/lg-airconditioner');
+    const candidates = [
+      path.resolve(__dirname, '../../docs/lg-airconditioner'),
+      path.resolve(process.cwd(), 'docs/lg-airconditioner'),
+      path.resolve(__dirname, '../../../docs/lg-airconditioner'),
+      path.resolve(process.cwd(), '../docs/lg-airconditioner'),
+    ];
+    const dataDir = candidates.find((c) => fs.existsSync(c)) || candidates[0];
     if (!fs.existsSync(dataDir)) {
       console.warn(`[RetrievalEngine] Docs directory not found at ${dataDir}`);
       return;

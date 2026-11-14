@@ -47,10 +47,16 @@ export const apiClient = {
     }),
 
   // Interactive Conversational Diagnostic Chatbot
-  createChatSession: (params?: { sessionId?: string; model?: string; language?: string; appliance?: string }) =>
+  createChatSession: (params?: { sessionId?: string; model?: string; language?: string; appliance?: string; currentUser?: UserProfile | null }) =>
     api<{ session: ChatSessionData }>('/api/chat/session', {
       method: 'POST',
-      body: JSON.stringify(params || {}),
+      body: JSON.stringify({
+        sessionId: params?.sessionId || undefined,
+        model: params?.model || 'UW-Q18WUZA',
+        language: params?.language || 'en',
+        appliance: params?.appliance || 'air-conditioner',
+        currentUser: params?.currentUser || undefined,
+      }),
     }),
   sendChatMessage: (params: {
     sessionId: string;
@@ -58,6 +64,7 @@ export const apiClient = {
     optionIndex?: number;
     issueId?: string;
     specialAction?: string;
+    currentUser?: UserProfile | null;
   }) =>
     api<{ session: ChatSessionData; botMessages: ChatMessageItem[] }>('/api/chat/message', {
       method: 'POST',
@@ -175,7 +182,9 @@ export interface ChatMessageItem {
   text: string;
   textHi?: string;
   timestamp: string;
-  action?: 'NAV_BOOKING';
+  action?: 'NAV_BOOKING' | 'BOOKING_CONFIRMED';
+  ticketId?: string;
+  ticket?: any;
   bookingContext?: {
     symptom?: string;
     probable_cause?: string;
@@ -220,6 +229,19 @@ export interface ChatSessionData {
   messages: ChatMessageItem[];
   createdAt: string;
   isCompleted: boolean;
+  bookingState?: {
+    step: string;
+    priority?: string;
+    preferredDate?: string;
+    preferredTime?: string;
+    reportedIssue?: string;
+    probableCause?: string;
+    customerName?: string;
+    contactNumber?: string;
+    serviceAddress?: string;
+    pincode?: string;
+    editingField?: string;
+  };
 }
 
 export interface IssueInfo {

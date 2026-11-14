@@ -30,8 +30,9 @@ import {
   Loader2,
   ShieldCheck,
   Headphones,
+  UserCheck,
 } from 'lucide-react';
-import { apiClient, ChatMessageItem, ChatSessionData } from '../lib/api';
+import { apiClient, ChatMessageItem, ChatSessionData, UserProfile } from '../lib/api';
 import { getApplianceById } from '../lib/appliances';
 import { AudioRecorder } from '../lib/audioRecorder';
 import { AudioQueuePlayer } from '../lib/audioPlayer';
@@ -44,8 +45,10 @@ interface DiagnosticEngineProps {
     priority?: string;
     error_code?: string;
   }) => void;
+  onTicketCreated?: (ticketId: string) => void;
   selectedModel: string;
   selectedAppliance?: string;
+  currentUser?: UserProfile | null;
 }
 
 interface StarterPill {
@@ -69,14 +72,17 @@ const STARTER_ACTION_PILLS: StarterPill[] = [
 
 export const DiagnosticEngine: React.FC<DiagnosticEngineProps> = ({
   onEscalateToBooking,
+  onTicketCreated,
   selectedModel,
   selectedAppliance = 'air-conditioner',
+  currentUser,
 }) => {
   const [session, setSession] = useState<ChatSessionData | null>(null);
+  const sessionIdRef = useRef<string>('');
   const [messages, setMessages] = useState<ChatMessageItem[]>([]);
   const [inputText, setInputText] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [language, setLanguage] = useState<'en' | 'hi' | 'ta'>('en');
+  const [language, setLanguage] = useState<'auto' | 'ta' | 'hi' | 'en'>('en');
   const [userRating, setUserRating] = useState<number | null>(null);
   const [ratingSubmitted, setRatingSubmitted] = useState<boolean>(false);
 
@@ -109,9 +115,12 @@ export const DiagnosticEngine: React.FC<DiagnosticEngineProps> = ({
   const playerRef = useRef<AudioQueuePlayer | null>(null);
   const activeTurnIdRef = useRef<number>(1);
   const hasReceivedAudioForTurnRef = useRef<boolean>(false);
+  const processedChunksRef = useRef<Set<string>>(new Set());
   const recognitionRef = useRef<any>(null);
+  const isSttFallbackRef = useRef<boolean>(false);
   const playbackStartTimeRef = useRef<number>(0);
   const consecutiveSpeechFramesRef = useRef<number>(0);
+  const lastAppendedUserTextRef = useRef<{ text: string; time: number }>({ text: '', time: 0 });
 
   // Checks if a candidate user transcript is an acoustic echo of what the assistant spoke
   const isEchoOfAssistant = (userText: string): boolean => {
@@ -132,7 +141,7 @@ export const DiagnosticEngine: React.FC<DiagnosticEngineProps> = ({
     if (!assistantSpeech) return false;
 
     // Direct substring match
-    if (assistantSpeech.includes(candidate)) {
+    if (assistantSpeech.includes(candidate) || candidate.includes(assistantSpeech)) {
       console.log(`[EchoGate] Dropped direct substring echo: "${userText}"`);
       return true;
     }
@@ -142,7 +151,7 @@ export const DiagnosticEngine: React.FC<DiagnosticEngineProps> = ({
     if (userWords.length >= 2) {
       const matchingWords = userWords.filter((w) => assistantSpeech.includes(w));
       const overlapRatio = matchingWords.length / userWords.length;
-      if (overlapRatio >= 0.7) {
+      if (overlapRatio >= 0.5) {
         console.log(`[EchoGate] Dropped word overlap echo (${Math.round(overlapRatio * 100)}%): "${userText}"`);
         return true;
       }
@@ -163,17 +172,31 @@ export const DiagnosticEngine: React.FC<DiagnosticEngineProps> = ({
       }
       echoGateActiveRef.current = true;
       setVoiceStatus('speaking');
+
+      // Full-Duplex Invariant: NEVER mute the microphone during assistant playback!
+      // The microphone must stay continuously unmuted so user speech reaches backend
+      // VAD for fast ducking and confirmed barge-in, and Gnani STT for transcription.
+      // Acoustic echo suppression is handled by hardware AEC and server-side VAD/echo filters.
+      recorderRef.current?.setMuted(false);
+
+      if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+        wsRef.current.send(JSON.stringify({ type: 'playback_state', isPlaying: true }));
+      }
     } else {
       consecutiveSpeechFramesRef.current = 0;
       lastPlaybackEndTimeRef.current = Date.now();
-      // Decay tail for room acoustic reflections
+      playerRef.current?.setVolume(1.0, 10);
+      if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+        wsRef.current.send(JSON.stringify({ type: 'playback_state', isPlaying: false }));
+      }
+      // Decay tail for room acoustic reflections and speaker decay (400ms)
       if (echoGateTimerRef.current) clearTimeout(echoGateTimerRef.current);
       echoGateTimerRef.current = setTimeout(() => {
         echoGateActiveRef.current = false;
         if (isVoiceActive) {
           setVoiceStatus((prev) => (prev === 'speaking' ? 'listening' : prev));
         }
-      }, 500);
+      }, 400);
     }
   };
 
@@ -185,11 +208,8 @@ export const DiagnosticEngine: React.FC<DiagnosticEngineProps> = ({
         wsRef.current.send(JSON.stringify({ type: 'set_echo_gate', enabled: next }));
       }
       if (!next) {
-        // If switching to headphone mode, unmute immediately
-        recorderRef.current?.setMuted(false);
         echoGateActiveRef.current = false;
       } else if (isAssistantSpeaking) {
-        recorderRef.current?.setMuted(true);
         echoGateActiveRef.current = true;
       }
       return next;
@@ -224,13 +244,14 @@ export const DiagnosticEngine: React.FC<DiagnosticEngineProps> = ({
     if (wsRef.current) {
       try {
         if (wsRef.current.readyState === WebSocket.OPEN) {
-          wsRef.current.send(JSON.stringify({ type: 'end_session' }));
+          wsRef.current.send(JSON.stringify({ type: 'mic_mute', muted: true }));
           wsRef.current.close();
         }
       } catch {}
       wsRef.current = null;
     }
     setIsVoiceActive(false);
+    isSttFallbackRef.current = false;
     setVoiceStatus('idle');
     setIsAssistantSpeaking(false);
     setInterimTranscript('');
@@ -286,23 +307,30 @@ export const DiagnosticEngine: React.FC<DiagnosticEngineProps> = ({
   const appendUserMessage = (userText: string) => {
     const trimmed = userText?.trim();
     if (!trimmed) return;
-    if (isEchoOfAssistant(trimmed)) return;
-    setMessages((prev) => {
-      // Check if any recent message (last 3 messages) is an identical user utterance
-      const recentUser = prev.slice(-3).reverse().find((m) => m.sender === 'user');
-      if (recentUser && recentUser.text.trim().toLowerCase() === trimmed.toLowerCase()) {
-        return prev;
-      }
-      return [
-        ...prev,
-        {
-          id: 'voice-user-' + Date.now() + '-' + Math.random().toString(36).slice(2, 6),
-          sender: 'user',
-          text: trimmed,
-          timestamp: new Date().toISOString(),
-        },
-      ];
-    });
+
+    // Strict deduplication guard against immediate duplicate triggers (< 1500ms)
+    const now = Date.now();
+    const lastNorm = lastAppendedUserTextRef.current.text.toLowerCase().replace(/[^a-z0-9\s]/g, '').trim();
+    const currentNorm = trimmed.toLowerCase().replace(/[^a-z0-9\s]/g, '').trim();
+    if (
+      lastNorm &&
+      lastNorm === currentNorm &&
+      now - lastAppendedUserTextRef.current.time < 1500
+    ) {
+      console.log('[DiagnosticEngine] Dropped duplicate user bubble:', trimmed);
+      return;
+    }
+    lastAppendedUserTextRef.current = { text: trimmed, time: now };
+
+    setMessages((prev) => [
+      ...prev,
+      {
+        id: 'voice-user-' + Date.now() + '-' + Math.random().toString(36).slice(2, 6),
+        sender: 'user',
+        text: trimmed,
+        timestamp: new Date().toISOString(),
+      },
+    ]);
     setIsNearBottom(true);
     setTimeout(() => scrollToBottom(true), 30);
   };
@@ -313,11 +341,26 @@ export const DiagnosticEngine: React.FC<DiagnosticEngineProps> = ({
       case 'session_ready':
         setVoiceStatus('listening');
         activeTurnIdRef.current = data.turnId || 1;
+        if (data.sessionId) {
+          sessionIdRef.current = data.sessionId;
+          setSession((prev) =>
+            prev
+              ? {
+                  ...prev,
+                  sessionId: data.sessionId,
+                  issueId: data.activeIssueId ?? prev.issueId,
+                  currentNodeId: data.activeNodeId ?? prev.currentNodeId,
+                  isCompleted: data.isCompleted ?? prev.isCompleted,
+                }
+              : prev
+          );
+        }
         break;
 
       case 'language_detected':
-        if (data.detectedLanguage) {
-          setLanguage(data.detectedLanguage === 'ta' ? 'ta' : data.detectedLanguage === 'hi' ? 'hi' : 'en');
+        if (data.detectedLanguage && language === 'auto') {
+          const clean = data.detectedLanguage.toLowerCase().split(/[-_]/)[0];
+          setLanguage(clean as any);
         }
         break;
 
@@ -331,6 +374,7 @@ export const DiagnosticEngine: React.FC<DiagnosticEngineProps> = ({
         }
         break;
 
+      case 'transcript_final':
       case 'final_transcript':
         if (data.turnId && data.turnId > activeTurnIdRef.current) {
           activeTurnIdRef.current = data.turnId;
@@ -361,7 +405,6 @@ export const DiagnosticEngine: React.FC<DiagnosticEngineProps> = ({
         }
         if (data.text) {
           setInterimTranscript('');
-          appendUserMessage(data.text);
         }
         setVoiceStatus('processing');
         setIsLoading(true);
@@ -375,34 +418,85 @@ export const DiagnosticEngine: React.FC<DiagnosticEngineProps> = ({
         if (data.turnId >= activeTurnIdRef.current && data.message) {
           const botMsg: ChatMessageItem = data.message;
           lastSpokenAssistantTextRef.current = botMsg.text || '';
-          setMessages((prev) => {
-            if (prev.some((m) => m.id === botMsg.id)) return prev;
-            return [...prev, botMsg];
-          });
+          if (data.session?.messages && data.session.messages.length > 0) {
+            setMessages(data.session.messages);
+          } else {
+            setMessages((prev) => {
+              if (prev.some((m) => m.id === botMsg.id)) return prev;
+              return [...prev, botMsg];
+            });
+          }
           setIsLoading(false);
           setIsNearBottom(true);
           setTimeout(() => scrollToBottom(true), 30);
 
-          if (botMsg.action === 'NAV_BOOKING' || botMsg.bookingContext) {
+          if (data.session) {
+            setSession(data.session);
+            if (data.session.sessionId) {
+              sessionIdRef.current = data.session.sessionId;
+            }
+          } else if (data.issueId || data.currentNodeId) {
+            setSession((prev) =>
+              prev
+                ? {
+                    ...prev,
+                    issueId: data.issueId ?? prev.issueId,
+                    currentNodeId: data.currentNodeId ?? prev.currentNodeId,
+                    isCompleted: data.isCompleted ?? prev.isCompleted,
+                  }
+                : prev
+            );
+          }
+
+          if (botMsg.action === 'NAV_BOOKING') {
             triggerAutoBookingNavigation(botMsg.bookingContext);
+          }
+          if (botMsg.action === 'BOOKING_CONFIRMED' && botMsg.ticketId) {
+            onTicketCreated?.(botMsg.ticketId);
           }
         }
         break;
 
-      case 'audio_chunk':
-        // If audio chunks for a NEW turn arrive, immediately purge residual audio from old turn!
-        if (data.turnId > activeTurnIdRef.current) {
+      case 'bot_turn_start':
+        if (data.turnId) {
           activeTurnIdRef.current = data.turnId;
           if (playerRef.current) {
-            playerRef.current.stop();
+            playerRef.current.setActiveTurnId(data.turnId);
           }
         }
-        if (data.turnId >= activeTurnIdRef.current && data.audio) {
+        // AudioQueuePlayer onStateChange callback activates speaking state once chunks actually begin playing
+        break;
+
+      case 'audio_chunk':
+      case 'tts_audio_chunk': {
+        // If audio chunks for a NEW turn arrive, immediately purge residual audio from old turn!
+        const chunkTurn = data.turnId || activeTurnIdRef.current;
+        const seq = data.sequenceNumber || data.chunkIndex || 0;
+        const chunkKey = `${chunkTurn}:${seq}`;
+
+        // Deduplicate chunks if received across both event names
+        if (processedChunksRef.current.has(chunkKey)) {
+          break;
+        }
+        processedChunksRef.current.add(chunkKey);
+        if (processedChunksRef.current.size > 200) {
+          const firstKey = processedChunksRef.current.values().next().value;
+          if (firstKey) processedChunksRef.current.delete(firstKey);
+        }
+
+        if (chunkTurn > activeTurnIdRef.current) {
+          activeTurnIdRef.current = chunkTurn;
+          if (playerRef.current) {
+            playerRef.current.setActiveTurnId(chunkTurn);
+          }
+        }
+        const audioData = data.audioBase64 || data.audio;
+        if (chunkTurn >= activeTurnIdRef.current && audioData) {
           hasReceivedAudioForTurnRef.current = true;
-          playerRef.current?.enqueueBase64(data.audio);
-          setPlaybackActive(true);
+          playerRef.current?.enqueueBase64(audioData, chunkTurn);
         }
         break;
+      }
 
       case 'audio_done':
         // If external TTS streamed no chunks or player is idle, fallback to browser SpeechSynthesis
@@ -445,16 +539,23 @@ export const DiagnosticEngine: React.FC<DiagnosticEngineProps> = ({
         }
         break;
 
+      case 'tts_duck': {
+        const duckVol = typeof data.volume === 'number' ? data.volume : 0.2;
+        playerRef.current?.setVolume(duckVol, 50);
+        break;
+      }
+
+      case 'stop_playback':
       case 'interrupted':
-        activeTurnIdRef.current = data.turnId;
+        activeTurnIdRef.current = data.turnId || activeTurnIdRef.current;
         if (echoGateTimerRef.current) {
           clearTimeout(echoGateTimerRef.current);
           echoGateTimerRef.current = null;
         }
         echoGateActiveRef.current = false;
-        recorderRef.current?.setMuted(false);
         if (playerRef.current) {
           playerRef.current.stop();
+          playerRef.current.setVolume(1.0, 10);
         }
         if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
           window.speechSynthesis.cancel();
@@ -465,6 +566,10 @@ export const DiagnosticEngine: React.FC<DiagnosticEngineProps> = ({
 
       case 'error':
         console.warn('[Voice Server Warning]', data.message);
+        if (data.code === 'STT_UNAVAILABLE') {
+          isSttFallbackRef.current = true;
+          console.log('[Voice Client] Upstream STT unavailable; activated browser WebSpeech fallback mode');
+        }
         break;
     }
   };
@@ -473,6 +578,7 @@ export const DiagnosticEngine: React.FC<DiagnosticEngineProps> = ({
   const startVoiceMode = async () => {
     try {
       setVoiceError(null);
+      isSttFallbackRef.current = false;
       setVoiceStatus('connecting');
       setIsVoiceActive(true);
 
@@ -495,8 +601,8 @@ export const DiagnosticEngine: React.FC<DiagnosticEngineProps> = ({
         ws.send(
           JSON.stringify({
             type: 'start_session',
-            sessionId: session?.sessionId || '',
-            language: 'auto',
+            sessionId: sessionIdRef.current || session?.sessionId || '',
+            language: language === 'auto' ? 'indic-auto' : language === 'ta' ? 'ta-IN' : language === 'hi' ? 'hi-IN' : 'en-IN',
             model: selectedModel,
             appliance: selectedAppliance,
           })
@@ -528,40 +634,62 @@ export const DiagnosticEngine: React.FC<DiagnosticEngineProps> = ({
       // Initialize microphone recorder (16 kHz mono linear PCM little-endian)
       const recorder = new AudioRecorder({
         sampleRate: 16000,
+        autoGainControl: true,
         onAudioData: (buffer) => {
           if (ws.readyState === WebSocket.OPEN) {
-            // Immediate local barge-in: If assistant is speaking or playing audio and user starts speaking,
-            // cut off local playback after grace period with multi-frame confirmation
+            // Full-Duplex Invariant: ALWAYS stream audio frames to WebSocket so server-side
+            // 80Hz filter, Silero VAD, and Gnani STT receive 100% of user speech audio.
+            ws.send(buffer);
+
             const isPlaying = playerRef.current?.playing || isAssistantSpeaking || (typeof window !== 'undefined' && window.speechSynthesis?.speaking);
+
+            // Compute real-time RMS energy of the incoming 16-bit linear PCM frame
+            const int16 = new Int16Array(buffer);
+            let sumSquares = 0;
+            for (let i = 0; i < int16.length; i++) {
+              const norm = int16[i] / 32768;
+              sumSquares += norm * norm;
+            }
+            const rms = Math.sqrt(sumSquares / int16.length);
+
+            // Instant Client-Side Interruption (Barge-In) Detection & Two-Stage Ducking:
+            // When user speaks over assistant audio:
             if (isPlaying) {
-              const timeSinceStart = Date.now() - playbackStartTimeRef.current;
-              // Fast grace window: 120ms (instantaneous feel, absorbs initial buffer click)
-              if (timeSinceStart > 120) {
-                const pcm16 = new Int16Array(buffer);
-                let sumSquares = 0;
-                for (let i = 0; i < pcm16.length; i++) {
-                  const norm = pcm16[i] / 32768;
-                  sumSquares += norm * norm;
-                }
-                const rms = Math.sqrt(sumSquares / pcm16.length);
-                // Fast 2-tier detection:
-                // Tier 1: Firm speech (RMS > 0.08) triggers immediately on 1 frame (~128ms)
-                // Tier 2: Moderate speech (RMS > 0.05) triggers on 2 consecutive frames (~250ms)
-                const isSpeech = rms > 0.08 || (rms > 0.05 && consecutiveSpeechFramesRef.current >= 1);
-                if (rms > 0.05) {
-                  consecutiveSpeechFramesRef.current++;
-                } else {
+              // Conversational speech into microphone typically has RMS >= 0.016
+              // Background noise with AEC typically has RMS < 0.012
+              if (rms >= 0.018) {
+                consecutiveSpeechFramesRef.current++;
+
+                // Stage 1 (Fast Local Ducking): Immediately drop playback volume to 20% within 40ms
+                playerRef.current?.setVolume(0.2, 40);
+
+                // Stage 2 (Confirmed Interruption): Sustained speech (>= 2 frames ~160ms) or loud burst (rms >= 0.045)
+                if (consecutiveSpeechFramesRef.current >= 2 || rms >= 0.045) {
+                  console.log(`[BargeIn] Client-side speech interruption confirmed (RMS=${rms.toFixed(4)}, frames=${consecutiveSpeechFramesRef.current}). Halting playback.`);
                   consecutiveSpeechFramesRef.current = 0;
+
+                  // Immediately halt all browser audio playback (< 40ms)
+                  if (playerRef.current) {
+                    playerRef.current.stop();
+                    playerRef.current.setVolume(1.0, 10);
+                  }
+                  if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+                    window.speechSynthesis.cancel();
+                  }
+                  setIsAssistantSpeaking(false);
+                  setPlaybackActive(false);
+                  setVoiceStatus('listening');
+
+                  // Signal backend to abort TTS streaming & advance turn
+                  ws.send(JSON.stringify({ type: 'barge_in', reason: 'client_vad' }));
                 }
-                if (isSpeech) {
-                  consecutiveSpeechFramesRef.current = 0;
-                  handleInterruptSpeech();
+              } else if (rms < 0.012) {
+                // Decay speech frames on silence
+                if (consecutiveSpeechFramesRef.current > 0) {
+                  consecutiveSpeechFramesRef.current = Math.max(0, consecutiveSpeechFramesRef.current - 1);
                 }
               }
-            } else {
-              consecutiveSpeechFramesRef.current = 0;
             }
-            ws.send(buffer);
           }
         },
         onError: (err) => {
@@ -573,41 +701,63 @@ export const DiagnosticEngine: React.FC<DiagnosticEngineProps> = ({
       recorderRef.current = recorder;
       await recorder.start();
 
-      // Native Web Speech recognition fallback for environments where upstream WebSocket STT is blocked
-      const SpeechRec = typeof window !== 'undefined' && ((window as any).SpeechRecognition || (window as any).webkitSpeechRecognition);
-      if (SpeechRec) {
+      // Dual-layer STT resilience: Initialize Web Speech API as resilient local recognizer
+      const SpeechRecognition = typeof window !== 'undefined' && ((window as any).SpeechRecognition || (window as any).webkitSpeechRecognition);
+      if (SpeechRecognition) {
         try {
-          const recognition = new SpeechRec();
+          const recognition = new SpeechRecognition();
           recognition.continuous = true;
           recognition.interimResults = true;
           recognition.lang = language === 'ta' ? 'ta-IN' : language === 'hi' ? 'hi-IN' : 'en-IN';
-          recognition.onresult = (e: any) => {
-            const lastRes = e.results[e.results.length - 1];
-            const transcriptText = lastRes[0]?.transcript?.trim();
-            // Drop results received during playback under Echo Gate or matching assistant speech
-            if (echoGateActiveRef.current && isEchoGateEnabled) {
-              console.log('[EchoGate] Dropped WebSpeech result while assistant is speaking');
-              return;
-            }
-            if (isEchoOfAssistant(transcriptText)) {
-              return;
-            }
-            if (lastRes.isFinal && transcriptText) {
-              setInterimTranscript('');
-              appendUserMessage(transcriptText);
-              if (ws.readyState === WebSocket.OPEN) {
-                ws.send(JSON.stringify({ type: 'text_input', text: transcriptText }));
+
+          recognition.onresult = (event: any) => {
+            const isPlaying = playerRef.current?.playing || isAssistantSpeaking;
+            if (isPlaying) return;
+
+            let interim = '';
+            let final = '';
+            for (let i = event.resultIndex; i < event.results.length; ++i) {
+              if (event.results[i].isFinal) {
+                final += event.results[i][0].transcript;
+              } else {
+                interim += event.results[i][0].transcript;
               }
-            } else if (transcriptText) {
-              setInterimTranscript(transcriptText);
+            }
+
+            if (interim && !final) {
+              setInterimTranscript(interim.trim());
+              setVoiceStatus('listening');
+            }
+
+            if (final.trim()) {
+              const cleaned = final.trim();
+              setInterimTranscript('');
+
+              // Standby fallback guard: if WebSocket is open and active, backend Gnani STT owns dispatching
+              const isCloudSttActive = !isSttFallbackRef.current && wsRef.current && wsRef.current.readyState === WebSocket.OPEN && voiceStatus !== 'error';
+              if (isCloudSttActive) {
+                console.log(`[WebSpeech standby] Cloud STT is active; skipping fallback dispatch for: "${cleaned}"`);
+                return;
+              }
+
+              const now = Date.now();
+              // Prevent duplicate dispatch if backend STT already processed this utterance
+              if (now - lastAppendedUserTextRef.current.time > 2000 || lastAppendedUserTextRef.current.text !== cleaned) {
+                lastAppendedUserTextRef.current = { text: cleaned, time: now };
+                handleSendMessage(cleaned);
+              }
             }
           };
+
           recognition.onerror = (e: any) => {
-            console.warn('[WebSpeech Fallback Notice]', e.error);
+            console.warn('[WebSpeech fallback warning]', e.error);
           };
+
           recognition.start();
           recognitionRef.current = recognition;
-        } catch {}
+        } catch (e) {
+          console.warn('[WebSpeech init skipped]', e);
+        }
       }
     } catch (err: any) {
       console.error('[startVoiceMode failed]', err);
@@ -667,11 +817,13 @@ export const DiagnosticEngine: React.FC<DiagnosticEngineProps> = ({
       try {
         setIsLoading(true);
         const res = await apiClient.createChatSession({
-          model: selectedModel,
-          language,
-          appliance: selectedAppliance,
+          model: selectedModel || 'UW-Q18WUZA',
+          language: language === 'auto' ? 'en' : language,
+          appliance: selectedAppliance || 'air-conditioner',
+          currentUser: currentUser,
         });
         setSession(res.session);
+        sessionIdRef.current = res.session.sessionId;
         setMessages(res.session.messages || []);
         setIsNearBottom(true);
         setTimeout(() => scrollToBottom(false), 50);
@@ -686,17 +838,19 @@ export const DiagnosticEngine: React.FC<DiagnosticEngineProps> = ({
 
   // Handle switching language
   const handleToggleLanguage = async () => {
-    const nextLang = language === 'en' ? 'hi' : language === 'hi' ? 'ta' : 'en';
+    const nextLang: 'auto' | 'ta' | 'hi' | 'en' =
+      language === 'en' ? 'ta' : language === 'ta' ? 'hi' : language === 'hi' ? 'auto' : 'en';
     setLanguage(nextLang);
     if (!session) return;
     try {
       const res = await apiClient.createChatSession({
         sessionId: session.sessionId,
-        model: selectedModel,
-        language: nextLang,
-        appliance: selectedAppliance,
+        model: selectedModel || 'UW-Q18WUZA',
+        language: nextLang === 'auto' ? 'en' : nextLang,
+        appliance: selectedAppliance || 'air-conditioner',
       });
       setSession(res.session);
+      sessionIdRef.current = res.session.sessionId;
     } catch (err) {
       console.error('Failed to update language:', err);
     }
@@ -743,16 +897,21 @@ export const DiagnosticEngine: React.FC<DiagnosticEngineProps> = ({
       const res = await apiClient.sendChatMessage({
         sessionId: session.sessionId,
         text: textToSend,
+        currentUser: currentUser,
       });
 
       setSession(res.session);
+      sessionIdRef.current = res.session.sessionId;
       setMessages(res.session.messages);
 
       setTimeout(() => inputRef.current?.focus(), 100);
 
       const latestBotMsg = [...res.session.messages].reverse().find((m) => m.sender === 'bot');
-      if (latestBotMsg && (latestBotMsg.action === 'NAV_BOOKING' || latestBotMsg.bookingContext)) {
+      if (latestBotMsg && latestBotMsg.action === 'NAV_BOOKING') {
         triggerAutoBookingNavigation(latestBotMsg.bookingContext);
+      }
+      if (latestBotMsg && latestBotMsg.action === 'BOOKING_CONFIRMED' && latestBotMsg.ticketId) {
+        onTicketCreated?.(latestBotMsg.ticketId);
       }
     } catch (err) {
       console.error('Failed to send message:', err);
@@ -784,7 +943,7 @@ export const DiagnosticEngine: React.FC<DiagnosticEngineProps> = ({
       return;
     }
 
-    if (chip.value === 'BOOK_TECH' || chip.value === 'NAV_BOOKING') {
+    if (chip.value === 'NAV_BOOKING') {
       const lastConclusionMsg = [...messages].reverse().find((m) => m.conclusion);
       const conclusion = lastConclusionMsg?.conclusion;
       onEscalateToBooking({
@@ -837,10 +996,20 @@ export const DiagnosticEngine: React.FC<DiagnosticEngineProps> = ({
         optionIndex: chip.optionIndex,
         issueId: chip.issueId,
         specialAction: chip.value,
+        currentUser: currentUser,
       });
 
       setSession(res.session);
+      sessionIdRef.current = res.session.sessionId;
       setMessages(res.session.messages);
+
+      const latestBotMsg = [...res.session.messages].reverse().find((m) => m.sender === 'bot');
+      if (latestBotMsg && latestBotMsg.action === 'NAV_BOOKING') {
+        triggerAutoBookingNavigation(latestBotMsg.bookingContext);
+      }
+      if (latestBotMsg && latestBotMsg.action === 'BOOKING_CONFIRMED' && latestBotMsg.ticketId) {
+        onTicketCreated?.(latestBotMsg.ticketId);
+      }
     } catch (err) {
       console.error('Failed to process option choice:', err);
     } finally {
@@ -858,6 +1027,7 @@ export const DiagnosticEngine: React.FC<DiagnosticEngineProps> = ({
       setShowMenu(false);
       const res = await apiClient.resetChatSession(session.sessionId);
       setSession(res.session);
+      sessionIdRef.current = res.session.sessionId;
       setMessages(res.session.messages);
       setIsNearBottom(true);
       setTimeout(() => scrollToBottom(false), 50);
@@ -870,12 +1040,49 @@ export const DiagnosticEngine: React.FC<DiagnosticEngineProps> = ({
 
   // Dynamic suggestions list for the side-scroll suggestions bar in one line
   const getSuggestions = (): StarterPill[] => {
+    // If active in conversational booking, surface contextual booking action suggestions
+    if (session?.bookingState && session.bookingState.step !== 'IDLE' && session.bookingState.step !== 'COMPLETED') {
+      if (session.bookingState.step === 'AWAITING_CONFIRMATION') {
+        return [
+          { label: '✅ Yes, Details Correct & Book', labelHi: '✅ हाँ, विवरण सही है और बुक करें', value: 'CONFIRM_BOOKING' },
+          { label: '📅 Change Date/Time', labelHi: '📅 तारीख/समय बदलें', value: 'EDIT_DATE' },
+          { label: '📱 Change Phone', labelHi: '📱 फोन बदलें', value: 'EDIT_PHONE' },
+          { label: '📍 Change Address', labelHi: '📍 पता बदलें', value: 'EDIT_ADDRESS' },
+          { label: '👤 Change Name', labelHi: '👤 नाम बदलें', value: 'EDIT_NAME' },
+          { label: '❌ Cancel Booking', labelHi: '❌ बुकिंग रद्द करें', value: 'CANCEL_BOOKING' },
+        ];
+      }
+      if (session.bookingState.step === 'AWAITING_DATE_TIME') {
+        const isHigh = session.bookingState.priority === 'High';
+        return [
+          { label: '📅 Tomorrow Morning', labelHi: '📅 कल सुबह', value: 'Tomorrow Morning' },
+          { label: '📅 Tomorrow Afternoon', labelHi: '📅 कल दोपहर', value: 'Tomorrow Afternoon' },
+          { label: '📅 Tomorrow Evening', labelHi: '📅 कल शाम', value: 'Tomorrow Evening' },
+          ...(!isHigh
+            ? [
+                { label: '📅 Day After Tomorrow', labelHi: '📅 परसों', value: 'Day After Tomorrow' },
+                { label: '📅 Next Week', labelHi: '📅 अगले सप्ताह', value: 'Next Week' },
+              ]
+            : []),
+          { label: '❌ Cancel Booking', labelHi: '❌ बुकिंग रद्द करें', value: 'CANCEL_BOOKING' },
+        ];
+      }
+      if (session.bookingState.editingField) {
+        return [
+          { label: '❌ Keep Current Value', labelHi: '❌ वर्तमान मान रखें', value: 'CONFIRM_BOOKING' },
+          { label: '❌ Cancel Booking', labelHi: '❌ बुकिंग रद्द करें', value: 'CANCEL_BOOKING' },
+        ];
+      }
+    }
+
     if (selectedAppliance === 'refrigerator') {
       return [
-        { label: '❄️ Not Cooling / Warm', labelHi: '❄️ ठंडक नहीं / गर्म', value: 'Not cooling' },
-        { label: '💧 Water Leaking', labelHi: '💧 पानी लीक हो रहा है', value: 'Water leaking' },
-        { label: '🧊 Heavy Frost Buildup', labelHi: '🧊 अत्यधिक बर्फ जमना', value: 'Frost buildup' },
-        { label: '🔊 Loud Humming Noise', labelHi: '🔊 तेज गुनगुनाहट की आवाज', value: 'Humming noise' },
+        { label: '🧊 No Cooling / Warm', labelHi: '🧊 ठंडा नहीं हो रहा / गर्म', value: 'REF01', issueId: 'REF01' },
+        { label: '❄️ Low Cooling / Food Warm', labelHi: '❄️ कम ठंडक / खाना गर्म', value: 'REF02', issueId: 'REF02' },
+        { label: '⚡ Won\'t Turn On / Dead', labelHi: '⚡ चालू नहीं हो रहा / बिजली नहीं', value: 'REF03', issueId: 'REF03' },
+        { label: '💧 Water Leaking', labelHi: '💧 पानी लीक हो रहा है', value: 'REF06', issueId: 'REF06' },
+        { label: '🧊 Heavy Frost Buildup', labelHi: '🧊 अत्यधिक बर्फ जमना', value: 'REF10', issueId: 'REF10' },
+        { label: '🔊 Unusual Noise', labelHi: '🔊 तेज असामान्य आवाज', value: 'REF04', issueId: 'REF04' },
       ];
     }
     if (selectedAppliance === 'washing-machine') {
@@ -938,11 +1145,13 @@ export const DiagnosticEngine: React.FC<DiagnosticEngineProps> = ({
             {/* Language Toggle */}
             <button
               onClick={handleToggleLanguage}
-              className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg hover:bg-slate-100 text-xs font-semibold text-slate-600 transition-colors cursor-pointer"
-              title="Toggle Recognition Language: English / हिन्दी / தமிழ்"
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg hover:bg-slate-100 text-xs font-semibold text-slate-700 transition-colors cursor-pointer border border-slate-200"
+              title="Click to toggle language: Auto (Multilingual) 🌐 / தமிழ் 🇮🇳 / हिन्दी 🇮🇳 / English 🇬🇧"
             >
               <Languages className="w-3.5 h-3.5 text-teal-600" />
-              <span className="hidden sm:inline">{language === 'en' ? 'हिन्दी' : language === 'hi' ? 'தமிழ்' : 'English'}</span>
+              <span className="hidden sm:inline">
+                {language === 'auto' ? 'Auto 🌐' : language === 'ta' ? 'தமிழ் 🇮🇳' : language === 'hi' ? 'हिन्दी 🇮🇳' : 'English 🇬🇧'}
+              </span>
             </button>
 
             {/* Restart Session */}
@@ -968,15 +1177,16 @@ export const DiagnosticEngine: React.FC<DiagnosticEngineProps> = ({
               <span>{isVoiceActive ? 'Mic ON' : 'Voice Agent'}</span>
             </button>
 
-            {/* Book Tech Escalation */}
+            {/* Book Tech Conversational Trigger */}
             <button
               onClick={() =>
-                onEscalateToBooking({
-                  symptom: `${applianceInfo.name} - Direct Request from Chat`,
-                  priority: 'Medium',
+                handleChipClick({
+                  label: '📅 Book Technician Visit',
+                  value: 'BOOK_TECH',
                 })
               }
               className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold transition-all shadow-xs cursor-pointer ml-1"
+              title="Schedule a certified technician visit"
             >
               <Calendar className="w-3.5 h-3.5 text-teal-400" />
               <span>Book Tech</span>
@@ -1005,9 +1215,9 @@ export const DiagnosticEngine: React.FC<DiagnosticEngineProps> = ({
                   <button
                     onClick={() => {
                       setShowMenu(false);
-                      onEscalateToBooking({
-                        symptom: `${applianceInfo.name} - Direct Request`,
-                        priority: 'Medium',
+                      handleChipClick({
+                        label: '📅 Book Technician Visit',
+                        value: 'BOOK_TECH',
                       });
                     }}
                     className="w-full text-left px-3 py-2 text-xs font-medium text-teal-700 hover:bg-teal-50 flex items-center gap-2"
@@ -1176,6 +1386,46 @@ export const DiagnosticEngine: React.FC<DiagnosticEngineProps> = ({
                       </div>
                     )}
 
+                    {/* Embedded Booking Confirmation Card */}
+                    {(msg.action === 'BOOKING_CONFIRMED' || msg.ticketId) && (
+                      <div className="mt-3 p-3.5 rounded-xl bg-gradient-to-br from-teal-50 to-emerald-50 border border-teal-200 text-teal-950 text-xs space-y-2.5 shadow-2xs">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-1.5 font-bold text-teal-900">
+                            <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                            <span>Appointment Confirmed</span>
+                          </div>
+                          {msg.ticketId && (
+                            <span className="font-mono text-[10px] px-2 py-0.5 rounded-md bg-white border border-teal-200 text-teal-800 font-bold">
+                              {msg.ticketId}
+                            </span>
+                          )}
+                        </div>
+
+                        {msg.ticket && (
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 p-2.5 bg-white/90 rounded-lg border border-teal-100 text-[11px]">
+                            <div>
+                              <span className="text-slate-500 block text-[10px]">Assigned Specialist</span>
+                              <span className="font-semibold text-slate-800 flex items-center gap-1 mt-0.5">
+                                <UserCheck className="w-3.5 h-3.5 text-teal-600" />
+                                {msg.ticket.assignedTechnician?.name || 'Certified Specialist'}
+                              </span>
+                            </div>
+                            <div>
+                              <span className="text-slate-500 block text-[10px]">Scheduled Slot</span>
+                              <span className="font-semibold text-slate-800 flex items-center gap-1 mt-0.5">
+                                <Calendar className="w-3.5 h-3.5 text-teal-600" />
+                                {msg.ticket.scheduledDate} ({msg.ticket.scheduledSlot})
+                              </span>
+                            </div>
+                          </div>
+                        )}
+
+                        <div className="text-[10px] text-teal-800 flex items-center justify-between pt-1">
+                          <span>SMS/Email confirmation with tracking details sent.</span>
+                        </div>
+                      </div>
+                    )}
+
                     {/* Embedded Resolution Card */}
                     {msg.isResolution && (
                       <div className="mt-2.5 p-3 bg-white/90 rounded-xl border border-emerald-200 text-xs text-emerald-900">
@@ -1228,7 +1478,17 @@ export const DiagnosticEngine: React.FC<DiagnosticEngineProps> = ({
                     isBot &&
                     msg.chips &&
                     msg.chips.length > 0 &&
-                    msg.chips.some((c) => c.value === 'START_ERROR_DIAG' || c.value === 'BOOK_TECH' || c.value === 'NAV_BOOKING' || c.value === 'RESTART') &&
+                    msg.chips.some((c) =>
+                      c.value === 'START_ERROR_DIAG' ||
+                      c.value === 'BOOK_TECH' ||
+                      c.value === 'NAV_BOOKING' ||
+                      c.value === 'RESTART' ||
+                      c.value === 'CONFIRM_BOOKING' ||
+                      c.value === 'CANCEL_BOOKING' ||
+                      c.value.startsWith('EDIT_') ||
+                      c.value.startsWith('SLOT_') ||
+                      c.value === 'TRACK_TICKET'
+                    ) &&
                     isLatest && (
                     <div className="pt-2 flex flex-wrap gap-1.5 sm:gap-2">
                       {msg.chips.map((chip, cIdx) => (
@@ -1314,7 +1574,18 @@ export const DiagnosticEngine: React.FC<DiagnosticEngineProps> = ({
                 key={idx}
                 type="button"
                 onClick={() => {
-                  if (p.issueId || p.value === 'ERROR_CODE' || p.value.startsWith('AC')) {
+                  if (
+                    p.issueId ||
+                    p.value === 'ERROR_CODE' ||
+                    p.value.startsWith('AC') ||
+                    p.value.startsWith('REF') ||
+                    p.value === 'CONFIRM_BOOKING' ||
+                    p.value === 'CANCEL_BOOKING' ||
+                    p.value.startsWith('EDIT_') ||
+                    p.value.startsWith('SLOT_') ||
+                    p.value === 'NAV_BOOKING' ||
+                    p.value === 'BOOK_TECH'
+                  ) {
                     handleChipClick(p);
                   } else {
                     handleSendMessage(p.label);

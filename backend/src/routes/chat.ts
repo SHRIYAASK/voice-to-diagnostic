@@ -5,25 +5,45 @@ import { chatService } from '../engine/chatService';
 const router = Router();
 
 // POST /api/chat/session — Get or create a chat session
-const sessionSchema = z.object({
-  sessionId: z.string().optional(),
-  model: z.string().optional().default('UW-Q18WUZA'),
-  language: z.enum(['en', 'hi', 'ta']).optional().default('en'),
-  appliance: z.string().optional().default('air-conditioner'),
-});
+const sessionSchema = z
+  .object({
+    sessionId: z.union([z.string(), z.null(), z.undefined()]).optional().transform((v) => (v && v.trim() ? v.trim() : undefined)),
+    model: z.union([z.string(), z.null(), z.undefined()]).optional().transform((v) => (v && v.trim() ? v.trim() : 'UW-Q18WUZA')),
+    language: z.union([z.string(), z.null(), z.undefined()]).optional().transform((v) => {
+      if (!v) return 'en';
+      const s = v.toLowerCase();
+      if (s.startsWith('ta')) return 'ta';
+      if (s.startsWith('hi')) return 'hi';
+      return 'en';
+    }),
+    appliance: z.union([z.string(), z.null(), z.undefined()]).optional().transform((v) => (v && v.trim() ? v.trim() : 'air-conditioner')),
+  })
+  .passthrough()
+  .optional()
+  .nullable();
 
 router.post('/session', (req: Request, res: Response) => {
   try {
-    const parsed = sessionSchema.safeParse(req.body);
+    const rawBody = req.body || {};
+    const parsed = sessionSchema.safeParse(rawBody);
     if (!parsed.success) {
+      console.error('[API /api/chat/session] Validation error:', parsed.error, 'Body:', req.body);
       return res.status(400).json({ error: 'Invalid session payload', details: parsed.error });
     }
 
+    const data = parsed.data || {
+      sessionId: undefined,
+      model: 'UW-Q18WUZA',
+      language: 'en',
+      appliance: 'air-conditioner',
+    };
+
     const session = chatService.getOrCreateSession(
-      parsed.data.sessionId,
-      parsed.data.model,
-      parsed.data.language,
-      parsed.data.appliance
+      data.sessionId,
+      data.model,
+      data.language,
+      data.appliance,
+      rawBody.currentUser
     );
 
     return res.json({ session });
@@ -34,13 +54,15 @@ router.post('/session', (req: Request, res: Response) => {
 });
 
 // POST /api/chat/message — Send a message or trigger an option
-const messageSchema = z.object({
-  sessionId: z.string(),
-  text: z.string().optional(),
-  optionIndex: z.number().int().optional(),
-  issueId: z.string().optional(),
-  specialAction: z.string().optional(),
-});
+const messageSchema = z
+  .object({
+    sessionId: z.string(),
+    text: z.union([z.string(), z.null(), z.undefined()]).optional().transform((v) => (v !== null ? v : undefined)),
+    optionIndex: z.union([z.number().int(), z.null(), z.undefined()]).optional().transform((v) => (v !== null ? v : undefined)),
+    issueId: z.union([z.string(), z.null(), z.undefined()]).optional().transform((v) => (v !== null ? v : undefined)),
+    specialAction: z.union([z.string(), z.null(), z.undefined()]).optional().transform((v) => (v !== null ? v : undefined)),
+  })
+  .passthrough();
 
 router.post('/message', async (req: Request, res: Response) => {
   const parsed = messageSchema.safeParse(req.body);
@@ -54,6 +76,7 @@ router.post('/message', async (req: Request, res: Response) => {
       optionIndex: parsed.data.optionIndex,
       issueId: parsed.data.issueId,
       specialAction: parsed.data.specialAction,
+      currentUser: (req.body as any).currentUser,
     });
 
     return res.json(result);

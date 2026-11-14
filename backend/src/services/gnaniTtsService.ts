@@ -5,7 +5,8 @@
  * 1. Low-latency Server-Sent Events (SSE) streaming TTS (https://api.vachana.ai/api/v1/tts/sse)
  *    - Streams base64 audio chunks progressively as they are generated.
  *    - Supports instant abort / cancellation on user interruption (barge-in).
- * 2. Synchronous REST TTS (https://api.vachana.ai/api/v1/tts/inference)
+ * 2. Sentence-level streaming synthesis: progressively synthesizes sentences in sequence.
+ * 3. Synchronous REST TTS (https://api.vachana.ai/api/v1/tts/inference)
  *    - Generates complete audio WAV buffer.
  *
  * Model: timbre-v2.5 (default voice: Nalini)
@@ -31,9 +32,16 @@ export interface AudioChunkEvent {
   audioBase64: string;
 }
 
+export interface SentenceChunkEvent {
+  turnId: number;
+  sequenceNumber: number;
+  isFinal: boolean;
+  audioBase64: string;
+}
+
 export const gnaniTtsService = {
   /**
-   * Streams synthesized audio chunks via SSE.
+   * Streams synthesized audio chunks via SSE for a single text segment.
    * Calls onChunk callback progressively as chunks arrive.
    */
   streamSynthesize: async (
@@ -126,6 +134,21 @@ export const gnaniTtsService = {
         }
       }
 
+      // Flush remainder buffer if present
+      if (buffer.trim().startsWith('data:')) {
+        const jsonStr = buffer.trim().slice(5).trim();
+        try {
+          const data = JSON.parse(jsonStr);
+          if (data.audio) {
+            chunksCount++;
+            onChunk({
+              chunkIndex: data.chunk_index ?? chunksCount,
+              audioBase64: data.audio,
+            });
+          }
+        } catch {}
+      }
+
       return { success: true, chunksReceived: chunksCount };
     } catch (err: any) {
       if (err.name === 'AbortError') {
@@ -137,6 +160,49 @@ export const gnaniTtsService = {
         error: err.message || 'TTS streaming synthesis failed',
       };
     }
+  },
+
+  /**
+   * Sentence-level streaming synthesis: progressively synthesizes sentences in sequence.
+   * Emits chunks tagged with turnId and monotonic sequenceNumber.
+   */
+  streamSentenceSynthesis: async (
+    sentences: string[],
+    turnId: number,
+    onChunk: (chunk: SentenceChunkEvent) => void,
+    options: TtsSynthesisOptions = {}
+  ): Promise<{ success: boolean; totalChunks: number; error?: string }> => {
+    let globalSeq = 0;
+
+    for (let i = 0; i < sentences.length; i++) {
+      if (options.signal?.aborted) {
+        return { success: false, totalChunks: globalSeq, error: 'Cancelled by user interruption' };
+      }
+
+      const sentence = sentences[i];
+      const isLastSentence = i === sentences.length - 1;
+
+      const res = await gnaniTtsService.streamSynthesize(
+        sentence,
+        (chunk) => {
+          if (options.signal?.aborted) return;
+          globalSeq++;
+          onChunk({
+            turnId,
+            sequenceNumber: globalSeq,
+            isFinal: false,
+            audioBase64: chunk.audioBase64,
+          });
+        },
+        options
+      );
+
+      if (!res.success && res.error && !res.error.includes('cancelled')) {
+        return { success: false, totalChunks: globalSeq, error: res.error };
+      }
+    }
+
+    return { success: true, totalChunks: globalSeq };
   },
 
   /**

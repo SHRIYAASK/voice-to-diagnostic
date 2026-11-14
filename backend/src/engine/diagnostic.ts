@@ -69,7 +69,10 @@ function resolveConclusion(tree: DiagnosticTree, conclusionId: string): Diagnost
 
 // ── Public API ───────────────────────────────────────────────────────────────
 
-export function startSession(issueId: string, startNodeId?: string): { sessionId: string; step: DiagnosticStep } | { error: string } {
+export function startSession(
+  issueId: string,
+  startNodeId?: string
+): { sessionId: string; step: DiagnosticStep } | { error: string } {
   const tree = getTree(issueId);
   if (!tree) return { error: `No diagnostic tree found for issue "${issueId}"` };
 

@@ -66,3 +66,12 @@ next-env.d.ts
 Thumbs.db
 .vscode/
 .idea/
+
+# Test files and test suites
+tests/
+**/tests/
+*.test.ts
+*.test.js
+*.spec.ts
+*.spec.js
+

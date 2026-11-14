@@ -6,16 +6,16 @@ function findDataDir(): string {
     return path.resolve(process.env.DATA_DIR);
   }
   const candidates = [
-    path.resolve(process.cwd(), '../docs/lg-airconditioner'),
+    path.resolve(__dirname, '../../docs/lg-airconditioner'),
     path.resolve(process.cwd(), 'docs/lg-airconditioner'),
     path.resolve(__dirname, '../../../docs/lg-airconditioner'),
-    path.resolve(__dirname, '../../docs/lg-airconditioner'),
+    path.resolve(process.cwd(), '../docs/lg-airconditioner'),
     path.resolve(__dirname, '../docs/lg-airconditioner'),
   ];
   for (const c of candidates) {
     if (fs.existsSync(c)) return c;
   }
-  return path.resolve(process.cwd(), '../docs/lg-airconditioner');
+  return path.resolve(__dirname, '../../docs/lg-airconditioner');
 }
 
 const DATA_DIR = findDataDir();
@@ -70,6 +70,12 @@ export interface DiagnosticTree {
   conclusions: Record<string, ConclusionRecord>;
 }
 
+export interface GetTreeRequest {
+  issueId: string;
+  appliance?: string;
+  model?: string;
+}
+
 // ── Loaders ──────────────────────────────────────────────────────────────────
 
 let _errorCodes: ErrorCode[] | null = null;
@@ -102,8 +108,12 @@ export function getAllTrees(): Map<string, DiagnosticTree> {
   return _trees;
 }
 
-export function getTree(issueId: string): DiagnosticTree | undefined {
-  return getAllTrees().get(issueId.toUpperCase());
+export function getTree(request: GetTreeRequest): DiagnosticTree | undefined;
+export function getTree(issueId: string): DiagnosticTree | undefined;
+export function getTree(param: string | GetTreeRequest): DiagnosticTree | undefined {
+  const id = typeof param === 'string' ? param : param?.issueId;
+  if (!id) return undefined;
+  return getAllTrees().get(id.toUpperCase());
 }
 
 export function getMaintenanceText(): string {

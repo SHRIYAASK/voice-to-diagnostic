@@ -9,7 +9,7 @@
  *
  * Language Code:
  *    Defaults to 'en-IN' (English - India).
- *    Also supports 'hi-IN', 'ta-IN', 'te-IN', 'kn-IN', etc., or 'indic-auto'.
+ *    Supports all regional and global language codes dynamically.
  */
 
 import WebSocket from 'ws';
@@ -23,7 +23,7 @@ const STT_WS_URL = 'wss://api.vachana.ai/stt/v3/stream';
 const STT_REST_URL = 'https://api.vachana.ai/stt/v3';
 
 export interface SttSessionOptions {
-  languageCode?: string; // defaults to 'indic-auto' (Gnani Prisma automatic multilingual detection)
+  languageCode?: string; // defaults to 'en-IN' (English - India)
   sampleRate?: number;   // defaults to 16000
 }
 
@@ -36,14 +36,25 @@ export interface SttTranscriptData {
 
 /**
  * Resolves user/frontend language parameter to Gnani Prisma API language code.
- * Maps 'auto', 'indic-auto', or empty values to Gnani's official 'indic-auto' identifier.
+ * Supports 'indic-auto' for multilingual auto-detection, as well as dedicated regional locales.
  */
 export function resolveSttLanguage(lang?: string): string {
   const trimmed = (lang || '').trim().toLowerCase();
-  if (!trimmed || trimmed === 'auto' || trimmed === 'indic-auto') {
+  if (!trimmed || trimmed === 'auto' || trimmed === 'auto_detect' || trimmed === 'multilingual' || trimmed === 'indic-auto' || trimmed === 'auto_detect') {
     return 'indic-auto';
   }
-  return lang!.trim();
+  if (trimmed.startsWith('ta')) return 'ta-IN';
+  if (trimmed.startsWith('hi')) return 'hi-IN';
+  if (trimmed.startsWith('te')) return 'te-IN';
+  if (trimmed.startsWith('kn')) return 'kn-IN';
+  if (trimmed.startsWith('ml')) return 'ml-IN';
+  if (trimmed.startsWith('bn')) return 'bn-IN';
+  if (trimmed.startsWith('mr')) return 'mr-IN';
+  if (trimmed.startsWith('gu')) return 'gu-IN';
+  if (trimmed.startsWith('pa')) return 'pa-IN';
+  if (trimmed.startsWith('en')) return 'en-IN';
+  if (trimmed.includes('-')) return trimmed;
+  return `${trimmed}-IN`;
 }
 
 export class GnaniSttStreamingSession extends EventEmitter {
@@ -191,7 +202,7 @@ export const gnaniSttService = {
    */
   transcribeAudioBuffer: async (
     audioBuffer: Buffer,
-    languageCode: string = 'auto'
+    languageCode: string = 'en-IN'
   ): Promise<{ success: boolean; transcript: string; processingTime?: number; error?: string }> => {
     if (!GNANI_API_KEY) {
       return { success: false, transcript: '', error: 'GNANI_API_KEY is missing' };

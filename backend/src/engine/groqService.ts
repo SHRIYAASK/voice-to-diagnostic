@@ -38,7 +38,7 @@ const GROQ_API_KEY = process.env.GROQ_API_KEY;
 
 let _groqClient: Groq | null = null;
 if (GROQ_API_KEY && GROQ_API_KEY.startsWith('gsk_')) {
-  _groqClient = new Groq({ apiKey: GROQ_API_KEY });
+  _groqClient = new Groq({ apiKey: GROQ_API_KEY, timeout: 2500 });
 }
 
 // 16 Decision Trees Reference
@@ -305,8 +305,8 @@ export const groqService = {
     }
 
     // ── Fast Path 1: Yes / No Affirmative / Negative Matching ─────────────────
-    const isAffirmative = /\b(yes|yeah|yup|y|true|correct|right|already|already did|done|powers on|it is on|turned on|working|sure)\b/i.test(cleanLower);
-    const isNegative = /\b(no|nope|nah|n|false|off|not on|not working|not yet|didn't|haven't|completely off|dead|no display)\b/i.test(cleanLower);
+    const isAffirmative = /\b(yes|yeah|yup|y|true|correct|right|already|already did|done|powers on|it is on|turned on|working|sure|haan|ha|aama|aamanga|avunu|sari|chalu)\b/i.test(cleanLower);
+    const isNegative = /\b(no|nope|nah|n|false|off|not on|not working|not yet|didn't|haven't|completely off|dead|no display|nahi|illa|ledu)\b/i.test(cleanLower);
 
     if (isAffirmative && !isNegative) {
       const yesOpt = options.find((o) => /\b(yes|already|normal|on|working|powers on|restored)\b/i.test(o.label));
@@ -625,27 +625,44 @@ export const groqService = {
 
   /**
    * Localizes diagnostic text, questions, or conclusions into natural code-switched
-   * Tamil or Hindi with English technical loanwords using Qwen on Groq.
+   * target language (Tamil, Hindi, Telugu, Kannada, Malayalam, Bengali, etc.) with
+   * English technical loanwords using Qwen on Groq.
    */
   localizeText: async (
     text: string,
-    targetLanguage: 'ta' | 'hi' | 'en'
+    targetLanguage: string
   ): Promise<string> => {
-    if (targetLanguage === 'en' || !text || !_groqClient) return text;
+    const langKey = (targetLanguage || 'en').toLowerCase().split(/[-_]/)[0];
+    if (langKey === 'en' || !text || !_groqClient) return text;
     try {
-      const langDesc = targetLanguage === 'ta'
-        ? 'conversational code-switched Tamil (Tamil script + common English technical loanwords like AC, cooling, remote, filter, MCB, outdoor unit, compressor, fan, display, drain pipe). Avoid archaic/literary terms.'
-        : 'conversational code-switched Hindi (Hinglish with English technical loanwords). Avoid archaic terms.';
+      const langNames: Record<string, string> = {
+        ta: 'conversational code-switched Tamil (Tamil script + common English technical loanwords like AC, cooling, remote, filter, MCB, outdoor unit, compressor, fan, display, drain pipe). Avoid archaic/literary terms.',
+        hi: 'conversational code-switched Hindi (Hindi script/Hinglish with English technical loanwords). Avoid archaic terms.',
+        te: 'conversational code-switched Telugu (Telugu script with English technical loanwords). Avoid archaic terms.',
+        kn: 'conversational code-switched Kannada (Kannada script with English technical loanwords). Avoid archaic terms.',
+        ml: 'conversational code-switched Malayalam (Malayalam script with English technical loanwords). Avoid archaic terms.',
+        bn: 'conversational code-switched Bengali (Bengali script with English technical loanwords). Avoid archaic terms.',
+        mr: 'conversational code-switched Marathi (Marathi script with English technical loanwords). Avoid archaic terms.',
+        gu: 'conversational code-switched Gujarati (Gujarati script with English technical loanwords). Avoid archaic terms.',
+        pa: 'conversational code-switched Punjabi (Gurmukhi script with English technical loanwords). Avoid archaic terms.',
+      };
+
+      const langDesc = langNames[langKey] || `natural conversational ${targetLanguage} with common English technical loanwords`;
 
       const completion = await _groqClient.chat.completions.create({
         model: process.env.GROQ_MODEL || 'qwen/qwen3.8-27b',
         messages: [
           {
             role: 'system',
-            content: `You translate LG AC troubleshooting questions, symptoms, and instructions into ${langDesc}. ` +
-              `Make it natural, clear, and colloquial for an Indian homeowner. ` +
-              `DO NOT translate technical appliance nouns like AC, Remote, Filter, MCB, Outdoor unit, Compressor, Fan, Mode, Sensor, Drain pipe — keep them in English. ` +
-              `Output ONLY the translated text.`
+            content: `You are a helpful local human support executive for ApplianceCare AI translating LG AC diagnostic questions into natural spoken ${langDesc}.\n` +
+              `MANDATORY CODE-SWITCHED SPEAKING POLICY (NO STATIC EXAMPLES):\n` +
+              `1. Translate into natural, fluid everyday conversational code-switching (local language mixed with English).\n` +
+              `2. Never use formal, literary, pure, or textbook language. Refer to the unit conversationally as AC.\n` +
+              `3. Keep common appliance and technical nouns strictly in English: cooling, compressor, fan, remote, display, filter, outdoor unit, temperature, voltage, MCB, PCB, drain pipe.\n` +
+              `4. Use genuine everyday spoken sentence structures rather than translating English sentences word-for-word.\n` +
+              `5. Ask only ONE clear diagnostic question at a time. Keep it short, natural, and easy to understand when spoken.\n` +
+              `6. Do not invent symptoms or mention internal model numbers.\n` +
+              `Output ONLY the spoken translation.`
           },
           { role: 'user', content: text }
         ],

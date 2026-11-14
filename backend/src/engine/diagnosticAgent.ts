@@ -11,6 +11,9 @@
 
 import Groq from 'groq-sdk';
 import dotenv from 'dotenv';
+import { groqService } from './groqService';
+import { deterministicRouter } from './deterministicRouter';
+import { treeIndexService } from './treeIndexService';
 
 dotenv.config();
 
@@ -34,6 +37,7 @@ export type DiagnosticAgentAction =
       optionIndex: number;
       conversationalReply: string;
       reasoning: string;
+      preemptedObservations?: string[];
     }
   | {
       type: 'start_diagnostic_tree';
@@ -55,6 +59,7 @@ export type DiagnosticAgentAction =
       type: 'escalate_to_booking';
       reason: string;
       conversationalReply: string;
+      matchedCurrentOptionIndex?: number;
     }
   | {
       type: 'conversational_response';
@@ -64,31 +69,11 @@ export type DiagnosticAgentAction =
 const GROQ_API_KEY = process.env.GROQ_API_KEY;
 let _groqClient: Groq | null = null;
 if (GROQ_API_KEY && GROQ_API_KEY.startsWith('gsk_')) {
-  _groqClient = new Groq({ apiKey: GROQ_API_KEY });
+  _groqClient = new Groq({ apiKey: GROQ_API_KEY, timeout: 2500 });
 }
 
 // Model identifier on Groq LPU
-const ORCHESTRATOR_MODEL = 'qwen/qwen3.8-27b';
-
-// Available Diagnostic Trees reference for start_diagnostic_tree
-const TREE_CATALOG = [
-  { id: 'AC01', title: 'Cooling Performance / Not Cooling / Blowing Warm Air' },
-  { id: 'AC02', title: 'Power Failure / Not Turning On / No Display' },
-  { id: 'AC03', title: 'MCB Tripping / Circuit Breaker / Electrical Safety' },
-  { id: 'AC04', title: 'Indoor Water Leakage / Dripping from Unit' },
-  { id: 'AC05', title: 'Abnormal Odor / Bad Smell / Burning Smell' },
-  { id: 'AC06', title: 'Abnormal Noise / Vibration / Rattling' },
-  { id: 'AC07', title: 'Airflow / Fan Blower Issues' },
-  { id: 'AC08', title: 'Remote Control Malfunction / Remote Not Working' },
-  { id: 'AC09', title: 'Ice Formation / Pipe Freezing / Frost' },
-  { id: 'AC10', title: 'Compressor Frequent Cycling / Starting and Stopping' },
-  { id: 'AC11', title: 'Display / LED Lights Blinking' },
-  { id: 'AC12', title: 'Air Filter Cleaning & Maintenance' },
-  { id: 'AC13', title: 'Temperature Sensor / Thermistor Malfunction' },
-  { id: 'AC14', title: 'Cabinet / Front Grille Physical Enclosure' },
-  { id: 'AC15', title: 'Smart Connectivity / LG ThinQ Wi-Fi Setup' },
-  { id: 'AC16', title: 'Hardware Failure / Emergency Escalation' },
-];
+const ORCHESTRATOR_MODEL = process.env.GROQ_MODEL || 'llama-3.3-70b-versatile';
 
 /**
  * Builds the native function tool definitions for Groq Chat Completions
@@ -111,68 +96,73 @@ function buildTools(hasActiveTree: boolean): Groq.Chat.Completions.ChatCompletio
             },
             conversational_reply: {
               type: 'string',
-              description: 'A warm, empathetic, natural acknowledgment of what the user observed (e.g. "I understand your AC is turning on and lights are visible, but it\'s blowing warm air."). Do NOT mention option numbers or indices.',
+              description: 'A warm, empathetic, natural human acknowledgment of what the user observed (e.g. "Got it, no lights are visible on the display." or "Understood, your appliance is not cooling."). NEVER use repetitive templates or generic filler phrases. Do NOT mention option numbers or indices.',
             },
             reasoning: {
               type: 'string',
-              description: 'Brief technical explanation of why this option matches the user\'s spoken or typed symptom.',
+              description: 'Brief explanation of why this option matches the user\'s spoken or typed symptom.',
+            },
+            preempted_observations: {
+              type: 'array',
+              items: { type: 'string' },
+              description: 'Any additional troubleshooting facts or observations the user explicitly mentioned in this utterance that answer upcoming questions.',
             },
           },
           required: ['option_index', 'conversational_reply'],
         },
       },
     });
-
-    tools.push({
-      type: 'function',
-      function: {
-        name: 'ask_diagnostic_clarification',
-        description: 'Ask the user a conversational clarification question when their response is completely unclear, ambiguous, or lacks necessary diagnostic details for the current question.',
-        parameters: {
-          type: 'object',
-          properties: {
-            clarification_question: {
-              type: 'string',
-              description: 'A polite, natural question clarifying what specific symptom or state needs to be checked, without presenting buttons.',
-            },
-            explanation: {
-              type: 'string',
-              description: 'Why the user response requires clarification.',
-            },
-          },
-          required: ['clarification_question'],
-        },
-      },
-    });
-  } else {
-    tools.push({
-      type: 'function',
-      function: {
-        name: 'start_diagnostic_tree',
-        description: 'Start a specific diagnostic tree based on the user\'s stated issue or symptom.',
-        parameters: {
-          type: 'object',
-          properties: {
-            tree_id: {
-              type: 'string',
-              description: 'The ID of the diagnostic tree to start (e.g. "AC01" for cooling issues, "AC04" for water leakage).',
-            },
-            conversational_reply: {
-              type: 'string',
-              description: 'Warm, natural acknowledgment confirming the symptom and introducing the guided troubleshooting.',
-            },
-            reasoning: {
-              type: 'string',
-              description: 'Why this diagnostic tree was selected for the user\'s symptom.',
-            },
-          },
-          required: ['tree_id', 'conversational_reply'],
-        },
-      },
-    });
   }
 
+  // start_diagnostic_tree is available in all states (starts initial tree or switches tree on symptom correction)
+  tools.push({
+    type: 'function',
+    function: {
+      name: 'start_diagnostic_tree',
+      description: 'Start or switch to a specific diagnostic tree based on the user\'s stated issue or corrected symptom (e.g. "AC03" for MCB tripping, "AC01" for cooling issues, "AC04" for water leakage). Call this whenever the user introduces or corrects to a different problem.',
+      parameters: {
+        type: 'object',
+        properties: {
+          tree_id: {
+            type: 'string',
+            description: 'The ID of the diagnostic tree to start or switch to (e.g. "AC03" for MCB tripping, "AC01" for cooling issues, "AC04" for water leakage).',
+          },
+          conversational_reply: {
+            type: 'string',
+            description: 'Warm, natural acknowledgment confirming the symptom and introducing the guided troubleshooting.',
+          },
+          reasoning: {
+            type: 'string',
+            description: 'Why this diagnostic tree was selected for the user\'s symptom.',
+          },
+        },
+        required: ['tree_id', 'conversational_reply'],
+      },
+    },
+  });
+
   // Universal tools available in all states
+  tools.push({
+    type: 'function',
+    function: {
+      name: 'ask_diagnostic_clarification',
+      description: 'Ask the user a conversational clarification question when their response is unclear, ambiguous, audio trouble (e.g. "cannot hear you"), or lacks necessary diagnostic details.',
+      parameters: {
+        type: 'object',
+        properties: {
+          clarification_question: {
+            type: 'string',
+            description: 'A polite, natural question clarifying what specific symptom or state needs to be checked, without presenting buttons.',
+          },
+          explanation: {
+            type: 'string',
+            description: 'Why the user response requires clarification.',
+          },
+        },
+        required: ['clarification_question'],
+      },
+    },
+  });
   tools.push({
     type: 'function',
     function: {
@@ -199,17 +189,21 @@ function buildTools(hasActiveTree: boolean): Groq.Chat.Completions.ChatCompletio
     type: 'function',
     function: {
       name: 'escalate_to_booking',
-      description: 'Trigger technician booking when the user requests an authorized technician visit, schedule repair, schedule a service (e.g. "schedule service", "i schedule a service"), or professional assistance.',
+      description: 'Trigger technician booking when the user requests an authorized technician visit, schedule repair, schedule a service, call someone, or professional assistance at ANY point (including in compound utterances like "the filter is clean and book me a technician").',
       parameters: {
         type: 'object',
         properties: {
           reason: {
             type: 'string',
-            description: 'The reason why technician booking is being initiated.',
+            description: 'The reason why technician booking is being initiated, including any observations made by the customer.',
           },
           conversational_reply: {
             type: 'string',
-            description: 'Polite confirmation that we are opening technician booking with their details.',
+            description: 'Polite, empathetic confirmation acknowledging what they observed and confirming we are opening technician booking with their details.',
+          },
+          matched_current_option_index: {
+            type: 'number',
+            description: 'If the customer also answered the active troubleshooting question in the same breath (e.g., "filter is clean and book a tech"), the 0-based option index for that answer so it is recorded into history.',
           },
         },
         required: ['reason', 'conversational_reply'],
@@ -229,10 +223,38 @@ export const diagnosticAgent = {
     context: ActiveDiagnosticContext
   ): Promise<DiagnosticAgentAction> => {
     if (!_groqClient) {
-      console.warn('[DiagnosticAgent] Groq client not configured with valid API key.');
+      console.warn('[DiagnosticAgent] Groq client not configured or unavailable. Using deterministic fallback.');
+      if (context.activeTree && context.activeTree.options && context.activeTree.options.length > 0) {
+        const res = await groqService.resolveOption(
+          userText,
+          context.activeTree.questionText,
+          context.activeTree.options
+        );
+        if (res.selectedIndex !== null && res.selectedIndex >= 0 && res.selectedIndex < context.activeTree.options.length) {
+          const optLabel = context.activeTree.options[res.selectedIndex]?.label || 'your observation';
+          const cleanOpt = optLabel.toLowerCase().replace(/\s*\(.*\)/, '').replace(/^[0-9.]+\s*/, '');
+          return {
+            type: 'advance_diagnostic_step',
+            optionIndex: res.selectedIndex,
+            conversationalReply: `Got it, ${cleanOpt}.`,
+            reasoning: res.rationale,
+          };
+        }
+      }
+      if (!context.activeTree) {
+        const route = deterministicRouter.route(userText, { appliance_type: context.appliance, model: context.model });
+        if (route.targetId) {
+          return {
+            type: 'start_diagnostic_tree',
+            treeId: route.targetId,
+            conversationalReply: 'Let us diagnose this issue step by step.',
+            reasoning: route.rationale,
+          };
+        }
+      }
       return {
         type: 'conversational_response',
-        reply: `I received your message: "${userText}". How else can I assist with your LG air conditioner?`,
+        reply: `Could you please clarify what you are observing with your air conditioner?`,
       };
     }
 
@@ -241,28 +263,57 @@ export const diagnosticAgent = {
 
     let systemPrompt = `You are the core Diagnostic Orchestration Agent for LG Air Conditioners (ApplianceCare AI).
 Your purpose is to guide the user through accurate, safe, step-by-step diagnostic trees using structured tool calls.
-You speak warmly, professionally, and empathetically.
+You speak warmly, professionally, and empathetically.`;
 
-CRITICAL LANGUAGE & CODE-SWITCHING DIRECTIVE:
-- When the user speaks in Tamil (or Tanglish) or context.language is 'ta':
-  * You MUST formulate conversational_reply, clarification_question, and all direct dialogue in natural, modern conversational code-switched Tamil (Tamil script + common English loanwords).
-  * DO NOT use archaic/literary/pure Tamil words (e.g., avoid "வெளிப்புற அலகு காற்று சுழல்கிறதா").
-  * Use everyday colloquial phrasing: "Outdoor unit fan சுத்துதா, compressor sound கேக்குதா?", "Air filter-ல dust அடைச்சிருக்கா?", "MCB trip ஆகுதா?", "Remote check பண்ணுங்க".
-  * Common technical terms MUST stay in English: AC, Cooling, Remote, Display, Outdoor unit, Fan, Compressor, Filter, MCB, Power, Service, Drain pipe, Sensor, Mode.
-- When the user speaks in Hindi (or Hinglish) or context.language is 'hi':
-  * Reply in natural everyday code-switched Hindi (Hinglish with Devanagari script or conversational Latin script).
-- When the user speaks in English or context.language is 'en':
-  * Reply in English.
-- NEVER respond in plain English if the user spoke in Tamil or Hindi! Match the user's spoken language code-switch.
+    systemPrompt += `\n\nCRITICAL PRIORITY RULE — CUSTOMER SERVICE & TECHNICIAN BOOKING:
+- Customer service or technician booking requests ALWAYS take priority over optional troubleshooting questions.
+- If the customer asks for a technician, repair, service visit, or expert assistance at ANY point (e.g. "book me a technician", "please send someone", "need a repair", "schedule a service", "call a tech"), you MUST IMMEDIATELY call 'escalate_to_booking'.
+- If the customer also reported an answer to the current troubleshooting question in the same breath (e.g. "the air filter is clean and book me a technician"), capture that answer in 'matched_current_option_index', summarize it in 'reason', and acknowledge it warmly in 'conversational_reply'.
+- NEVER continue troubleshooting or force more questions once a technician is requested!
+
+CRITICAL CONVERSATIONAL & CHAIN-OF-THOUGHT RULES:
+1. Remember all customer answers: The customer may provide multiple details or compound thoughts in one sentence.
+2. Preempted observations: When the customer's utterance answers the current question AND provides details answering upcoming checks:
+   - Call 'advance_diagnostic_step' with the current question's option_index.
+   - Put the other confirmed facts into 'preempted_observations'.
+3. NATURAL, DYNAMIC ACKNOWLEDGMENT:
+   - Provide a concise, empathetic acknowledgment reflecting the customer's specific observation in natural language.
+   - NEVER use robotic canned templates or repeat static generic filler sentences across turns.
+   - Never output internal IDs, node names, or option numbers.
+4. One question at a time: The engine will ask the next unanswered question. Your 'conversational_reply' should ONLY acknowledge what the user said; the system will attach the next question.
+5. No technical jargon: Never mention internal IDs ("AC01", "REF01", "Tree ID", "Node ID"). Speak in plain, friendly customer language.
+
+CRITICAL PUBLIC-FACING NATURAL LANGUAGE DIRECTIVE:
+- NEVER mention internal diagnostic IDs in customer dialogue.
+- Refer to the appliance naturally as "your air conditioner" rather than spelling out internal codes.
+
+MANDATORY CODE-SWITCHED SPEAKING POLICY — APPLIANCECARE AI:
+You MUST ALWAYS speak in a natural, fluid conversational style with genuine everyday code-switching.
+This is a permanent speaking policy, not an optional language mode.
+
+Linguistic Guidelines (Zero Static Scripting):
+1. For Tamil-speaking customers, speak in natural everyday Tamil mixed with English (Tanglish). Never use formal, bookish, or literary Tamil.
+2. For Hindi-speaking customers, speak in natural everyday conversational Hindi mixed with English (Hinglish). Never use formal, pure, or textbook Hindi.
+3. For English-speaking customers, use natural Indian conversational English.
+4. Keep common appliance and technical terminology strictly in English, including cooling, compressor, fan, remote, display, filter, outdoor unit, temperature, voltage, MCB, PCB, and drain pipe. Embed them naturally in the local sentence structure.
+5. Formulate responses dynamically and contextually based on the customer's exact words. Never repeat static scripted phrases across turns.
+6. Acknowledge what the customer said with natural human empathy, and ask only ONE diagnostic question at a time.
+7. Keep responses short and easy to understand when spoken aloud.
+8. Do not announce the language you detected, and do not recite internal model numbers or technical IDs.
+9. If the customer explicitly asks for Tamil, Tanglish, Hindi, Hinglish, or English, change the base language dynamically while retaining natural code-switching.
+
+Technical and safety rules:
+- Preserve the meaning of diagnostic-tree questions.
+- Never invent symptoms, error codes or appliance specifications.
+- Never bypass the deterministic diagnostic engine or safety policies.
+- Do not provide unsafe electrical, refrigerant or high-voltage DIY instructions.
+
+Return only the response intended to be spoken aloud.
 
 CRITICAL INSTRUCTIONS:
 - You MUST ALWAYS call one of the available tools. Do not output plain text without a tool call.
-- Zero hardcoding: intelligently evaluate the user's natural language, colloquialisms, typos (e.g. "giveing", "wont cold"), and implied information.
-- In power checks: If the user says "the ac is not cooling" or "it's blowing warm air" or "fan is running", that IMPLIES the unit is powered on and display lights are working (Option 0 in a power check).
-- In remote checks (e.g. asking if AC starts blowing air when pressing remote): If the user says "no it doesn't blow air" or "no response" or "remote doesn't work", that matches the option for "No response to remote".
-- In symptoms checks: Map descriptions like "cools for 5 mins then stops" to intermittent cooling; "warm air only" to no cool air; "air is slow" to weak airflow.
-- If an error code is stated (e.g. "CH 05", "CH 01"), call lookup_error_code.
-- If the user asks to schedule a service, book a technician, request a visit, or have someone inspect/repair the unit (e.g. "schedule service", "i schedule a service", "book technician", "schedule a visit", "yes book it"), you MUST call escalate_to_booking.`;
+- Tool function names MUST match exact identifiers with underscores: 'advance_diagnostic_step', 'start_diagnostic_tree', 'ask_diagnostic_clarification', 'lookup_error_code', 'escalate_to_booking'. NEVER use spaces in function names.
+- Zero hardcoding: intelligently evaluate the user's natural language, colloquialisms, typos, and implied information.`;
 
     if (hasActiveTree && context.activeTree) {
       systemPrompt += `\n\nCURRENT ACTIVE DIAGNOSTIC CONTEXT:
@@ -274,13 +325,18 @@ ${context.activeTree.options.map((opt) => `${opt.index}: "${opt.label}"`).join('
 
 Rules for Active Tree:
 - If the user's statement matches or reasonably implies any of the above options, call 'advance_diagnostic_step' with that option_index.
-- If the user's statement is completely unrelated or impossible to map to any option, call 'ask_diagnostic_clarification'.`;
+- If the user corrects or changes their symptom (e.g. "sorry it's MCB tripping", "actually water is leaking", "fuse blown"), call 'start_diagnostic_tree' with the corresponding tree_id (e.g. "AC03" for MCB tripping, "AC04" for water leakage).
+- If the user's statement is completely unrelated or impossible to map to any option, call 'ask_diagnostic_clarification'.
+
+AVAILABLE DIAGNOSTIC TREES CATALOG (for cross-tree symptom switches):
+${treeIndexService.getCatalog(context.appliance).map((t) => `${t.id}: ${t.title}`).join('\n')}`;
     } else {
       systemPrompt += `\n\nAVAILABLE DIAGNOSTIC TREES CATALOG:
-${TREE_CATALOG.map((t) => `${t.id}: ${t.title}`).join('\n')}
+${treeIndexService.getCatalog(context.appliance).map((t) => `${t.id}: ${t.title}`).join('\n')}
 
 Rules for Starting Diagnosis:
-- If the user describes a symptom matching any tree (e.g., cooling trouble, water dripping, tripping breaker), call 'start_diagnostic_tree' with the corresponding tree_id.`;
+- If the user describes a symptom matching any tree, call 'start_diagnostic_tree' with the corresponding tree_id.
+- If the user's utterance is unclear, ambiguous, a greeting, audio trouble, or does not describe a clear symptom, call 'ask_diagnostic_clarification' to politely clarify what issue they are experiencing with their air conditioner.`;
     }
 
     const messages: Groq.Chat.Completions.ChatCompletionMessageParam[] = [
@@ -333,17 +389,23 @@ Rules for Starting Diagnosis:
           return {
             type: 'advance_diagnostic_step',
             optionIndex: typeof args.option_index === 'number' ? args.option_index : 0,
-            conversationalReply: args.conversational_reply || 'Understood, let us proceed to the next step.',
+            conversationalReply: args.conversational_reply || 'Understood, noted.',
             reasoning: args.reasoning || '',
+            preemptedObservations: Array.isArray(args.preempted_observations) ? args.preempted_observations : undefined,
           };
 
-        case 'start_diagnostic_tree':
+        case 'start_diagnostic_tree': {
+          let chosenTreeId = (args.tree_id || '').toUpperCase().trim();
+          if (!chosenTreeId.startsWith('AC')) {
+            chosenTreeId = 'AC01';
+          }
           return {
             type: 'start_diagnostic_tree',
-            treeId: args.tree_id || 'AC01',
+            treeId: chosenTreeId,
             conversationalReply: args.conversational_reply || 'Let us diagnose this issue step by step.',
             reasoning: args.reasoning || '',
           };
+        }
 
         case 'ask_diagnostic_clarification':
           return {
@@ -364,6 +426,7 @@ Rules for Starting Diagnosis:
             type: 'escalate_to_booking',
             reason: args.reason || 'User requested service booking',
             conversationalReply: args.conversational_reply || 'I am opening the technician booking form for you.',
+            matchedCurrentOptionIndex: typeof args.matched_current_option_index === 'number' ? args.matched_current_option_index : undefined,
           };
 
         default:
@@ -374,9 +437,89 @@ Rules for Starting Diagnosis:
       }
     } catch (err: any) {
       console.error('[DiagnosticAgent] Error during LLM tool call:', err.message);
+
+      // Deterministic Fallback 0: Check if booking is requested
+      if (/\b(book|schedule|call|send|arrange|need|want|request|get)\b[\s\S]{0,30}\b(technician|tech|mechanic|engineer|expert|service|repair|visit|appointment)\b/i.test(userText)) {
+        return {
+          type: 'escalate_to_booking',
+          reason: 'User requested service booking',
+          conversationalReply: 'Certainly, opening the technician booking form with your diagnostic findings attached.',
+        };
+      }
+
+      // Deterministic Fallback 0.5: Check if user is reporting or correcting to a different symptom tree
+      if (context.activeTree) {
+        const switchRoute = deterministicRouter.route(userText, { appliance_type: context.appliance, model: context.model });
+        const isCorrection = /\b(sorry|actually|wait|no wait|instead|not cooling|wrong issue|different issue)\b/i.test(userText);
+        if (
+          switchRoute.route === 'SYMPTOM_TROUBLESHOOTING' &&
+          switchRoute.targetId &&
+          switchRoute.targetId !== context.activeTree.issueId &&
+          (isCorrection || switchRoute.confidence >= 0.85)
+        ) {
+          return {
+            type: 'start_diagnostic_tree',
+            treeId: switchRoute.targetId,
+            conversationalReply: `Understood, let us troubleshoot the ${switchRoute.targetId} issue.`,
+            reasoning: switchRoute.rationale,
+          };
+        }
+      }
+
+      // Deterministic Fallback 1: Resolve active tree option if in active tree
+      if (context.activeTree && context.activeTree.options && context.activeTree.options.length > 0) {
+        try {
+          const fallbackRes = await groqService.resolveOption(
+            userText,
+            context.activeTree.questionText,
+            context.activeTree.options
+          );
+          if (fallbackRes.selectedIndex !== null && fallbackRes.selectedIndex >= 0 && fallbackRes.selectedIndex < context.activeTree.options.length) {
+            const optLabel = context.activeTree.options[fallbackRes.selectedIndex]?.label || 'your observation';
+            const cleanOpt = optLabel.toLowerCase().replace(/\s*\(.*\)/, '').replace(/^[0-9.]+\s*/, '');
+            const cleanLang = (context.language || 'en').toLowerCase().split(/[-_]/)[0];
+            let conversationalReply = `Got it, ${cleanOpt}.`;
+            if (cleanLang === 'ta') {
+              conversationalReply = `சரி, ${cleanOpt}.`;
+            } else if (cleanLang === 'hi') {
+              conversationalReply = `ठीक है, ${cleanOpt}.`;
+            } else if (cleanLang === 'te') {
+              conversationalReply = `సరే, ${cleanOpt}.`;
+            } else if (cleanLang === 'kn') {
+              conversationalReply = `ಸರಿ, ${cleanOpt}.`;
+            } else if (cleanLang === 'ml') {
+              conversationalReply = `ശരി, ${cleanOpt}.`;
+            } else if (cleanLang === 'bn') {
+              conversationalReply = `ঠিক আছে, ${cleanOpt}.`;
+            }
+            return {
+              type: 'advance_diagnostic_step',
+              optionIndex: fallbackRes.selectedIndex,
+              conversationalReply,
+              reasoning: fallbackRes.rationale || 'Resolved via deterministic option matcher fallback.',
+            };
+          }
+        } catch (fbErr) {
+          console.error('[DiagnosticAgent] Fallback option matching error:', fbErr);
+        }
+      }
+
+      // Deterministic Fallback 2: Route initial utterance if no active tree
+      if (!context.activeTree) {
+        const route = deterministicRouter.route(userText);
+        if (route.targetId && route.targetId.startsWith('AC')) {
+          return {
+            type: 'start_diagnostic_tree',
+            treeId: route.targetId,
+            conversationalReply: 'Let us diagnose this issue step by step.',
+            reasoning: route.rationale,
+          };
+        }
+      }
+
       return {
         type: 'conversational_response',
-        reply: 'I understand. Let us check the next step for your air conditioner.',
+        reply: 'Could you please describe what you are observing with your air conditioner?',
       };
     }
   },

@@ -26,6 +26,8 @@ interface VoiceCallModalProps {
   sessionId: string;
   selectedModel: string;
   selectedAppliance?: string;
+  initialLanguage?: string;
+  onLanguageDetected?: (lang: string) => void;
   onMessageReceived?: (msg: ChatMessageItem) => void;
   onTurnCompleted?: (userText: string, botMsg: ChatMessageItem) => void;
 }
@@ -38,13 +40,14 @@ export const VoiceCallModal: React.FC<VoiceCallModalProps> = ({
   sessionId,
   selectedModel,
   selectedAppliance = 'air-conditioner',
+  initialLanguage = 'en',
+  onLanguageDetected,
   onMessageReceived,
   onTurnCompleted,
 }) => {
   const [status, setStatus] = useState<VoiceStatus>('connecting');
   const [isMuted, setIsMuted] = useState(false);
-  const [language, setLanguage] = useState<'auto' | 'en-IN' | 'hi-IN' | 'ta-IN'>('auto');
-  const [detectedLanguage, setDetectedLanguage] = useState<'en' | 'hi' | 'ta' | null>(null);
+  const [detectedLanguage, setDetectedLanguage] = useState<string>(initialLanguage || 'en');
   const [userTranscript, setUserTranscript] = useState<string>('');
   const [isInterim, setIsInterim] = useState(false);
   const [assistantText, setAssistantText] = useState<string>('');
@@ -61,6 +64,7 @@ export const VoiceCallModal: React.FC<VoiceCallModalProps> = ({
   const isMutedRef = useRef<boolean>(false); // ref so onAudioData closure always reads current mute state
   const playbackStartTimeRef = useRef<number>(0);
   const consecutiveSpeechFramesRef = useRef<number>(0);
+  const processedChunksRef = useRef<Set<string>>(new Set());
 
   // Call timer effect
   useEffect(() => {
@@ -89,7 +93,7 @@ export const VoiceCallModal: React.FC<VoiceCallModalProps> = ({
     return () => {
       cleanupSession();
     };
-  }, [isOpen, language]);
+  }, [isOpen]);
 
   const cleanupSession = () => {
     if (recorderRef.current) {
@@ -122,9 +126,15 @@ export const VoiceCallModal: React.FC<VoiceCallModalProps> = ({
           playbackStartTimeRef.current = Date.now();
           consecutiveSpeechFramesRef.current = 0;
           setStatus('speaking');
+          if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+            wsRef.current.send(JSON.stringify({ type: 'playback_state', isPlaying: true }));
+          }
         } else {
           consecutiveSpeechFramesRef.current = 0;
           setStatus('listening');
+          if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+            wsRef.current.send(JSON.stringify({ type: 'playback_state', isPlaying: false }));
+          }
         }
       });
       await playerRef.current.unlock();
@@ -140,7 +150,7 @@ export const VoiceCallModal: React.FC<VoiceCallModalProps> = ({
           JSON.stringify({
             type: 'start_session',
             sessionId,
-            language,
+            language: detectedLanguage || initialLanguage || 'en',
             model: selectedModel,
             appliance: selectedAppliance,
           })
@@ -166,49 +176,65 @@ export const VoiceCallModal: React.FC<VoiceCallModalProps> = ({
         }
       };
 
-      // Initialize microphone recorder (continuous streaming, no muting on playback)
+      // Initialize microphone recorder with acoustic echo suppression & instant VAD barge-in
       const recorder = new AudioRecorder({
         sampleRate: 16000,
         onAudioData: (buffer) => {
           if (ws.readyState === WebSocket.OPEN && !isMutedRef.current) {
-            // Immediate local barge-in: If assistant is playing audio and user starts speaking,
-            // cut off local audio immediately after grace period with multi-frame confirmation
             const isPlaying = playerRef.current?.playing || (typeof window !== 'undefined' && window.speechSynthesis?.speaking);
-            if (isPlaying) {
-              const timeSinceStart = Date.now() - playbackStartTimeRef.current;
-              // Fast grace window: 120ms (instantaneous feel, absorbs initial buffer click)
-              if (timeSinceStart > 120) {
-                const pcm16 = new Int16Array(buffer);
-                let sumSquares = 0;
-                for (let i = 0; i < pcm16.length; i++) {
-                  const norm = pcm16[i] / 32768;
-                  sumSquares += norm * norm;
-                }
-                const rms = Math.sqrt(sumSquares / pcm16.length);
-                // Fast 2-tier detection:
-                // Tier 1: Firm speech (RMS > 0.08) triggers immediately on 1 frame (~128ms)
-                // Tier 2: Moderate speech (RMS > 0.05) triggers on 2 consecutive frames (~250ms)
-                const isSpeech = rms > 0.08 || (rms > 0.05 && consecutiveSpeechFramesRef.current >= 1);
-                if (rms > 0.05) {
-                  consecutiveSpeechFramesRef.current++;
-                } else {
-                  consecutiveSpeechFramesRef.current = 0;
-                }
-                if (isSpeech) {
-                  consecutiveSpeechFramesRef.current = 0;
-                  if (playerRef.current) {
-                    playerRef.current.stop();
-                  }
-                  if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-                    window.speechSynthesis.cancel();
-                  }
-                  ws.send(JSON.stringify({ type: 'interrupt' }));
-                  setStatus('listening');
-                }
-              }
-            } else {
-              consecutiveSpeechFramesRef.current = 0;
+
+            // Compute real-time RMS energy of the incoming 16-bit linear PCM frame
+            const int16 = new Int16Array(buffer);
+            let sumSquares = 0;
+            for (let i = 0; i < int16.length; i++) {
+              const norm = int16[i] / 32768;
+              sumSquares += norm * norm;
             }
+            const rms = Math.sqrt(sumSquares / int16.length);
+
+            // Acoustic Echo Gating & Barge-In Detection
+            if (isPlaying) {
+              const timeSincePlaybackStart = Date.now() - playbackStartTimeRef.current;
+              // Ignore initial acoustic transients for the first 300ms of playback unless loud deliberate speech
+              if (timeSincePlaybackStart < 300 && rms < 0.085) {
+                return;
+              }
+
+              // Normal human conversational speech into laptop microphone typically has RMS 0.045 - 0.100
+              // Laptop speaker leakage is typically < 0.035
+              if (rms > 0.048) {
+                consecutiveSpeechFramesRef.current++;
+              } else {
+                consecutiveSpeechFramesRef.current = 0;
+              }
+
+              // Confirmed user interruption: sustained voiced speech (>= 2 frames ~80ms) or loud burst (rms > 0.085)
+              if (consecutiveSpeechFramesRef.current >= 2 || rms > 0.085) {
+                console.log(`[VoiceModal BargeIn] Genuine user interruption confirmed (RMS=${rms.toFixed(4)}, frames=${consecutiveSpeechFramesRef.current}). Halting playback.`);
+                consecutiveSpeechFramesRef.current = 0;
+
+                // 1. Immediately halt all browser audio playback (< 50ms)
+                if (playerRef.current) {
+                  playerRef.current.stop();
+                }
+                if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+                  window.speechSynthesis.cancel();
+                }
+                setStatus('listening');
+
+                // 2. Notify backend to abort TTS streaming & cancel turn
+                ws.send(JSON.stringify({ type: 'barge_in', reason: 'client_vad' }));
+
+                // 3. Immediately forward this voiced frame so STT does not lose initial syllables!
+                ws.send(buffer);
+                return;
+              }
+
+              // During playback, gate speaker leakage so it does not feed into STT
+              return;
+            }
+
+            // Normal listening: forward audio frame to WebSocket
             ws.send(buffer);
           }
         },
@@ -234,28 +260,39 @@ export const VoiceCallModal: React.FC<VoiceCallModalProps> = ({
         activeTurnIdRef.current = data.turnId || 1;
         break;
 
-      case 'language_detected':
-        if (data.detectedLanguage) {
-          setDetectedLanguage(data.detectedLanguage === 'ta' ? 'ta' : data.detectedLanguage === 'hi' ? 'hi' : 'en');
+      case 'language_detected': {
+        const lang = data.detectedLanguage || data.language;
+        if (lang) {
+          const clean = lang.toLowerCase().split(/[-_]/)[0];
+          setDetectedLanguage(clean);
+          onLanguageDetected?.(clean);
         }
         break;
+      }
 
       case 'interim_transcript':
-        if (data.turnId >= activeTurnIdRef.current) {
-          if (playerRef.current?.playing) {
-            playerRef.current.stop();
-          }
-          if (typeof window !== 'undefined' && window.speechSynthesis?.speaking) {
-            window.speechSynthesis.cancel();
-          }
-          if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
-            wsRef.current.send(JSON.stringify({ type: 'interrupt' }));
+        if (data.turnId >= activeTurnIdRef.current && data.text) {
+          const isPlaying = playerRef.current?.playing || (typeof window !== 'undefined' && window.speechSynthesis?.speaking);
+          // If assistant is actively playing, don't trigger barge-in on short acoustic echo
+          if (isPlaying) {
+            const trimmed = data.text.trim().toLowerCase();
+            if (trimmed.length > 5 && !assistantText.toLowerCase().includes(trimmed)) {
+              if (playerRef.current) playerRef.current.stop();
+              if (typeof window !== 'undefined' && window.speechSynthesis?.speaking) {
+                window.speechSynthesis.cancel();
+              }
+              if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+                wsRef.current.send(JSON.stringify({ type: 'interrupt', reason: 'speech_transcript' }));
+              }
+              setStatus('listening');
+            }
           }
           setUserTranscript(data.text);
           setIsInterim(true);
-          setStatus('listening');
           if (data.detectedLanguage) {
-            setDetectedLanguage(data.detectedLanguage === 'ta' ? 'ta' : data.detectedLanguage === 'hi' ? 'hi' : 'en');
+            const clean = data.detectedLanguage.toLowerCase().split(/[-_]/)[0];
+            setDetectedLanguage(clean);
+            onLanguageDetected?.(clean);
           }
         }
         break;
@@ -276,9 +313,21 @@ export const VoiceCallModal: React.FC<VoiceCallModalProps> = ({
           lastUserTextRef.current = data.text;
           setStatus('processing');
           if (data.detectedLanguage) {
-            setDetectedLanguage(data.detectedLanguage === 'ta' ? 'ta' : data.detectedLanguage === 'hi' ? 'hi' : 'en');
+            const clean = data.detectedLanguage.toLowerCase().split(/[-_]/)[0];
+            setDetectedLanguage(clean);
+            onLanguageDetected?.(clean);
           }
         }
+        break;
+
+      case 'bot_turn_start':
+        if (data.turnId) {
+          activeTurnIdRef.current = data.turnId;
+          if (playerRef.current) {
+            playerRef.current.setActiveTurnId(data.turnId);
+          }
+        }
+        // Player's onStateChange callback handles setting status to 'speaking' once audio actually plays
         break;
 
       case 'processing_start':
@@ -316,17 +365,60 @@ export const VoiceCallModal: React.FC<VoiceCallModalProps> = ({
         break;
 
       case 'audio_chunk':
+      case 'tts_audio_chunk': {
         // If audio chunk from a NEW turn arrives, immediately purge residual audio from old turn!
-        if (data.turnId > activeTurnIdRef.current) {
-          activeTurnIdRef.current = data.turnId;
+        const chunkTurn = data.turnId || activeTurnIdRef.current;
+        const seq = data.sequenceNumber || data.chunkIndex || 0;
+        const chunkKey = `${chunkTurn}:${seq}`;
+
+        // Deduplicate if backend sent both tts_audio_chunk and legacy audio_chunk
+        if (processedChunksRef.current.has(chunkKey)) {
+          break;
+        }
+        processedChunksRef.current.add(chunkKey);
+        if (processedChunksRef.current.size > 200) {
+          const firstKey = processedChunksRef.current.values().next().value;
+          if (firstKey) processedChunksRef.current.delete(firstKey);
+        }
+
+        if (chunkTurn > activeTurnIdRef.current) {
+          activeTurnIdRef.current = chunkTurn;
           if (playerRef.current) {
-            playerRef.current.stop();
+            playerRef.current.setActiveTurnId(chunkTurn);
           }
         }
-        if (data.turnId >= activeTurnIdRef.current && data.audio) {
+        const b64Payload = data.audioBase64 || data.audio;
+        if (chunkTurn >= activeTurnIdRef.current && b64Payload) {
           if (playerRef.current) {
-            playerRef.current.enqueueBase64(data.audio);
+            playerRef.current.enqueueBase64(b64Payload, chunkTurn);
           }
+        }
+        break;
+      }
+
+      case 'stop_playback':
+        if (playerRef.current) {
+          playerRef.current.stop();
+        }
+        if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+          window.speechSynthesis.cancel();
+        }
+        setStatus('listening');
+        break;
+
+      case 'state_change':
+        if (data.currentState === 'SPEAKING') {
+          if (playerRef.current?.playing) {
+            setStatus('speaking');
+          }
+        } else if (data.currentState === 'PROCESSING' || data.currentState === 'REASONING') {
+          setStatus('processing');
+        } else if (data.currentState === 'LISTENING') {
+          if (!playerRef.current?.playing) {
+            setStatus('listening');
+          }
+        } else if (data.currentState === 'RECONNECTING') {
+          setStatus('connecting');
         }
         break;
 
@@ -338,9 +430,19 @@ export const VoiceCallModal: React.FC<VoiceCallModalProps> = ({
             window.speechSynthesis.cancel();
             const clean = assistantText.replace(/[*#`_📋⚠️🚨]/g, '').trim();
             const utterance = new SpeechSynthesisUtterance(clean);
-            utterance.lang = language === 'ta-IN' ? 'ta-IN' : language === 'hi-IN' ? 'hi-IN' : 'en-IN';
-            utterance.onstart = () => setStatus('speaking');
-            utterance.onend = () => setStatus('listening');
+            utterance.lang = 'en-IN';
+            utterance.onstart = () => {
+              setStatus('speaking');
+              if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+                wsRef.current.send(JSON.stringify({ type: 'playback_state', isPlaying: true }));
+              }
+            };
+            utterance.onend = () => {
+              setStatus('listening');
+              if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+                wsRef.current.send(JSON.stringify({ type: 'playback_state', isPlaying: false }));
+              }
+            };
             window.speechSynthesis.speak(utterance);
           }, 250);
         }
@@ -407,17 +509,18 @@ export const VoiceCallModal: React.FC<VoiceCallModalProps> = ({
     }
   };
 
-  const handleCycleLanguage = () => {
-    const nextLang = language === 'auto' ? 'en-IN' : language === 'en-IN' ? 'hi-IN' : language === 'hi-IN' ? 'ta-IN' : 'auto';
-    setLanguage(nextLang);
-    if (nextLang !== 'auto') {
-      setDetectedLanguage(null);
-    }
+  const handleSwitchLanguage = (targetLang?: string) => {
+    const nextLang =
+      targetLang ||
+      (detectedLanguage === 'auto' ? 'ta' : detectedLanguage === 'ta' ? 'hi' : detectedLanguage === 'hi' ? 'en' : 'auto');
+    setDetectedLanguage(nextLang);
+    onLanguageDetected?.(nextLang);
     if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
       wsRef.current.send(
         JSON.stringify({
           type: 'set_language',
-          language: nextLang,
+          language:
+            nextLang === 'auto' ? 'AUTO_DETECT' : nextLang === 'ta' ? 'ta-IN' : nextLang === 'hi' ? 'hi-IN' : 'en-IN',
         })
       );
     }
@@ -450,7 +553,9 @@ export const VoiceCallModal: React.FC<VoiceCallModalProps> = ({
                   LIVE
                 </span>
               </div>
-              <span className="text-[11px] text-slate-400">{selectedModel} • Dual Inverter AC</span>
+              <span className="text-[11px] text-slate-400">
+                {selectedModel} • Dual Inverter AC
+              </span>
             </div>
           </div>
 
@@ -460,27 +565,25 @@ export const VoiceCallModal: React.FC<VoiceCallModalProps> = ({
               {formatTimer(callDuration)}
             </span>
 
-            {/* Language toggle */}
+            {/* Multilingual Language selector / indicator */}
             <button
-              onClick={handleCycleLanguage}
-              className={`text-xs px-2.5 py-1 rounded-full border transition flex items-center gap-1.5 cursor-pointer ${
-                language === 'auto'
-                  ? 'bg-teal-950/70 text-teal-300 border-teal-500/50 hover:bg-teal-900/60'
-                  : 'bg-slate-800 hover:bg-slate-700 text-slate-200 border-slate-700'
-              }`}
-              title="Toggle Recognition Language: Auto (Detect) / English / Hindi / Tamil"
+              onClick={() => handleSwitchLanguage()}
+              className="text-xs px-2.5 py-1 rounded-full border flex items-center gap-1.5 bg-teal-950/70 text-teal-300 border-teal-500/50 hover:bg-teal-900/80 cursor-pointer transition-colors"
+              title="Click to toggle language: Auto (Multilingual) 🌐 / தமிழ் 🇮🇳 / हिन्दी 🇮🇳 / English 🇬🇧"
             >
               <Languages className="w-3.5 h-3.5 text-teal-400" />
               <span className="font-medium">
-                {language === 'auto'
-                  ? detectedLanguage
-                    ? `Auto (${detectedLanguage === 'ta' ? 'தமிழ்' : detectedLanguage === 'hi' ? 'हिन्दी' : 'EN'})`
-                    : 'Auto (Detect)'
-                  : language === 'en-IN'
-                  ? 'English'
-                  : language === 'hi-IN'
-                  ? 'हिन्दी'
-                  : 'தமிழ்'}
+                {detectedLanguage === 'auto' ? 'Auto 🌐' :
+                 detectedLanguage === 'ta' ? 'தமிழ் (ta-IN)' :
+                 detectedLanguage === 'hi' ? 'हिन्दी (hi-IN)' :
+                 detectedLanguage === 'te' ? 'తెలుగు (te-IN)' :
+                 detectedLanguage === 'kn' ? 'ಕನ್ನಡ (kn-IN)' :
+                 detectedLanguage === 'ml' ? 'മലയാളം (ml-IN)' :
+                 detectedLanguage === 'bn' ? 'বাংলা (bn-IN)' :
+                 detectedLanguage === 'mr' ? 'मराठी (mr-IN)' :
+                 detectedLanguage === 'gu' ? 'ગુજરાતી (gu-IN)' :
+                 detectedLanguage === 'pa' ? 'ਪੰਜਾਬੀ (pa-IN)' :
+                 detectedLanguage && detectedLanguage !== 'en' ? `${detectedLanguage.toUpperCase()}` : 'English (en-IN)'}
               </span>
             </button>
           </div>
@@ -560,14 +663,10 @@ export const VoiceCallModal: React.FC<VoiceCallModalProps> = ({
                 : 'Ready'}
             </span>
 
-            {language === 'auto' && (
-              <span className="text-[11px] text-teal-400/90 font-medium flex items-center gap-1">
-                <Sparkles className="w-3 h-3 text-teal-400" />
-                {detectedLanguage
-                  ? `Detected: ${detectedLanguage === 'ta' ? 'Tamil (தமிழ்)' : detectedLanguage === 'hi' ? 'Hindi (हिन्दी)' : 'English'}`
-                  : 'Auto-detecting language (English, हिन्दी, தமிழ்)...'}
-              </span>
-            )}
+            <span className="text-[11px] text-teal-400/90 font-medium flex items-center gap-1">
+              <Sparkles className="w-3 h-3 text-teal-400" />
+              English Voice Diagnostic (en-IN)
+            </span>
           </div>
         </div>
 
@@ -614,8 +713,8 @@ export const VoiceCallModal: React.FC<VoiceCallModalProps> = ({
             </div>
           ) : !userTranscript ? (
             <div className="flex flex-col items-center justify-center h-full text-center text-slate-500 py-6">
-              <p className="text-xs">Speak naturally in English or Hindi (e.g. &ldquo;AC is not cooling&rdquo; or &ldquo;पानी टपक रहा है&rdquo;)</p>
-              <p className="text-[11px] text-slate-600 mt-1">Gnani Prisma STT (Auto Detect) • HF Evon 30B • Gnani Timbre TTS</p>
+              <p className="text-xs">Speak naturally in English (e.g. &ldquo;AC is not cooling&rdquo; or &ldquo;Water is leaking from indoor unit&rdquo;)</p>
+              <p className="text-[11px] text-slate-600 mt-1">Gnani Prisma STT (English) • HF Evon 30B • Gnani Timbre TTS</p>
             </div>
           ) : null}
 

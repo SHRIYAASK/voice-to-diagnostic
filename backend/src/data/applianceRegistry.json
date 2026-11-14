@@ -1,0 +1,66 @@
+{
+  "appliances": [
+    {
+      "type": "air-conditioner",
+      "patterns": [
+        "\\b(ac|air\\s*conditioner|cooling\\s*unit|hvac|split\\s*unit)\\b"
+      ]
+    },
+    {
+      "type": "refrigerator",
+      "patterns": [
+        "\\b(refrigerator|fridge|freezer)\\b"
+      ]
+    },
+    {
+      "type": "washing-machine",
+      "patterns": [
+        "\\b(washing\\s*machine|washer|dryer|laundry)\\b"
+      ]
+    },
+    {
+      "type": "microwave",
+      "patterns": [
+        "\\b(microwave|micro\\s*wave|oven)\\b"
+      ]
+    },
+    {
+      "type": "water-purifier",
+      "patterns": [
+        "\\b(water\\s*purifier|purifier|ro\\s*filter)\\b"
+      ]
+    }
+  ],
+  "brands": [
+    { "brand": "LG", "patterns": ["\\b(lg|life'?s\\s*good)\\b"] },
+    { "brand": "Samsung", "patterns": ["\\b(samsung)\\b"] },
+    { "brand": "Daikin", "patterns": ["\\b(daikin)\\b"] },
+    { "brand": "Voltas", "patterns": ["\\b(voltas)\\b"] },
+    { "brand": "Hitachi", "patterns": ["\\b(hitachi)\\b"] },
+    { "brand": "Blue Star", "patterns": ["\\b(blue\\s*star)\\b"] },
+    { "brand": "Carrier", "patterns": ["\\b(carrier)\\b"] },
+    { "brand": "Whirlpool", "patterns": ["\\b(whirlpool)\\b"] },
+    { "brand": "Lloyd", "patterns": ["\\b(lloyd)\\b"] },
+    { "brand": "Panasonic", "patterns": ["\\b(panasonic)\\b"] }
+  ],
+  "subtypes": [
+    { "subtype": "split", "patterns": ["\\b(split|dual\\s*inverter|inverter\\s*split)\\b"] },
+    { "subtype": "window", "patterns": ["\\b(window|window\\s*unit)\\b"] },
+    { "subtype": "cassette", "patterns": ["\\b(cassette|ceiling)\\b"] },
+    { "subtype": "tower", "patterns": ["\\b(tower|standing)\\b"] },
+    { "subtype": "inverter", "patterns": ["\\b(inverter|dual\\s*inverter)\\b"] },
+    { "subtype": "top-load", "patterns": ["\\b(top\\s*load)\\b"] },
+    { "subtype": "front-load", "patterns": ["\\b(front\\s*load)\\b"] },
+    { "subtype": "double-door", "patterns": ["\\b(double\\s*door|side\\s*by\\s*side)\\b"] },
+    { "subtype": "single-door", "patterns": ["\\b(single\\s*door)\\b"] }
+  ],
+  "locations": [
+    { "location": "indoor", "patterns": ["\\b(indoor|indoor\\s*unit|inside\\s*unit|blower|front\\s*panel|room\\s*unit)\\b"] },
+    { "location": "outdoor", "patterns": ["\\b(outdoor|outdoor\\s*unit|outside|compressor|condenser)\\b"] },
+    { "location": "remote", "patterns": ["\\b(remote|remote\\s*control|controller)\\b"] },
+    { "location": "display", "patterns": ["\\b(display|screen|indicator|led|lights?)\\b"] },
+    { "location": "pipes", "patterns": ["\\b(pipe|pipes|copper\\s*pipe|drain|drain\\s*pipe|hose)\\b"] },
+    { "location": "electrical", "patterns": ["\\b(mcb|breaker|socket|plug|switch|board|wiring|stabilizer)\\b"] }
+  ]
+}
+

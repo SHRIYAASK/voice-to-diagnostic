@@ -1,0 +1,86 @@
+{
+  "technicalTerms": {
+    "PCB": "P C B",
+    "MCB": "M C B",
+    "LED": "L E D",
+    "HVAC": "H VAC",
+    "DC": "D C",
+    "AC": "A C",
+    "BLDC": "B L D C",
+    "EEV": "E E V",
+    "OEM": "O E M",
+    "R32": "R thirty-two",
+    "R410A": "R four ten A",
+    "R22": "R twenty-two",
+    "VAD": "V A D",
+    "STT": "S T T",
+    "TTS": "T T S"
+  },
+  "applianceModels": {
+    "UW-Q18WUZA": "LG Dual Inverter Air Conditioner",
+    "MS-Q18YNZA": "LG Inverter Air Conditioner",
+    "GL-N292RDSY": "LG Smart Inverter Refrigerator",
+    "GL-D201ABCD": "LG Direct Cool Refrigerator"
+  },
+  "errorCodeRules": {
+    "prefix": "CH",
+    "spokenPrefix": "C H",
+    "specialCases": {
+      "CH01": "C H zero one",
+      "CH02": "C H zero two",
+      "CH03": "C H zero three",
+      "CH04": "C H zero four",
+      "CH05": "C H zero five",
+      "CH06": "C H zero six",
+      "CH07": "C H zero seven",
+      "CH08": "C H zero eight",
+      "CH09": "C H zero nine",
+      "CH10": "C H ten",
+      "CH12": "C H twelve",
+      "CH21": "C H twenty-one",
+      "CH22": "C H twenty-two",
+      "CH26": "C H twenty-six",
+      "CH29": "C H twenty-nine",
+      "CH32": "C H thirty-two",
+      "CH38": "C H thirty-eight",
+      "CH44": "C H forty-four",
+      "CH45": "C H forty-five",
+      "CH53": "C H fifty-three",
+      "CH67": "C H sixty-seven"
+    }
+  },
+  "abbreviations": {
+    "e.g.": "for example",
+    "i.e.": "that is",
+    "etc.": "and so forth",
+    "vs.": "versus",
+    "approx.": "approximately",
+    "min.": "minutes",
+    "sec.": "seconds",
+    "hrs.": "hours",
+    "deg.": "degrees",
+    "temp.": "temperature"
+  },
+  "currency": {
+    "₹": "rupees ",
+    "INR": "rupees "
+  },
+  "multilingual": {
+    "hi": {
+      "PCB": "पी सी बी",
+      "MCB": "एम सी बी",
+      "AC": "ए सी",
+      "compressor": "कम्प्रेसर",
+      "filter": "फ़िल्टर",
+      "technician": "तकनीशियन"
+    },
+    "ta": {
+      "PCB": "பி சி பி",
+      "MCB": "எம் சி பி",
+      "AC": "ஏ சி",
+      "compressor": "கம்ப்ரசர்",
+      "filter": "ஃபில்டர்",
+      "technician": "டெக்னீசியன்"
+    }
+  }
+}

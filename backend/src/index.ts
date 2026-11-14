@@ -17,6 +17,7 @@ import warrantyRouter from './routes/warranty';
 import techniciansRouter from './routes/technicians';
 import authRouter from './routes/auth';
 import { voiceSessionManager } from './services/voiceSessionManager';
+import { voiceMetrics } from './voice/voiceMetrics';
 import { hfEvonService } from './services/hfEvonService';
 
 const app = express();
@@ -75,6 +76,11 @@ app.get('/api/voice/status', async (_req, res) => {
   });
 });
 
+// Voice Agent Metrics & Observability
+app.get('/api/voice/metrics', (_req, res) => {
+  res.json(voiceMetrics.getSummary());
+});
+
 // Health check
 app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
@@ -98,6 +104,31 @@ wss.on('connection', (ws) => {
 });
 
 if (require.main === module) {
+  server.on('error', (err: any) => {
+    if (err.code === 'EADDRINUSE') {
+      console.error(`\n❌ [PORT CONFLICT] Port ${PORT} is already in use by another process.`);
+      console.error(`👉 To free port ${PORT}, run this command in PowerShell:`);
+      console.error(`   Stop-Process -Id (Get-NetTCPConnection -LocalPort ${PORT}).OwningProcess -Force\n`);
+      process.exit(1);
+    } else {
+      console.error('[Server Error]', err);
+      process.exit(1);
+    }
+  });
+
+  const cleanup = () => {
+    try {
+      wss.close();
+      server.close();
+    } catch {}
+    process.exit(0);
+  };
+  process.on('SIGINT', cleanup);
+  process.on('SIGTERM', cleanup);
+  process.once('SIGUSR2', () => {
+    cleanup();
+  });
+
   server.listen(PORT, () => {
     console.log(`✅ LG AC Diagnostic API & Voice WebSocket running on http://localhost:${PORT}`);
     console.log(`🎙️ Voice WebSocket listening on ws://localhost:${PORT}/api/voice`);

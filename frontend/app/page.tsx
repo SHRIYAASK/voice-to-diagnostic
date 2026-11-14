@@ -121,8 +121,10 @@ export default function Home() {
         {activeTab === 'diagnostic' && (
           <DiagnosticEngine
             onEscalateToBooking={handleEscalateToBooking}
+            onTicketCreated={handleTicketCreated}
             selectedModel={selectedModel}
             selectedAppliance={selectedAppliance}
+            currentUser={currentUser}
           />
         )}
 

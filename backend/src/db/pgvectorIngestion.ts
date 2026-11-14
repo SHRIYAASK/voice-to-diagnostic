@@ -140,7 +140,13 @@ export async function extractAndChunkPdf(pdfPath: string): Promise<DocumentChunk
  * Ingestion orchestrator: processes TXT + PDF and loads into pgvector & local cache
  */
 export async function ingestAllKnowledge(): Promise<IngestionResult> {
-  const dataDir = path.resolve(__dirname, '../../../docs/lg-airconditioner');
+  const candidates = [
+    path.resolve(__dirname, '../../docs/lg-airconditioner'),
+    path.resolve(process.cwd(), 'docs/lg-airconditioner'),
+    path.resolve(__dirname, '../../../docs/lg-airconditioner'),
+    path.resolve(process.cwd(), '../docs/lg-airconditioner'),
+  ];
+  const dataDir = candidates.find((c) => fs.existsSync(c)) || candidates[0];
   const pdfPath = path.join(dataDir, 'airconditioner-manual.pdf');
 
   console.log('🔄 [Ingestion] Starting ingestion of PDF manual and TXT files...');

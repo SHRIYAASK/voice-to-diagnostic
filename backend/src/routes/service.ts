@@ -60,6 +60,7 @@ export interface Ticket {
   scheduledDate?: string;
   scheduledSlot?: string;
   isAlternativeSlot?: boolean;
+  priority?: string;
   technicianNotes?: string;
 }
 
@@ -205,6 +206,84 @@ const bookSchema = z.object({
   problemDescription: z.string().optional(),
 });
 
+// ── Shared Service Ticket Creator (used by API and Chatbot) ───────────────────
+
+export interface CreateServiceTicketInput {
+  customerId?: string;
+  customerEmail?: string;
+  customerName: string;
+  contactNumber: string;
+  serviceAddress?: string;
+  address?: string;
+  city?: string;
+  pincode?: string;
+  email?: string;
+  acModel: string;
+  serialNumber?: string;
+  reportedIssue: string;
+  errorCode?: string;
+  probableCause?: string;
+  predictedParts?: any;
+  priority?: string;
+  diagnosticSummary?: string;
+  conclusionId?: string;
+  preferredDate?: string;
+  preferredTime?: string;
+  problemDescription?: string;
+  uploadedFile?: string;
+}
+
+export function createServiceTicket(input: CreateServiceTicketInput): { ticket: Ticket; appointment: any } {
+  const ticketId = `AC-SVC-${Date.now()}-${Math.floor(Math.random() * 1000).toString().padStart(3, '0')}`;
+  const computedAddress = input.serviceAddress ||
+    [input.address, input.city, input.pincode].filter(Boolean).join(', ') ||
+    'Not provided';
+
+  const prefDate = input.preferredDate || new Date().toISOString().split('T')[0];
+  const isElec = !!input.errorCode ||
+    (input.probableCause || '').toLowerCase().includes('inverter') ||
+    (input.reportedIssue || '').toLowerCase().includes('mcb');
+
+  const appointment = scheduler.bookAppointment({
+    ticketId,
+    preferredDate: prefDate,
+    preferredSlot: input.preferredTime,
+    isElectricalOrInverter: isElec,
+  });
+
+  const ticket: Ticket = {
+    ticketId,
+    status: 'assigned',
+    createdAt: new Date().toISOString(),
+    customerId: input.customerId,
+    customerEmail: input.customerEmail || input.email,
+    customerName: input.customerName,
+    contactNumber: input.contactNumber,
+    serviceAddress: computedAddress,
+    acModel: input.acModel || 'UW-Q18WUZA',
+    serialNumber: input.serialNumber,
+    reportedIssue: input.reportedIssue,
+    errorCode: input.errorCode,
+    diagnosticSummary: input.diagnosticSummary || input.problemDescription || input.probableCause,
+    conclusionId: input.conclusionId,
+    invoiceFile: input.uploadedFile,
+    assignedTechnician: {
+      id: appointment.technicianId,
+      name: appointment.technicianName,
+    },
+    scheduledDate: appointment.date,
+    scheduledSlot: appointment.slot,
+    isAlternativeSlot: appointment.isAlternativeSlot,
+    priority: input.priority || 'Medium',
+  };
+
+  tickets.set(ticketId, ticket);
+
+  console.log(`[SERVICE] Ticket created: ${ticketId} -> Customer: ${ticket.customerName} (${ticket.customerEmail || 'N/A'}) -> Assigned to ${appointment.technicianName} on ${appointment.date} (${appointment.slot})`);
+
+  return { ticket, appointment };
+}
+
 // ── POST /api/service/book ───────────────────────────────────────────────────
 
 router.post('/book', upload.any(), (req: Request, res: Response) => {
@@ -216,60 +295,18 @@ router.post('/book', upload.any(), (req: Request, res: Response) => {
     });
   }
 
-  const ticketId = `AC-SVC-${Date.now()}-${Math.floor(Math.random() * 1000).toString().padStart(3, '0')}`;
-  const computedAddress = parsed.data.serviceAddress ||
-    [parsed.data.address, parsed.data.city, parsed.data.pincode].filter(Boolean).join(', ') ||
-    'Not provided';
-
   const uploadedFile = (req.files && Array.isArray(req.files) && req.files.length > 0)
     ? (req.files as Express.Multer.File[])[0].filename
     : undefined;
 
-  // Assign one of the 10 technicians using scheduler
-  const prefDate = parsed.data.preferredDate || new Date().toISOString().split('T')[0];
-  const isElec = !!parsed.data.errorCode ||
-    (parsed.data.probableCause || '').toLowerCase().includes('inverter') ||
-    (parsed.data.reportedIssue || '').toLowerCase().includes('mcb');
-
-  const appointment = scheduler.bookAppointment({
-    ticketId,
-    preferredDate: prefDate,
-    preferredSlot: parsed.data.preferredTime,
-    isElectricalOrInverter: isElec,
+  const { ticket, appointment } = createServiceTicket({
+    ...parsed.data,
+    uploadedFile,
   });
-
-  const ticket: Ticket = {
-    ticketId,
-    status: 'assigned',
-    createdAt: new Date().toISOString(),
-    customerId: parsed.data.customerId,
-    customerEmail: parsed.data.customerEmail || parsed.data.email,
-    customerName: parsed.data.customerName,
-    contactNumber: parsed.data.contactNumber,
-    serviceAddress: computedAddress,
-    acModel: parsed.data.acModel,
-    serialNumber: parsed.data.serialNumber,
-    reportedIssue: parsed.data.reportedIssue,
-    errorCode: parsed.data.errorCode,
-    diagnosticSummary: parsed.data.diagnosticSummary || parsed.data.problemDescription || parsed.data.probableCause,
-    conclusionId: parsed.data.conclusionId,
-    invoiceFile: uploadedFile,
-    assignedTechnician: {
-      id: appointment.technicianId,
-      name: appointment.technicianName,
-    },
-    scheduledDate: appointment.date,
-    scheduledSlot: appointment.slot,
-    isAlternativeSlot: appointment.isAlternativeSlot,
-  };
-
-  tickets.set(ticketId, ticket);
-
-  console.log(`[SERVICE] Ticket created: ${ticketId} -> Customer: ${ticket.customerName} (${ticket.customerEmail || 'N/A'}) -> Assigned to ${appointment.technicianName} on ${appointment.date} (${appointment.slot})`);
 
   return res.status(201).json({
     success: true,
-    ticketId,
+    ticketId: ticket.ticketId,
     status: ticket.status,
     assignedTechnician: ticket.assignedTechnician,
     scheduledDate: ticket.scheduledDate,

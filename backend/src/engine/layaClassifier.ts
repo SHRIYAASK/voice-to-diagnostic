@@ -20,7 +20,7 @@ export interface ExtractedEntities {
 }
 
 export interface LayaClassificationResult {
-  intent_type: 'ERROR_CODE' | 'CRITICAL_SAFETY' | 'SYMPTOM_TREE' | 'TRIAGE_FALLBACK' | 'WARRANTY' | 'MAINTENANCE';
+  intent_type: 'ERROR_CODE' | 'CRITICAL_SAFETY' | 'SYMPTOM_TREE' | 'TRIAGE_FALLBACK' | 'WARRANTY' | 'MAINTENANCE' | 'UNKNOWN';
   target_tree_id: string;
   confidence: number;
   extracted_entities: ExtractedEntities;
@@ -302,7 +302,9 @@ export class LayaIntentClassifier {
         const matchedTokens = inputTokens.filter((w) => this.vocabulary.has(w));
 
         // If user input shares ZERO tokens with known knowledge base, drop confidence below 0.70
-        if (matchedTokens.length > 0) {
+        // Or if the ratio of matched tokens to total tokens is very low (< 0.4 for multi-word queries), treat as UNKNOWN
+        const matchRatio = matchedTokens.length / inputTokens.length;
+        if (matchedTokens.length > 0 && (inputTokens.length === 1 || matchRatio >= 0.4)) {
           const classifications = this.classifier.getClassifications(text);
 
           if (classifications && classifications.length > 0) {
@@ -313,6 +315,25 @@ export class LayaIntentClassifier {
               const runnerUp = classifications[1];
               const margin = Math.abs(topMatch.value - runnerUp.value);
               confidence = margin > 0.001 ? 0.88 : 0.74;
+
+              // If top predictions are too close to call and value is low, return UNKNOWN
+              if (margin < 0.0002 && topMatch.value < 0.01) {
+                return {
+                  intent_type: 'UNKNOWN',
+                  target_tree_id: 'AC16',
+                  confidence: 0.45,
+                  extracted_entities: {
+                    symptomPhrase: raw,
+                    language: detectedLanguage,
+                  },
+                };
+              }
+            }
+
+            // If margin between top and runner up is solid, confidence is high
+            // Otherwise, if absolute value is extremely tiny with minimal gap, drop to fallback
+            if (topMatch.value < 0.00005) {
+              confidence = 0.55;
             }
 
             // Confidence threshold enforcement (>= 0.70):

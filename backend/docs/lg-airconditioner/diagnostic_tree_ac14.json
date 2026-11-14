@@ -1,0 +1,116 @@
+{
+  "issue_id": "AC14",
+  "title": "Spare Parts & Accessories Request",
+  "start_node": "q1_requested_part",
+  "nodes": [
+    {
+      "id": "q1_requested_part",
+      "type": "question",
+      "text_en": "Which spare part or accessory do you need for your LG AC?",
+      "text_hi": "Aapko LG AC ke liye kaunsa spare part ya accessory chahiye?",
+      "options": [
+        {
+          "label": "Remote Control Handset",
+          "next_node": "q2_model_confirmation"
+        },
+        {
+          "label": "Air Filter Mesh (Anti-bacterial/HD)",
+          "next_node": "q2_model_confirmation"
+        },
+        {
+          "label": "Copper Piping Kit / Drain Pipe",
+          "conclusion": "diag_part_piping_kit"
+        },
+        {
+          "label": "Outdoor Wall Mounting Bracket",
+          "conclusion": "diag_part_mounting_bracket"
+        },
+        {
+          "label": "Other Electronic / Mechanical Part",
+          "next_node": "q3_warranty_check"
+        }
+      ]
+    },
+    {
+      "id": "q2_model_confirmation",
+      "type": "question",
+      "text_en": "Do you have the exact model number (e.g., UW-Q18WUZA, MS-Q18YNZA) from the side sticker?",
+      "text_hi": "Kya aapke paas AC ka exact model number likha hua hai?",
+      "options": [
+        {
+          "label": "Yes, model verified",
+          "next_node": "q3_warranty_check"
+        },
+        {
+          "label": "Not sure, need model identification guide",
+          "action": "instruct_locate_model_serial_sticker",
+          "next_node": "q3_warranty_check"
+        }
+      ]
+    },
+    {
+      "id": "q3_warranty_check",
+      "type": "question",
+      "text_en": "Is the AC within the 1-Year Comprehensive Warranty period or covered under AMC?",
+      "text_hi": "Kya AC 1 saal ki warranty ya AMC ke andar hai?",
+      "options": [
+        {
+          "label": "Yes, within active warranty (with invoice)",
+          "conclusion": "diag_warranty_part_dispatch"
+        },
+        {
+          "label": "No, out of warranty / purchased as paid spare",
+          "conclusion": "diag_chargeable_part_order"
+        }
+      ]
+    }
+  ],
+  "conclusions": {
+    "diag_warranty_part_dispatch": {
+      "probable_cause": "Warranty Replacement Part Request",
+      "confidence": 1.0,
+      "parts": [
+        "OEM Genuine Part under Warranty"
+      ],
+      "priority": "Medium",
+      "safety_flag": false,
+      "rag_query": "LG AC warranty spare part claim invoice verification",
+      "technician_note": "Validate customer purchase invoice and serial number in LG GSFS system."
+    },
+    "diag_chargeable_part_order": {
+      "probable_cause": "Out of Warranty Genuine Spare Part Order",
+      "confidence": 1.0,
+      "parts": [
+        "LG Genuine Spare Part"
+      ],
+      "priority": "Low",
+      "safety_flag": false,
+      "rag_query": "LG AC spare parts price list catalog",
+      "technician_note": "Generate quote with MRP and arrange dispatch or technician delivery."
+    },
+    "diag_part_piping_kit": {
+      "probable_cause": "Installation Copper Pipe Extension / Drain Hose Request",
+      "confidence": 0.95,
+      "parts": [
+        "Copper Tube 1/4 & 1/2 Pair 3M",
+        "Drain Hose 1/2-inch 5M"
+      ],
+      "priority": "Low",
+      "safety_flag": false,
+      "rag_query": "LG AC genuine copper pipe extension kit specifications",
+      "technician_note": "Ensure insulated copper tubes meet ASTM B280 pressure specifications."
+    },
+    "diag_part_mounting_bracket": {
+      "probable_cause": "Heavy-Duty Outdoor Stand / Vibration Bracket",
+      "confidence": 0.95,
+      "parts": [
+        "Outdoor Powder-Coated Bracket 2.0mm",
+        "Vibration Dampener Kit"
+      ],
+      "priority": "Low",
+      "safety_flag": false,
+      "rag_query": "LG AC outdoor heavy duty wall mounting stand bracket",
+      "technician_note": "Supply ISI standard galvanized powder-coated outdoor bracket."
+    }
+  }
+}

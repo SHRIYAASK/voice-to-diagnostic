@@ -1,0 +1,112 @@
+{
+  "issue_id": "AC16",
+  "title": "Technical Support & Escalation",
+  "start_node": "q1_troubleshooting_history",
+  "nodes": [
+    {
+      "id": "q1_troubleshooting_history",
+      "type": "question",
+      "text_en": "Have you already attempted self-troubleshooting steps without success?",
+      "text_hi": "Kya aap pehle hi troubleshooting steps try kar chuke hain par dikkat bani hui hai?",
+      "options": [
+        {
+          "label": "Yes, all basic checks failed",
+          "next_node": "q2_safety_critical_check"
+        },
+        {
+          "label": "No, this is my first time diagnosing",
+          "next_node": "q3_main_symptom_triage"
+        }
+      ]
+    },
+    {
+      "id": "q2_safety_critical_check",
+      "type": "question",
+      "text_en": "Is there any smoke, burning smell, exposed wiring, water near electrical sockets, or repeated breaker tripping?",
+      "text_hi": "Kya koi dhuan, jalne ki smell, nanga taar, socket ke paas paani ya baar-baar MCB trip hone ki dikkat hai?",
+      "options": [
+        {
+          "label": "YES - Critical Safety Risk Present",
+          "conclusion": "diag_emergency_safety_escalation"
+        },
+        {
+          "label": "No safety hazard, but product needs repair",
+          "next_node": "q4_service_preference"
+        }
+      ]
+    },
+    {
+      "id": "q3_main_symptom_triage",
+      "type": "question",
+      "text_en": "Which primary category best describes your issue?",
+      "text_hi": "Aapki dikkat kis category mein aati hai?",
+      "options": [
+        {
+          "label": "Cooling / Temperature issue",
+          "redirect_issue": "AC01"
+        },
+        {
+          "label": "Power / Not turning on",
+          "redirect_issue": "AC02"
+        },
+        {
+          "label": "Error code on display",
+          "redirect_issue": "AC03"
+        },
+        {
+          "label": "Water leaking",
+          "redirect_issue": "AC04"
+        }
+      ]
+    },
+    {
+      "id": "q4_service_preference",
+      "type": "question",
+      "text_en": "How would you like to proceed with LG Service Support?",
+      "text_hi": "Aap LG Service Support se kis tarah sampark karna chahte hain?",
+      "options": [
+        {
+          "label": "Book Technician Home Visit (Service Request)",
+          "conclusion": "diag_book_technician_visit"
+        },
+        {
+          "label": "Connect to LG WhatsApp / Call Support",
+          "conclusion": "diag_connect_live_support"
+        }
+      ]
+    }
+  ],
+  "conclusions": {
+    "diag_emergency_safety_escalation": {
+      "probable_cause": "Critical Electrical / Thermal Safety Hazard Detected",
+      "confidence": 1.0,
+      "parts": [
+        "Emergency Service Priority Dispatch"
+      ],
+      "priority": "Critical",
+      "safety_flag": true,
+      "rag_query": "LG customer care emergency escalation fire safety protocol",
+      "technician_note": "PRIORITY 1 ESCALATION: Advise customer to keep MCB turned OFF. Dispatch technician within 2-4 hours."
+    },
+    "diag_book_technician_visit": {
+      "probable_cause": "Unresolved Hardware / Electrical Component Malfunction",
+      "confidence": 0.9,
+      "parts": [
+        "Standard Technician Diagnostic Toolkit"
+      ],
+      "priority": "High",
+      "safety_flag": false,
+      "rag_query": "LG AC home service ticket generation field dispatch",
+      "technician_note": "Generate structured service ticket with collected symptoms, error history, and model number."
+    },
+    "diag_connect_live_support": {
+      "probable_cause": "Customer Support Consultation Requested",
+      "confidence": 1.0,
+      "parts": [],
+      "priority": "Medium",
+      "safety_flag": false,
+      "rag_query": "LG India support helpline 1800-315-9999 WhatsApp service link",
+      "technician_note": "Provide LG Toll-Free 1800-315-9999 and WhatsApp Support +91-9711709999."
+    }
+  }
+}

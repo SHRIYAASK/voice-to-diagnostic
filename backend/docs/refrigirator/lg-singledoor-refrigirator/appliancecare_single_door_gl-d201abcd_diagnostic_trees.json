@@ -1,0 +1,1884 @@
+{
+  "schema_version": "1.0",
+  "title": "ApplianceCare AI — Refrigerator Diagnostic Knowledge Base — GL-D201ABCD",
+  "created_for": "Model-aware troubleshooting chatbot prototype",
+  "scope": "LG India public support FAQ and product pages reviewed on 2026-10-12, plus clearly-labelled proposed diagnostic branches.",
+  "model": {
+    "model": "GL-D201ABCD",
+    "name": "LG 185 L Direct Cool Single Door Refrigerator",
+    "type": "Direct Cool, single door",
+    "capacity_l": 185,
+    "compressor": "Reciprocating compressor",
+    "controls": "Manual temperature knob; direct-cool defrost button referenced in LG's general Direct Cool FAQ",
+    "source_url": "https://www.lg.com/in/refrigerators/single-door-refrigerators/gl-d201abcd/",
+    "support_type": "Direct Cool"
+  },
+  "official_sources": [
+    {
+      "title": "LG India Refrigerator Troubleshooting FAQ",
+      "url": "https://www.lg.com/in/faqs/",
+      "content_covered": [
+        "Direct Cool no cooling",
+        "Frost Free no cooling",
+        "low cooling",
+        "noise",
+        "vibration",
+        "leakage",
+        "ice formation",
+        "door opening/closing"
+      ],
+      "status": "Official LG FAQ"
+    },
+    {
+      "title": "LG GL-D201ABCD product page",
+      "url": "https://www.lg.com/in/refrigerators/single-door-refrigerators/gl-d201abcd/",
+      "content_covered": [
+        "185 L",
+        "Direct Cool",
+        "single door",
+        "manual knob/reciprocating compressor specs on product page"
+      ],
+      "status": "Official LG product page"
+    },
+    {
+      "title": "LG GL-N292RDSY product page",
+      "url": "https://www.lg.com/in/refrigerators/double-door-refrigerators/gl-n292rdsy/",
+      "content_covered": [
+        "242 L",
+        "Frost Free",
+        "double door",
+        "Smart Inverter Compressor"
+      ],
+      "status": "Official LG product page"
+    }
+  ],
+  "global_rules": [
+    "Ask one diagnostic question at a time.",
+    "Support selectable answers and natural-language/free-text responses.",
+    "If the answer is uncertain, offer an 'I'm not sure' branch rather than guessing.",
+    "Use model-specific controls only after matching the full model code.",
+    "Never claim a compressor, thermostat, PCB, refrigerant system, or sensor has failed solely from a symptom.",
+    "Do not tell customers to open panels, handle wiring, bypass protection, remove electrical covers, or manipulate refrigerant.",
+    "If burning smell, smoke, sparks, damaged cable, repeated breaker trip, or water near electrical parts is reported, stop routine troubleshooting and escalate.",
+    "For persistent symptoms after the official safe checks, route to authorized service.",
+    "The LG FAQ's stabilizer wattage recommendations are not hard-coded as a chatbot instruction; verify product and installation requirements before recommending accessories.",
+    "Question wording, aliases, and branching order marked proposed are chatbot design suggestions, not a verbatim LG chatbot script."
+  ],
+  "scenario_count": 15,
+  "scenarios": [
+    {
+      "id": "REF01",
+      "title": "No cooling at all",
+      "severity": "high",
+      "questions": [
+        {
+          "question_id": "GL-D201ABCD_REF01_q1_power",
+          "text": "Is the refrigerator receiving power?",
+          "expected_answers": [
+            "Yes",
+            "No",
+            "Not sure"
+          ],
+          "branch_by_answer": {
+            "Yes": "GL-D201ABCD_REF01_q2_light",
+            "No": "power_off",
+            "Not sure": "check_power_safe"
+          },
+          "response_type": "single_select",
+          "accept_free_text": true,
+          "normalize_synonyms": true
+        },
+        {
+          "question_id": "GL-D201ABCD_REF01_q2_light",
+          "text": "Does the interior light or display turn on when the door is opened?",
+          "expected_answers": [
+            "Yes",
+            "No",
+            "Not sure"
+          ],
+          "branch_by_answer": {
+            "Yes": "GL-D201ABCD_REF01_q3_control",
+            "No": "check_power_safe",
+            "Not sure": "check_power_safe"
+          },
+          "response_type": "single_select",
+          "accept_free_text": true,
+          "normalize_synonyms": true
+        },
+        {
+          "question_id": "GL-D201ABCD_REF01_q3_control",
+          "text": "Is the temperature control set to a cooling setting rather than OFF?",
+          "expected_answers": [
+            "Yes",
+            "No",
+            "Not sure"
+          ],
+          "branch_by_answer": {
+            "Yes": "GL-D201ABCD_REF01_q4_recent",
+            "No": "set_control",
+            "Not sure": "show_control_manual"
+          },
+          "response_type": "single_select",
+          "accept_free_text": true,
+          "normalize_synonyms": true
+        },
+        {
+          "question_id": "GL-D201ABCD_REF01_q4_recent",
+          "text": "Was the refrigerator recently plugged in, moved, or restarted after a power cut?",
+          "expected_answers": [
+            "Yes",
+            "No",
+            "Not sure"
+          ],
+          "branch_by_answer": {
+            "Yes": "allow_stabilization",
+            "No": "GL-D201ABCD_REF01_q5_cooling",
+            "Not sure": "GL-D201ABCD_REF01_q5_cooling"
+          },
+          "response_type": "single_select",
+          "accept_free_text": true,
+          "normalize_synonyms": true
+        },
+        {
+          "question_id": "GL-D201ABCD_REF01_q5_cooling",
+          "text": "After correcting the setting and allowing time for cooling, is it cooling now?",
+          "expected_answers": [
+            "Yes",
+            "Partially",
+            "No"
+          ],
+          "branch_by_answer": {
+            "Yes": "resolved",
+            "Partially": "continue_low_cooling",
+            "No": "service_escalation"
+          },
+          "response_type": "single_select",
+          "accept_free_text": true,
+          "normalize_synonyms": true
+        }
+      ],
+      "source_basis": "LG FAQ has separate no-cooling advice for Direct Cool and Frost Free: temperature control not OFF; Direct Cool defrost button may be pressed; set temperature appropriately; low-voltage advice appears on LG's FAQ. Stabilizer sizing is not automatically recommended here because installation requirements must be verified for the exact model.",
+      "source_status": "Official FAQ basis; question sequence and some branches are proposed chatbot logic.",
+      "model_code": "GL-D201ABCD",
+      "appliance": "refrigerator",
+      "model_name": "LG 185 L Direct Cool Single Door Refrigerator",
+      "model_type": "Direct Cool, single door",
+      "start_question_id": "GL-D201ABCD_REF01_q1_power",
+      "source_urls": [
+        "https://www.lg.com/in/faqs/",
+        "https://www.lg.com/in/refrigerators/single-door-refrigerators/gl-d201abcd/"
+      ],
+      "brand_support_url": "https://www.lg.com/in/support/",
+      "model_specific_notes": "Direct Cool branch: manual temperature knob and defrost-related prompts apply only where present on this exact unit. Confirm all control labels against the user manual.",
+      "branch_actions": {
+        "power_off": "Ask customer to confirm the wall switch/socket is on and the plug is firmly seated only if safely accessible. Do not ask them to open electrical parts. If outlet or cable is damaged, stop and call a qualified electrician/service.",
+        "check_power_safe": "Check the wall switch and whether power is available in the home, without touching damaged wiring. If the socket/cable is hot, sparking, wet, or damaged, stop use and escalate.",
+        "set_control": "For GL-D201ABCD, set the temperature knob to a normal cooling setting; LG's general Direct Cool FAQ recommends High/7 for no-cooling triage. Do not apply this knob instruction to a different control layout.",
+        "show_control_manual": "Ask the customer to check the exact model's user manual or send a photo of the control setting; don't guess the control positions.",
+        "allow_stabilization": "Keep doors closed and allow the appliance time to stabilize after setup or a power interruption. If cooling does not return, continue diagnosis.",
+        "q5_cooling": "Continue based on the answer; do not infer a specific component failure from this symptom alone.",
+        "resolved": "Confirm stable cooling and close the troubleshooting flow.",
+        "continue_low_cooling": "Open REF02 Low cooling.",
+        "service_escalation": "Recommend authorized service. Capture model, serial number, symptom onset, light/display status, settings, and any unusual sound."
+      },
+      "diagnosis_policy": "Do not claim a component has failed based only on symptom answers. Use 'possible cause' only when supported; escalate uncertain or persistent faults.",
+      "terminal_outcomes": [
+        {
+          "outcome": "resolved",
+          "assistant_action": "Confirm the issue is resolved and summarize safe steps completed."
+        },
+        {
+          "outcome": "service_escalation",
+          "assistant_action": "Offer authorized service; capture model, serial number, symptom, onset, checks tried, and safety flags."
+        },
+        {
+          "outcome": "safety_stop",
+          "assistant_action": "Stop routine troubleshooting; advise safe isolation only if safe and direct the customer to qualified help."
+        }
+      ]
+    },
+    {
+      "id": "REF02",
+      "title": "Low cooling / food not cold enough",
+      "severity": "medium",
+      "questions": [
+        {
+          "question_id": "GL-D201ABCD_REF02_q1_scope",
+          "text": "Which part is not cooling properly?",
+          "expected_answers": [
+            "Entire refrigerator",
+            "Main fridge compartment",
+            "Freezer compartment",
+            "Both fridge and freezer"
+          ],
+          "branch_by_answer": {
+            "Entire refrigerator": "GL-D201ABCD_REF02_q2_setting",
+            "Main fridge compartment": "GL-D201ABCD_REF02_q2_setting",
+            "Freezer compartment": "GL-D201ABCD_REF02_q2_freezer",
+            "Both fridge and freezer": "GL-D201ABCD_REF02_q2_setting"
+          },
+          "response_type": "single_select",
+          "accept_free_text": true,
+          "normalize_synonyms": true
+        },
+        {
+          "question_id": "GL-D201ABCD_REF02_q2_setting",
+          "text": "Is the temperature setting appropriate for the current weather and food load?",
+          "expected_answers": [
+            "Yes",
+            "No",
+            "Not sure"
+          ],
+          "branch_by_answer": {
+            "Yes": "GL-D201ABCD_REF02_q3_load",
+            "No": "adjust_setting",
+            "Not sure": "check_manual"
+          },
+          "response_type": "single_select",
+          "accept_free_text": true,
+          "normalize_synonyms": true
+        },
+        {
+          "question_id": "GL-D201ABCD_REF02_q3_load",
+          "text": "Is food packed tightly or are air passages blocked by food?",
+          "expected_answers": [
+            "Yes",
+            "No",
+            "Not sure"
+          ],
+          "branch_by_answer": {
+            "Yes": "rearrange_food",
+            "No": "GL-D201ABCD_REF02_q4_ventilation",
+            "Not sure": "inspect_food_spacing"
+          },
+          "response_type": "single_select",
+          "accept_free_text": true,
+          "normalize_synonyms": true
+        },
+        {
+          "question_id": "GL-D201ABCD_REF02_q4_ventilation",
+          "text": "Is the refrigerator covered, too close to a wall, or near a heat source?",
+          "expected_answers": [
+            "Yes",
+            "No",
+            "Not sure"
+          ],
+          "branch_by_answer": {
+            "Yes": "correct_placement",
+            "No": "GL-D201ABCD_REF02_q5_door",
+            "Not sure": "inspect_placement"
+          },
+          "response_type": "single_select",
+          "accept_free_text": true,
+          "normalize_synonyms": true
+        },
+        {
+          "question_id": "GL-D201ABCD_REF02_q5_door",
+          "text": "Does the door close completely and is the gasket clean?",
+          "expected_answers": [
+            "Yes",
+            "No",
+            "Not sure"
+          ],
+          "branch_by_answer": {
+            "Yes": "GL-D201ABCD_REF02_q6_resolution",
+            "No": "clean_reseat_door",
+            "Not sure": "inspect_door"
+          },
+          "response_type": "single_select",
+          "accept_free_text": true,
+          "normalize_synonyms": true
+        },
+        {
+          "question_id": "GL-D201ABCD_REF02_q6_resolution",
+          "text": "After these safe checks, has cooling improved?",
+          "expected_answers": [
+            "Yes",
+            "Partially",
+            "No"
+          ],
+          "branch_by_answer": {
+            "Yes": "resolved",
+            "Partially": "monitor_and_recheck",
+            "No": "service_escalation"
+          },
+          "response_type": "single_select",
+          "accept_free_text": true,
+          "normalize_synonyms": true
+        },
+        {
+          "question_id": "GL-D201ABCD_REF02_q2_freezer",
+          "text": "Is the freezer temperature control set appropriately for the season and load?",
+          "expected_answers": [
+            "Yes",
+            "No",
+            "Not sure"
+          ],
+          "branch_by_answer": {
+            "Yes": "GL-D201ABCD_REF02_q3_load",
+            "No": "adjust_freezer_setting",
+            "Not sure": "check_manual"
+          },
+          "response_type": "single_select",
+          "accept_free_text": true,
+          "normalize_synonyms": true
+        }
+      ],
+      "source_basis": "LG FAQ lists incorrect setting, insufficient ventilation, covered body, insufficient food spacing, door not fully closed, heat sources; Frost Free FAQ also mentions freezer controller setting. Direct Cool FAQ mentions periodic manual defrost.",
+      "source_status": "Official FAQ basis; diagnostic order and resolution checks are proposed.",
+      "model_code": "GL-D201ABCD",
+      "appliance": "refrigerator",
+      "model_name": "LG 185 L Direct Cool Single Door Refrigerator",
+      "model_type": "Direct Cool, single door",
+      "start_question_id": "GL-D201ABCD_REF02_q1_scope",
+      "source_urls": [
+        "https://www.lg.com/in/faqs/",
+        "https://www.lg.com/in/refrigerators/single-door-refrigerators/gl-d201abcd/"
+      ],
+      "brand_support_url": "https://www.lg.com/in/support/",
+      "model_specific_notes": "Direct Cool branch: manual temperature knob and defrost-related prompts apply only where present on this exact unit. Confirm all control labels against the user manual.",
+      "branch_actions": {
+        "adjust_setting": "Adjust the temperature setting according to the exact model manual and food load. LG's general FAQ recommends setting the Direct Cool knob according to weather/food load; do not blindly apply a numbered setting to another control.",
+        "check_manual": "Use the model-specific manual to identify the recommended setting; do not invent a temperature value if the control is not labelled.",
+        "rearrange_food": "Leave gaps between items and avoid blocking air outlets/airflow paths. Do not overload the freezer.",
+        "inspect_food_spacing": "Ask the customer to check for blocked vents or tightly packed food, then rearrange if needed.",
+        "correct_placement": "Keep the appliance uncovered, with ventilation clearance. LG's FAQ says at least 10 cm from rear and side walls; follow the model's installation manual if it specifies different clearances. Keep away from stove, microwave, direct sunlight, and other heat sources.",
+        "inspect_placement": "Ask the customer to check ventilation clearance and nearby heat sources without moving a heavy appliance unsafely.",
+        "clean_reseat_door": "Remove obstructions, clean the gasket with a damp cloth, and close the door fully. Do not use tools or chemicals on the gasket.",
+        "inspect_door": "Inspect whether packages or shelves prevent the door from closing; check the gasket visually.",
+        "adjust_freezer_setting": "Set the freezer control according to the model manual and seasonal/food-load guidance. Exact control markings vary.",
+        "q6_resolution": "Continue to the resolution check.",
+        "resolved": "Confirm the refrigerator reaches and maintains normal cooling; close the flow.",
+        "monitor_and_recheck": "Keep doors closed and monitor. If cooling continues to decline, escalate.",
+        "service_escalation": "Arrange authorized service if safe checks do not restore cooling. Do not diagnose refrigerant or compressor faults from symptoms alone."
+      },
+      "diagnosis_policy": "Do not claim a component has failed based only on symptom answers. Use 'possible cause' only when supported; escalate uncertain or persistent faults.",
+      "terminal_outcomes": [
+        {
+          "outcome": "resolved",
+          "assistant_action": "Confirm the issue is resolved and summarize safe steps completed."
+        },
+        {
+          "outcome": "service_escalation",
+          "assistant_action": "Offer authorized service; capture model, serial number, symptom, onset, checks tried, and safety flags."
+        },
+        {
+          "outcome": "safety_stop",
+          "assistant_action": "Stop routine troubleshooting; advise safe isolation only if safe and direct the customer to qualified help."
+        }
+      ]
+    },
+    {
+      "id": "REF03",
+      "title": "Excessive ice / frost build-up",
+      "severity": "medium",
+      "questions": [
+        {
+          "question_id": "GL-D201ABCD_REF03_q1_type",
+          "text": "Where is the ice or frost forming?",
+          "expected_answers": [
+            "Inside freezer/on cooling plate",
+            "Around the door/gasket",
+            "On food containers",
+            "Not sure"
+          ],
+          "branch_by_answer": {
+            "Inside freezer/on cooling plate": "GL-D201ABCD_REF03_q2_type",
+            "Around the door/gasket": "GL-D201ABCD_REF03_q3_door",
+            "On food containers": "GL-D201ABCD_REF03_q2_type",
+            "Not sure": "GL-D201ABCD_REF03_q2_type"
+          },
+          "response_type": "single_select",
+          "accept_free_text": true,
+          "normalize_synonyms": true
+        },
+        {
+          "question_id": "GL-D201ABCD_REF03_q2_type",
+          "text": "Which refrigerator type are you using?",
+          "expected_answers": [
+            "Direct Cool single door",
+            "Frost Free double door"
+          ],
+          "branch_by_answer": {
+            "Direct Cool single door": "GL-D201ABCD_REF03_dc_defrost",
+            "Frost Free double door": "GL-D201ABCD_REF03_ff_frost"
+          },
+          "response_type": "single_select",
+          "accept_free_text": true,
+          "normalize_synonyms": true
+        },
+        {
+          "question_id": "GL-D201ABCD_REF03_q3_door",
+          "text": "Does the door close fully and is the gasket clean and undamaged?",
+          "expected_answers": [
+            "Yes",
+            "No",
+            "Not sure"
+          ],
+          "branch_by_answer": {
+            "Yes": "GL-D201ABCD_REF03_q4_resolution",
+            "No": "clean_reseat_door",
+            "Not sure": "inspect_door"
+          },
+          "response_type": "single_select",
+          "accept_free_text": true,
+          "normalize_synonyms": true
+        },
+        {
+          "question_id": "GL-D201ABCD_REF03_q4_resolution",
+          "text": "After correcting the door seal/closing issue, is frost still building up?",
+          "expected_answers": [
+            "Yes",
+            "No"
+          ],
+          "branch_by_answer": {
+            "Yes": "service_escalation",
+            "No": "resolved"
+          },
+          "response_type": "single_select",
+          "accept_free_text": true,
+          "normalize_synonyms": true
+        },
+        {
+          "question_id": "GL-D201ABCD_REF03_dc_defrost",
+          "text": "For this Direct Cool model, has the refrigerator been manually defrosted according to its manual?",
+          "expected_answers": [
+            "Yes",
+            "No",
+            "Not sure"
+          ],
+          "branch_by_answer": {
+            "Yes": "GL-D201ABCD_REF03_q5_load",
+            "No": "manual_defrost",
+            "Not sure": "check_manual"
+          },
+          "response_type": "single_select",
+          "accept_free_text": true,
+          "normalize_synonyms": true
+        },
+        {
+          "question_id": "GL-D201ABCD_REF03_ff_frost",
+          "text": "Is heavy frost accompanied by poor cooling, water leakage, or a door that does not close?",
+          "expected_answers": [
+            "Yes",
+            "No",
+            "Not sure"
+          ],
+          "branch_by_answer": {
+            "Yes": "service_escalation",
+            "No": "GL-D201ABCD_REF03_q5_load"
+          },
+          "response_type": "single_select",
+          "accept_free_text": true,
+          "normalize_synonyms": true
+        },
+        {
+          "question_id": "GL-D201ABCD_REF03_q5_load",
+          "text": "Is the freezer overloaded or are large containers blocking space/airflow?",
+          "expected_answers": [
+            "Yes",
+            "No",
+            "Not sure"
+          ],
+          "branch_by_answer": {
+            "Yes": "rearrange_food",
+            "No": "GL-D201ABCD_REF03_q4_resolution",
+            "Not sure": "inspect_food_spacing"
+          },
+          "response_type": "single_select",
+          "accept_free_text": true,
+          "normalize_synonyms": true
+        }
+      ],
+      "source_basis": "LG FAQ mentions defrost frequency for Direct Cool and freezer setting/food load for ice formation; door gasket and closure are common checks.",
+      "source_status": "Partly official FAQ basis; location-based triage and escalation are proposed.",
+      "model_code": "GL-D201ABCD",
+      "appliance": "refrigerator",
+      "model_name": "LG 185 L Direct Cool Single Door Refrigerator",
+      "model_type": "Direct Cool, single door",
+      "start_question_id": "GL-D201ABCD_REF03_q1_type",
+      "source_urls": [
+        "https://www.lg.com/in/faqs/",
+        "https://www.lg.com/in/refrigerators/single-door-refrigerators/gl-d201abcd/"
+      ],
+      "brand_support_url": "https://www.lg.com/in/support/",
+      "model_specific_notes": "Direct Cool branch: manual temperature knob and defrost-related prompts apply only where present on this exact unit. Confirm all control labels against the user manual.",
+      "branch_actions": {
+        "dc_defrost": "Use the model's user manual to identify the correct defrost method. LG's general Direct Cool FAQ refers to a defrost button and regular defrosting; exact procedure should be confirmed for the model.",
+        "ff_frost": "Do not instruct the user to dismantle the frost-free system or manually access the evaporator. Persistent/heavy frost should be escalated.",
+        "manual_defrost": "Follow only the model's approved defrost instructions. Protect food and keep water away from electrical components. Never chip ice with a knife or sharp object.",
+        "check_manual": "Check the exact model manual for defrost instructions; don't assume the controls are identical across models.",
+        "clean_reseat_door": "Remove obstructions and clean the door gasket with a damp cloth.",
+        "inspect_door": "Check for packages/shelves blocking closure and visually inspect gasket condition.",
+        "q5_load": "Continue based on food-load response.",
+        "rearrange_food": "Reduce overloading and leave space between items. Never use sharp tools to remove ice.",
+        "inspect_food_spacing": "Check whether containers are blocking the door or internal airflow.",
+        "q4_resolution": "Recheck after the door is properly closed.",
+        "service_escalation": "Arrange service if heavy frost persists, especially on a Frost Free model, or if cooling/leakage accompanies it.",
+        "resolved": "Confirm normal door closure and no continuing abnormal ice build-up."
+      },
+      "diagnosis_policy": "Do not claim a component has failed based only on symptom answers. Use 'possible cause' only when supported; escalate uncertain or persistent faults.",
+      "terminal_outcomes": [
+        {
+          "outcome": "resolved",
+          "assistant_action": "Confirm the issue is resolved and summarize safe steps completed."
+        },
+        {
+          "outcome": "service_escalation",
+          "assistant_action": "Offer authorized service; capture model, serial number, symptom, onset, checks tried, and safety flags."
+        },
+        {
+          "outcome": "safety_stop",
+          "assistant_action": "Stop routine troubleshooting; advise safe isolation only if safe and direct the customer to qualified help."
+        }
+      ]
+    },
+    {
+      "id": "REF04",
+      "title": "Water leaking inside the refrigerator",
+      "severity": "medium",
+      "questions": [
+        {
+          "question_id": "GL-D201ABCD_REF04_q1_water",
+          "text": "Where is the water appearing?",
+          "expected_answers": [
+            "Inside compartment/shelves",
+            "Under vegetable or chiller tray",
+            "On floor in front",
+            "Not sure"
+          ],
+          "branch_by_answer": {
+            "Inside compartment/shelves": "GL-D201ABCD_REF04_q2_surface",
+            "Under vegetable or chiller tray": "GL-D201ABCD_REF04_q2_tray",
+            "On floor in front": "GL-D201ABCD_REF04_q3_floor",
+            "Not sure": "GL-D201ABCD_REF04_q2_surface"
+          },
+          "response_type": "single_select",
+          "accept_free_text": true,
+          "normalize_synonyms": true
+        },
+        {
+          "question_id": "GL-D201ABCD_REF04_q2_surface",
+          "text": "Is the refrigerator standing unevenly or does the door fail to close fully?",
+          "expected_answers": [
+            "Yes",
+            "No",
+            "Not sure"
+          ],
+          "branch_by_answer": {
+            "Yes": "level_check",
+            "No": "GL-D201ABCD_REF04_q2_tray",
+            "Not sure": "inspect_level"
+          },
+          "response_type": "single_select",
+          "accept_free_text": true,
+          "normalize_synonyms": true
+        },
+        {
+          "question_id": "GL-D201ABCD_REF04_q2_tray",
+          "text": "For a Direct Cool model, is the fresh-zone/chiller tray correctly seated?",
+          "expected_answers": [
+            "Yes",
+            "No",
+            "Not applicable/Not sure"
+          ],
+          "branch_by_answer": {
+            "Yes": "GL-D201ABCD_REF04_q4_resolution",
+            "No": "reseat_tray",
+            "Not applicable/Not sure": "GL-D201ABCD_REF04_q4_resolution"
+          },
+          "response_type": "single_select",
+          "accept_free_text": true,
+          "normalize_synonyms": true
+        },
+        {
+          "question_id": "GL-D201ABCD_REF04_q3_floor",
+          "text": "Is water near a wall socket, power cord, or other electrical equipment?",
+          "expected_answers": [
+            "Yes",
+            "No",
+            "Not sure"
+          ],
+          "branch_by_answer": {
+            "Yes": "safety_stop",
+            "No": "GL-D201ABCD_REF04_q2_surface",
+            "Not sure": "safety_stop"
+          },
+          "response_type": "single_select",
+          "accept_free_text": true,
+          "normalize_synonyms": true
+        },
+        {
+          "question_id": "GL-D201ABCD_REF04_q4_resolution",
+          "text": "After safe checks, is the leakage resolved?",
+          "expected_answers": [
+            "Yes",
+            "No"
+          ],
+          "branch_by_answer": {
+            "Yes": "resolved",
+            "No": "service_escalation"
+          },
+          "response_type": "single_select",
+          "accept_free_text": true,
+          "normalize_synonyms": true
+        }
+      ],
+      "source_basis": "LG FAQ identifies tray placement and uneven surface for Direct Cool inside leakage; uneven surface for Frost Free inside leakage.",
+      "source_status": "Official FAQ basis; safety branch and some prompts are proposed.",
+      "model_code": "GL-D201ABCD",
+      "appliance": "refrigerator",
+      "model_name": "LG 185 L Direct Cool Single Door Refrigerator",
+      "model_type": "Direct Cool, single door",
+      "start_question_id": "GL-D201ABCD_REF04_q1_water",
+      "source_urls": [
+        "https://www.lg.com/in/faqs/",
+        "https://www.lg.com/in/refrigerators/single-door-refrigerators/gl-d201abcd/"
+      ],
+      "brand_support_url": "https://www.lg.com/in/support/",
+      "model_specific_notes": "Direct Cool branch: manual temperature knob and defrost-related prompts apply only where present on this exact unit. Confirm all control labels against the user manual.",
+      "branch_actions": {
+        "level_check": "Check whether the appliance is stable on a flat floor. Do not tilt or move a heavy refrigerator alone; use an installer/service technician if adjustment is needed.",
+        "inspect_level": "Visually check stability; request help if the appliance needs to be moved.",
+        "reseat_tray": "Remove and refit the fresh-zone/chiller tray only if it is designed for user removal and the manual allows it.",
+        "safety_stop": "Keep away from water near electrical equipment. If safe, switch off at the wall without touching wet surfaces; otherwise keep clear and seek qualified help urgently.",
+        "q4_resolution": "Check whether water returns after the appliance is level and trays are correctly seated.",
+        "resolved": "Confirm no further leakage and dry the floor safely.",
+        "service_escalation": "Arrange service if water returns or the source is unclear."
+      },
+      "diagnosis_policy": "Do not claim a component has failed based only on symptom answers. Use 'possible cause' only when supported; escalate uncertain or persistent faults.",
+      "terminal_outcomes": [
+        {
+          "outcome": "resolved",
+          "assistant_action": "Confirm the issue is resolved and summarize safe steps completed."
+        },
+        {
+          "outcome": "service_escalation",
+          "assistant_action": "Offer authorized service; capture model, serial number, symptom, onset, checks tried, and safety flags."
+        },
+        {
+          "outcome": "safety_stop",
+          "assistant_action": "Stop routine troubleshooting; advise safe isolation only if safe and direct the customer to qualified help."
+        }
+      ]
+    },
+    {
+      "id": "REF05",
+      "title": "Water leaking from rear / drain tray",
+      "severity": "medium",
+      "questions": [
+        {
+          "question_id": "GL-D201ABCD_REF05_q1_where",
+          "text": "Is water leaking from the rear/bottom area of the refrigerator?",
+          "expected_answers": [
+            "Yes",
+            "No",
+            "Not sure"
+          ],
+          "branch_by_answer": {
+            "Yes": "GL-D201ABCD_REF05_q2_visible",
+            "No": "GL-D201ABCD_REF04",
+            "Not sure": "GL-D201ABCD_REF05_q2_visible"
+          },
+          "response_type": "single_select",
+          "accept_free_text": true,
+          "normalize_synonyms": true
+        },
+        {
+          "question_id": "GL-D201ABCD_REF05_q2_visible",
+          "text": "Is water near an electrical outlet or the power cord?",
+          "expected_answers": [
+            "Yes",
+            "No",
+            "Not sure"
+          ],
+          "branch_by_answer": {
+            "Yes": "safety_stop",
+            "No": "GL-D201ABCD_REF05_q3_tray",
+            "Not sure": "safety_stop"
+          },
+          "response_type": "single_select",
+          "accept_free_text": true,
+          "normalize_synonyms": true
+        },
+        {
+          "question_id": "GL-D201ABCD_REF05_q3_tray",
+          "text": "Can you see water collected in the drain/evaporation tray without removing covers?",
+          "expected_answers": [
+            "Yes",
+            "No",
+            "Not sure"
+          ],
+          "branch_by_answer": {
+            "Yes": "wipe_safe",
+            "No": "GL-D201ABCD_REF05_q4_defrost",
+            "Not sure": "service_escalation"
+          },
+          "response_type": "single_select",
+          "accept_free_text": true,
+          "normalize_synonyms": true
+        },
+        {
+          "question_id": "GL-D201ABCD_REF05_q4_defrost",
+          "text": "For a Direct Cool model, has routine defrosting been performed according to the manual?",
+          "expected_answers": [
+            "Yes",
+            "No",
+            "Not applicable/Not sure"
+          ],
+          "branch_by_answer": {
+            "Yes": "service_escalation",
+            "No": "manual_defrost",
+            "Not applicable/Not sure": "service_escalation"
+          },
+          "response_type": "single_select",
+          "accept_free_text": true,
+          "normalize_synonyms": true
+        },
+        {
+          "question_id": "GL-D201ABCD_REF05_q5_resolution",
+          "text": "Has leakage stopped after the approved safe steps?",
+          "expected_answers": [
+            "Yes",
+            "No"
+          ],
+          "branch_by_answer": {
+            "Yes": "resolved",
+            "No": "service_escalation"
+          },
+          "response_type": "single_select",
+          "accept_free_text": true,
+          "normalize_synonyms": true
+        }
+      ],
+      "source_basis": "LG FAQ says rear leakage may occur when the drain tray is full and, for Direct Cool, irregular defrosting; its stated dry-cloth instruction is limited here to safe accessible areas.",
+      "source_status": "Official FAQ basis; safety boundaries are added.",
+      "model_code": "GL-D201ABCD",
+      "appliance": "refrigerator",
+      "model_name": "LG 185 L Direct Cool Single Door Refrigerator",
+      "model_type": "Direct Cool, single door",
+      "start_question_id": "GL-D201ABCD_REF05_q1_where",
+      "source_urls": [
+        "https://www.lg.com/in/faqs/",
+        "https://www.lg.com/in/refrigerators/single-door-refrigerators/gl-d201abcd/"
+      ],
+      "brand_support_url": "https://www.lg.com/in/support/",
+      "model_specific_notes": "Direct Cool branch: manual temperature knob and defrost-related prompts apply only where present on this exact unit. Confirm all control labels against the user manual.",
+      "branch_actions": {
+        "safety_stop": "Keep away from water near electrical equipment. If safe, isolate power without touching wet surfaces and seek qualified help.",
+        "wipe_safe": "Only wipe an externally accessible area with a dry cloth if safe. Do not remove rear covers or touch electrical parts.",
+        "q4_defrost": "Continue only using model-approved defrost guidance.",
+        "manual_defrost": "Follow the exact model manual. Do not use sharp objects or open the refrigerator cabinet.",
+        "service_escalation": "Arrange authorized service if tray access requires removing covers, leakage persists, or the source is uncertain.",
+        "q5_resolution": "Recheck for continued leakage.",
+        "resolved": "Confirm the floor is dry and no water returns."
+      },
+      "diagnosis_policy": "Do not claim a component has failed based only on symptom answers. Use 'possible cause' only when supported; escalate uncertain or persistent faults.",
+      "terminal_outcomes": [
+        {
+          "outcome": "resolved",
+          "assistant_action": "Confirm the issue is resolved and summarize safe steps completed."
+        },
+        {
+          "outcome": "service_escalation",
+          "assistant_action": "Offer authorized service; capture model, serial number, symptom, onset, checks tried, and safety flags."
+        },
+        {
+          "outcome": "safety_stop",
+          "assistant_action": "Stop routine troubleshooting; advise safe isolation only if safe and direct the customer to qualified help."
+        }
+      ]
+    },
+    {
+      "id": "REF06",
+      "title": "Door will not close or open normally",
+      "severity": "medium",
+      "questions": [
+        {
+          "question_id": "GL-D201ABCD_REF06_q1_issue",
+          "text": "What is happening with the door?",
+          "expected_answers": [
+            "Will not close fully",
+            "Hard to open",
+            "Door pops back open",
+            "Visible gasket gap"
+          ],
+          "branch_by_answer": {
+            "Will not close fully": "GL-D201ABCD_REF06_q2_obstruction",
+            "Hard to open": "GL-D201ABCD_REF06_q3_level",
+            "Door pops back open": "GL-D201ABCD_REF06_q2_obstruction",
+            "Visible gasket gap": "GL-D201ABCD_REF06_q4_gasket"
+          },
+          "response_type": "single_select",
+          "accept_free_text": true,
+          "normalize_synonyms": true
+        },
+        {
+          "question_id": "GL-D201ABCD_REF06_q2_obstruction",
+          "text": "Are food containers, shelves, or door bins obstructing closure?",
+          "expected_answers": [
+            "Yes",
+            "No",
+            "Not sure"
+          ],
+          "branch_by_answer": {
+            "Yes": "remove_obstruction",
+            "No": "GL-D201ABCD_REF06_q3_level",
+            "Not sure": "inspect_obstruction"
+          },
+          "response_type": "single_select",
+          "accept_free_text": true,
+          "normalize_synonyms": true
+        },
+        {
+          "question_id": "GL-D201ABCD_REF06_q3_level",
+          "text": "Is the refrigerator stable on a flat floor?",
+          "expected_answers": [
+            "Yes",
+            "No",
+            "Not sure"
+          ],
+          "branch_by_answer": {
+            "Yes": "GL-D201ABCD_REF06_q4_gasket",
+            "No": "level_check",
+            "Not sure": "inspect_level"
+          },
+          "response_type": "single_select",
+          "accept_free_text": true,
+          "normalize_synonyms": true
+        },
+        {
+          "question_id": "GL-D201ABCD_REF06_q4_gasket",
+          "text": "Is the gasket visibly dirty, folded, cracked, or out of position?",
+          "expected_answers": [
+            "Dirty",
+            "Folded/out of position",
+            "Cracked/torn",
+            "Looks normal",
+            "Not sure"
+          ],
+          "branch_by_answer": {
+            "Dirty": "clean_gasket",
+            "Folded/out of position": "reseat_gasket_gently",
+            "Cracked/torn": "service_escalation",
+            "Looks normal": "GL-D201ABCD_REF06_q5_resolution",
+            "Not sure": "inspect_gasket"
+          },
+          "response_type": "single_select",
+          "accept_free_text": true,
+          "normalize_synonyms": true
+        },
+        {
+          "question_id": "GL-D201ABCD_REF06_q5_resolution",
+          "text": "Does the door now close normally?",
+          "expected_answers": [
+            "Yes",
+            "No"
+          ],
+          "branch_by_answer": {
+            "Yes": "resolved",
+            "No": "service_escalation"
+          },
+          "response_type": "single_select",
+          "accept_free_text": true,
+          "normalize_synonyms": true
+        }
+      ],
+      "source_basis": "LG FAQ identifies uneven placement and gasket gap; recommends leveling and cleaning the gasket with a wet cloth.",
+      "source_status": "Official FAQ basis; specific obstruction branches are proposed.",
+      "model_code": "GL-D201ABCD",
+      "appliance": "refrigerator",
+      "model_name": "LG 185 L Direct Cool Single Door Refrigerator",
+      "model_type": "Direct Cool, single door",
+      "start_question_id": "GL-D201ABCD_REF06_q1_issue",
+      "source_urls": [
+        "https://www.lg.com/in/faqs/",
+        "https://www.lg.com/in/refrigerators/single-door-refrigerators/gl-d201abcd/"
+      ],
+      "brand_support_url": "https://www.lg.com/in/support/",
+      "model_specific_notes": "Direct Cool branch: manual temperature knob and defrost-related prompts apply only where present on this exact unit. Confirm all control labels against the user manual.",
+      "branch_actions": {
+        "remove_obstruction": "Rearrange items and confirm shelves/bins are seated correctly.",
+        "inspect_obstruction": "Check shelves, bins, and containers without forcing the door.",
+        "level_check": "The appliance should stand stable and level. Do not move a heavy refrigerator alone; arrange installation help if needed.",
+        "inspect_level": "Visually check whether the appliance rocks or leans.",
+        "clean_gasket": "Clean the door gasket with a damp cloth and dry it.",
+        "reseat_gasket_gently": "Gently return an accessible folded gasket to its normal position; do not pull hard or use tools.",
+        "service_escalation": "Request service for a damaged gasket, hinge issue, or persistent door alignment problem.",
+        "inspect_gasket": "Inspect visually; don't dismantle the door.",
+        "q5_resolution": "Recheck closure without slamming the door.",
+        "resolved": "Confirm door seals all the way around."
+      },
+      "diagnosis_policy": "Do not claim a component has failed based only on symptom answers. Use 'possible cause' only when supported; escalate uncertain or persistent faults.",
+      "terminal_outcomes": [
+        {
+          "outcome": "resolved",
+          "assistant_action": "Confirm the issue is resolved and summarize safe steps completed."
+        },
+        {
+          "outcome": "service_escalation",
+          "assistant_action": "Offer authorized service; capture model, serial number, symptom, onset, checks tried, and safety flags."
+        },
+        {
+          "outcome": "safety_stop",
+          "assistant_action": "Stop routine troubleshooting; advise safe isolation only if safe and direct the customer to qualified help."
+        }
+      ]
+    },
+    {
+      "id": "REF07",
+      "title": "Unusual sound / noise",
+      "severity": "low",
+      "questions": [
+        {
+          "question_id": "GL-D201ABCD_REF07_q1_sound",
+          "text": "Which sound best describes the issue?",
+          "expected_answers": [
+            "Hissing",
+            "Humming",
+            "Clicking at start/stop",
+            "Rattling/banging",
+            "Grinding or very loud noise",
+            "Other"
+          ],
+          "branch_by_answer": {
+            "Hissing": "normal_sound_check",
+            "Humming": "normal_sound_check",
+            "Clicking at start/stop": "normal_sound_check",
+            "Rattling/banging": "GL-D201ABCD_REF07_q2_vibration",
+            "Grinding or very loud noise": "GL-D201ABCD_REF07_q3_safety",
+            "Other": "GL-D201ABCD_REF07_q2_vibration"
+          },
+          "response_type": "single_select",
+          "accept_free_text": true,
+          "normalize_synonyms": true
+        },
+        {
+          "question_id": "GL-D201ABCD_REF07_q2_vibration",
+          "text": "Is the refrigerator touching a wall or standing unevenly?",
+          "expected_answers": [
+            "Yes",
+            "No",
+            "Not sure"
+          ],
+          "branch_by_answer": {
+            "Yes": "correct_placement",
+            "No": "GL-D201ABCD_REF07_q3_safety",
+            "Not sure": "inspect_placement"
+          },
+          "response_type": "single_select",
+          "accept_free_text": true,
+          "normalize_synonyms": true
+        },
+        {
+          "question_id": "GL-D201ABCD_REF07_q3_safety",
+          "text": "Is the sound accompanied by burning smell, smoke, repeated power trips, or a sudden loss of cooling?",
+          "expected_answers": [
+            "Yes",
+            "No"
+          ],
+          "branch_by_answer": {
+            "Yes": "safety_stop",
+            "No": "service_escalation"
+          },
+          "response_type": "single_select",
+          "accept_free_text": true,
+          "normalize_synonyms": true
+        },
+        {
+          "question_id": "GL-D201ABCD_REF07_q4_result",
+          "text": "Did the sound reduce after safe placement checks?",
+          "expected_answers": [
+            "Yes",
+            "No"
+          ],
+          "branch_by_answer": {
+            "Yes": "resolved",
+            "No": "service_escalation"
+          },
+          "response_type": "single_select",
+          "accept_free_text": true,
+          "normalize_synonyms": true
+        }
+      ],
+      "source_basis": "LG FAQ describes hissing, humming, and clicking as normal in many cases and identifies uneven surface/poor ventilation as vibration causes.",
+      "source_status": "Official FAQ basis; escalation thresholds are proposed.",
+      "model_code": "GL-D201ABCD",
+      "appliance": "refrigerator",
+      "model_name": "LG 185 L Direct Cool Single Door Refrigerator",
+      "model_type": "Direct Cool, single door",
+      "start_question_id": "GL-D201ABCD_REF07_q1_sound",
+      "source_urls": [
+        "https://www.lg.com/in/faqs/",
+        "https://www.lg.com/in/refrigerators/single-door-refrigerators/gl-d201abcd/"
+      ],
+      "brand_support_url": "https://www.lg.com/in/support/",
+      "model_specific_notes": "Direct Cool branch: manual temperature knob and defrost-related prompts apply only where present on this exact unit. Confirm all control labels against the user manual.",
+      "branch_actions": {
+        "normal_sound_check": "LG says hissing from refrigerant flow, humming while the compressor runs, and clicking as the compressor switches on/off can be normal. Ask whether the sound is new, extreme, or accompanied by poor cooling.",
+        "correct_placement": "Maintain clearance and place the refrigerator on a stable flat surface. LG FAQ recommends at least 10 cm clearance at rear and sides; follow the exact model manual.",
+        "inspect_placement": "Check external clearance and stability without pulling the appliance unsafely.",
+        "safety_stop": "Stop use if safe to do so and seek qualified service; keep away if smoke, burning smell, or electrical danger is present.",
+        "service_escalation": "Arrange service for persistent loud grinding, banging, or new noise with performance loss.",
+        "q4_result": "Confirm whether vibration/noise improved.",
+        "resolved": "Explain that normal compressor/refrigerant sounds may continue."
+      },
+      "diagnosis_policy": "Do not claim a component has failed based only on symptom answers. Use 'possible cause' only when supported; escalate uncertain or persistent faults.",
+      "terminal_outcomes": [
+        {
+          "outcome": "resolved",
+          "assistant_action": "Confirm the issue is resolved and summarize safe steps completed."
+        },
+        {
+          "outcome": "service_escalation",
+          "assistant_action": "Offer authorized service; capture model, serial number, symptom, onset, checks tried, and safety flags."
+        },
+        {
+          "outcome": "safety_stop",
+          "assistant_action": "Stop routine troubleshooting; advise safe isolation only if safe and direct the customer to qualified help."
+        }
+      ]
+    },
+    {
+      "id": "REF08",
+      "title": "Vibration / refrigerator shakes",
+      "severity": "low",
+      "questions": [
+        {
+          "question_id": "GL-D201ABCD_REF08_q1_stability",
+          "text": "Does the refrigerator rock or shake when gently checked from the outside?",
+          "expected_answers": [
+            "Yes",
+            "No",
+            "Not sure"
+          ],
+          "branch_by_answer": {
+            "Yes": "level_check",
+            "No": "GL-D201ABCD_REF08_q2_clearance",
+            "Not sure": "inspect_level"
+          },
+          "response_type": "single_select",
+          "accept_free_text": true,
+          "normalize_synonyms": true
+        },
+        {
+          "question_id": "GL-D201ABCD_REF08_q2_clearance",
+          "text": "Is there enough clearance from walls and nearby objects?",
+          "expected_answers": [
+            "Yes",
+            "No",
+            "Not sure"
+          ],
+          "branch_by_answer": {
+            "Yes": "GL-D201ABCD_REF08_q3_result",
+            "No": "correct_placement",
+            "Not sure": "inspect_placement"
+          },
+          "response_type": "single_select",
+          "accept_free_text": true,
+          "normalize_synonyms": true
+        },
+        {
+          "question_id": "GL-D201ABCD_REF08_q3_result",
+          "text": "Has vibration reduced after safe placement checks?",
+          "expected_answers": [
+            "Yes",
+            "No"
+          ],
+          "branch_by_answer": {
+            "Yes": "resolved",
+            "No": "service_escalation"
+          },
+          "response_type": "single_select",
+          "accept_free_text": true,
+          "normalize_synonyms": true
+        }
+      ],
+      "source_basis": "LG FAQ: vibration may be caused by uneven surface or insufficient ventilation; recommends 10 cm gap and adjusting legs.",
+      "source_status": "Official FAQ basis; conversational questions are proposed.",
+      "model_code": "GL-D201ABCD",
+      "appliance": "refrigerator",
+      "model_name": "LG 185 L Direct Cool Single Door Refrigerator",
+      "model_type": "Direct Cool, single door",
+      "start_question_id": "GL-D201ABCD_REF08_q1_stability",
+      "source_urls": [
+        "https://www.lg.com/in/faqs/",
+        "https://www.lg.com/in/refrigerators/single-door-refrigerators/gl-d201abcd/"
+      ],
+      "brand_support_url": "https://www.lg.com/in/support/",
+      "model_specific_notes": "Direct Cool branch: manual temperature knob and defrost-related prompts apply only where present on this exact unit. Confirm all control labels against the user manual.",
+      "branch_actions": {
+        "level_check": "Ensure the appliance is on a flat stable surface; have an installer adjust feet if needed. Don't tilt/move a heavy unit alone.",
+        "inspect_level": "Check stability visually and ask for installer assistance if unstable.",
+        "q2_clearance": "Check the required clearances in the model manual.",
+        "correct_placement": "Maintain ventilation gap and stable positioning; LG FAQ recommends 10 cm rear/side gap.",
+        "inspect_placement": "Check if the unit touches walls/cabinets or is squeezed into a tight space.",
+        "q3_result": "Reassess vibration.",
+        "resolved": "Confirm the unit is stable.",
+        "service_escalation": "Request service if vibration persists or is severe."
+      },
+      "diagnosis_policy": "Do not claim a component has failed based only on symptom answers. Use 'possible cause' only when supported; escalate uncertain or persistent faults.",
+      "terminal_outcomes": [
+        {
+          "outcome": "resolved",
+          "assistant_action": "Confirm the issue is resolved and summarize safe steps completed."
+        },
+        {
+          "outcome": "service_escalation",
+          "assistant_action": "Offer authorized service; capture model, serial number, symptom, onset, checks tried, and safety flags."
+        },
+        {
+          "outcome": "safety_stop",
+          "assistant_action": "Stop routine troubleshooting; advise safe isolation only if safe and direct the customer to qualified help."
+        }
+      ]
+    },
+    {
+      "id": "REF09",
+      "title": "Ice formation / freezer not making ice",
+      "severity": "low",
+      "questions": [
+        {
+          "question_id": "GL-D201ABCD_REF09_q1_goal",
+          "text": "What is the problem?",
+          "expected_answers": [
+            "Too much ice/frost",
+            "Ice tray not freezing",
+            "Food not freezing properly"
+          ],
+          "branch_by_answer": {
+            "Too much ice/frost": "GL-D201ABCD_REF03",
+            "Ice tray not freezing": "GL-D201ABCD_REF09_q2_setting",
+            "Food not freezing properly": "GL-D201ABCD_REF09_q2_setting"
+          },
+          "response_type": "single_select",
+          "accept_free_text": true,
+          "normalize_synonyms": true
+        },
+        {
+          "question_id": "GL-D201ABCD_REF09_q2_setting",
+          "text": "Is the freezer/cooling setting appropriate for the model and food load?",
+          "expected_answers": [
+            "Yes",
+            "No",
+            "Not sure"
+          ],
+          "branch_by_answer": {
+            "Yes": "GL-D201ABCD_REF09_q3_load",
+            "No": "adjust_setting",
+            "Not sure": "check_manual"
+          },
+          "response_type": "single_select",
+          "accept_free_text": true,
+          "normalize_synonyms": true
+        },
+        {
+          "question_id": "GL-D201ABCD_REF09_q3_load",
+          "text": "Is the freezer heavily loaded or are large containers blocking space?",
+          "expected_answers": [
+            "Yes",
+            "No",
+            "Not sure"
+          ],
+          "branch_by_answer": {
+            "Yes": "rearrange_food",
+            "No": "GL-D201ABCD_REF09_q4_tray",
+            "Not sure": "inspect_food_spacing"
+          },
+          "response_type": "single_select",
+          "accept_free_text": true,
+          "normalize_synonyms": true
+        },
+        {
+          "question_id": "GL-D201ABCD_REF09_q4_tray",
+          "text": "Are you using an ice tray rather than a large container for making ice?",
+          "expected_answers": [
+            "Yes",
+            "No",
+            "Not applicable"
+          ],
+          "branch_by_answer": {
+            "Yes": "GL-D201ABCD_REF09_q5_result",
+            "No": "use_ice_tray",
+            "Not applicable": "GL-D201ABCD_REF09_q5_result"
+          },
+          "response_type": "single_select",
+          "accept_free_text": true,
+          "normalize_synonyms": true
+        },
+        {
+          "question_id": "GL-D201ABCD_REF09_q5_result",
+          "text": "Is the freezer now freezing as expected?",
+          "expected_answers": [
+            "Yes",
+            "No"
+          ],
+          "branch_by_answer": {
+            "Yes": "resolved",
+            "No": "service_escalation"
+          },
+          "response_type": "single_select",
+          "accept_free_text": true,
+          "normalize_synonyms": true
+        }
+      ],
+      "source_basis": "LG FAQ has separate Direct Cool and Frost Free ice-formation guidance: incorrect setting, overloading, large utensils; recommends suitable setting, space, and ice trays.",
+      "source_status": "Official FAQ basis; branches are proposed.",
+      "model_code": "GL-D201ABCD",
+      "appliance": "refrigerator",
+      "model_name": "LG 185 L Direct Cool Single Door Refrigerator",
+      "model_type": "Direct Cool, single door",
+      "start_question_id": "GL-D201ABCD_REF09_q1_goal",
+      "source_urls": [
+        "https://www.lg.com/in/faqs/",
+        "https://www.lg.com/in/refrigerators/single-door-refrigerators/gl-d201abcd/"
+      ],
+      "brand_support_url": "https://www.lg.com/in/support/",
+      "model_specific_notes": "Direct Cool branch: manual temperature knob and defrost-related prompts apply only where present on this exact unit. Confirm all control labels against the user manual.",
+      "branch_actions": {
+        "adjust_setting": "Use the exact model manual to select the recommended setting. Direct Cool and Frost Free controls differ.",
+        "check_manual": "Confirm control settings in the model manual.",
+        "rearrange_food": "Avoid overloading the freezer and leave space between items.",
+        "inspect_food_spacing": "Check that food does not block airflow or door closure.",
+        "use_ice_tray": "LG's FAQ recommends ice cube trays rather than large utensils for ice formation.",
+        "q5_result": "Recheck freezing after sufficient time with doors closed.",
+        "resolved": "Confirm normal freezing.",
+        "service_escalation": "Arrange service if the freezer cannot freeze after setting/load checks."
+      },
+      "diagnosis_policy": "Do not claim a component has failed based only on symptom answers. Use 'possible cause' only when supported; escalate uncertain or persistent faults.",
+      "terminal_outcomes": [
+        {
+          "outcome": "resolved",
+          "assistant_action": "Confirm the issue is resolved and summarize safe steps completed."
+        },
+        {
+          "outcome": "service_escalation",
+          "assistant_action": "Offer authorized service; capture model, serial number, symptom, onset, checks tried, and safety flags."
+        },
+        {
+          "outcome": "safety_stop",
+          "assistant_action": "Stop routine troubleshooting; advise safe isolation only if safe and direct the customer to qualified help."
+        }
+      ]
+    },
+    {
+      "id": "REF10",
+      "title": "Interior light not working",
+      "severity": "low",
+      "questions": [
+        {
+          "question_id": "GL-D201ABCD_REF10_q1_power",
+          "text": "Is the refrigerator otherwise cooling normally?",
+          "expected_answers": [
+            "Yes",
+            "No",
+            "Not sure"
+          ],
+          "branch_by_answer": {
+            "Yes": "GL-D201ABCD_REF10_q2_light",
+            "No": "GL-D201ABCD_REF01",
+            "Not sure": "GL-D201ABCD_REF01"
+          },
+          "response_type": "single_select",
+          "accept_free_text": true,
+          "normalize_synonyms": true
+        },
+        {
+          "question_id": "GL-D201ABCD_REF10_q2_light",
+          "text": "Does the light fail every time the door opens?",
+          "expected_answers": [
+            "Yes",
+            "No",
+            "Intermittent"
+          ],
+          "branch_by_answer": {
+            "Yes": "GL-D201ABCD_REF10_q3_visible",
+            "No": "resolved",
+            "Intermittent": "GL-D201ABCD_REF10_q3_visible"
+          },
+          "response_type": "single_select",
+          "accept_free_text": true,
+          "normalize_synonyms": true
+        },
+        {
+          "question_id": "GL-D201ABCD_REF10_q3_visible",
+          "text": "Is there visible damage, moisture, or a burning smell near the light area?",
+          "expected_answers": [
+            "Yes",
+            "No",
+            "Not sure"
+          ],
+          "branch_by_answer": {
+            "Yes": "safety_stop",
+            "No": "service_escalation",
+            "Not sure": "service_escalation"
+          },
+          "response_type": "single_select",
+          "accept_free_text": true,
+          "normalize_synonyms": true
+        }
+      ],
+      "source_basis": "Model product page confirms an interior light for GL-D201ABCD; the LG FAQ pages reviewed do not give a detailed refrigerator-light repair procedure.",
+      "source_status": "Proposed diagnostic flow; model feature grounded in product page. No DIY electrical repair instructions.",
+      "model_code": "GL-D201ABCD",
+      "appliance": "refrigerator",
+      "model_name": "LG 185 L Direct Cool Single Door Refrigerator",
+      "model_type": "Direct Cool, single door",
+      "start_question_id": "GL-D201ABCD_REF10_q1_power",
+      "source_urls": [
+        "https://www.lg.com/in/faqs/",
+        "https://www.lg.com/in/refrigerators/single-door-refrigerators/gl-d201abcd/"
+      ],
+      "brand_support_url": "https://www.lg.com/in/support/",
+      "model_specific_notes": "Direct Cool branch: manual temperature knob and defrost-related prompts apply only where present on this exact unit. Confirm all control labels against the user manual.",
+      "branch_actions": {
+        "q2_light": "Ask whether the light is consistently off or intermittent.",
+        "q3_visible": "Do not ask the customer to remove the lamp cover or access wiring unless the user manual explicitly permits the specific task.",
+        "safety_stop": "Stop using the appliance if electrical danger is suspected and arrange qualified service.",
+        "service_escalation": "Arrange service for the light or door-switch circuit; do not diagnose a failed part from symptoms alone.",
+        "resolved": "If the light works now and cooling is normal, close the issue."
+      },
+      "diagnosis_policy": "Do not claim a component has failed based only on symptom answers. Use 'possible cause' only when supported; escalate uncertain or persistent faults.",
+      "terminal_outcomes": [
+        {
+          "outcome": "resolved",
+          "assistant_action": "Confirm the issue is resolved and summarize safe steps completed."
+        },
+        {
+          "outcome": "service_escalation",
+          "assistant_action": "Offer authorized service; capture model, serial number, symptom, onset, checks tried, and safety flags."
+        },
+        {
+          "outcome": "safety_stop",
+          "assistant_action": "Stop routine troubleshooting; advise safe isolation only if safe and direct the customer to qualified help."
+        }
+      ]
+    },
+    {
+      "id": "REF11",
+      "title": "Bad smell / food odor",
+      "severity": "low",
+      "questions": [
+        {
+          "question_id": "GL-D201ABCD_REF11_q1_smell",
+          "text": "What best describes the smell?",
+          "expected_answers": [
+            "Food/strong odor",
+            "Musty smell",
+            "Burning/electrical smell",
+            "Unknown"
+          ],
+          "branch_by_answer": {
+            "Food/strong odor": "GL-D201ABCD_REF11_q2_source",
+            "Musty smell": "GL-D201ABCD_REF11_q2_source",
+            "Burning/electrical smell": "safety_stop",
+            "Unknown": "GL-D201ABCD_REF11_q2_source"
+          },
+          "response_type": "single_select",
+          "accept_free_text": true,
+          "normalize_synonyms": true
+        },
+        {
+          "question_id": "GL-D201ABCD_REF11_q2_source",
+          "text": "Is there spilled food, spoiled food, or an uncovered strong-smelling item?",
+          "expected_answers": [
+            "Yes",
+            "No",
+            "Not sure"
+          ],
+          "branch_by_answer": {
+            "Yes": "clean_food_spill",
+            "No": "GL-D201ABCD_REF11_q3_clean",
+            "Not sure": "inspect_contents"
+          },
+          "response_type": "single_select",
+          "accept_free_text": true,
+          "normalize_synonyms": true
+        },
+        {
+          "question_id": "GL-D201ABCD_REF11_q3_clean",
+          "text": "Have the removable shelves/containers been cleaned according to the manual?",
+          "expected_answers": [
+            "Yes",
+            "No",
+            "Not sure"
+          ],
+          "branch_by_answer": {
+            "Yes": "GL-D201ABCD_REF11_q4_result",
+            "No": "clean_safe",
+            "Not sure": "check_manual"
+          },
+          "response_type": "single_select",
+          "accept_free_text": true,
+          "normalize_synonyms": true
+        },
+        {
+          "question_id": "GL-D201ABCD_REF11_q4_result",
+          "text": "Has the odor disappeared?",
+          "expected_answers": [
+            "Yes",
+            "No"
+          ],
+          "branch_by_answer": {
+            "Yes": "resolved",
+            "No": "service_escalation"
+          },
+          "response_type": "single_select",
+          "accept_free_text": true,
+          "normalize_synonyms": true
+        }
+      ],
+      "source_basis": "General proposed consumer triage; LG pages reviewed did not provide a model-specific odor flow for these two models.",
+      "source_status": "Proposed scenario, not claimed as official LG FAQ wording.",
+      "model_code": "GL-D201ABCD",
+      "appliance": "refrigerator",
+      "model_name": "LG 185 L Direct Cool Single Door Refrigerator",
+      "model_type": "Direct Cool, single door",
+      "start_question_id": "GL-D201ABCD_REF11_q1_smell",
+      "source_urls": [
+        "https://www.lg.com/in/faqs/",
+        "https://www.lg.com/in/refrigerators/single-door-refrigerators/gl-d201abcd/"
+      ],
+      "brand_support_url": "https://www.lg.com/in/support/",
+      "model_specific_notes": "Direct Cool branch: manual temperature knob and defrost-related prompts apply only where present on this exact unit. Confirm all control labels against the user manual.",
+      "branch_actions": {
+        "safety_stop": "Burning/electrical smell is not a routine odor. Stop use if safe and request service.",
+        "clean_food_spill": "Remove spoiled food and clean accessible food-contact surfaces according to the user manual.",
+        "inspect_contents": "Inspect food and containers; discard spoiled food safely.",
+        "q3_clean": "Continue with safe cleaning guidance.",
+        "clean_safe": "Use only cleaning methods and materials approved in the model manual; do not pour water into vents or electrical areas.",
+        "check_manual": "Consult the model manual for approved interior cleaning.",
+        "q4_result": "Recheck after cleaning and ventilation according to manual.",
+        "resolved": "Confirm the odor has cleared.",
+        "service_escalation": "Arrange service if persistent odor remains after safe cleaning or appears electrical."
+      },
+      "diagnosis_policy": "Do not claim a component has failed based only on symptom answers. Use 'possible cause' only when supported; escalate uncertain or persistent faults.",
+      "terminal_outcomes": [
+        {
+          "outcome": "resolved",
+          "assistant_action": "Confirm the issue is resolved and summarize safe steps completed."
+        },
+        {
+          "outcome": "service_escalation",
+          "assistant_action": "Offer authorized service; capture model, serial number, symptom, onset, checks tried, and safety flags."
+        },
+        {
+          "outcome": "safety_stop",
+          "assistant_action": "Stop routine troubleshooting; advise safe isolation only if safe and direct the customer to qualified help."
+        }
+      ]
+    },
+    {
+      "id": "REF12",
+      "title": "Power interruption / appliance not restarting",
+      "severity": "medium",
+      "questions": [
+        {
+          "question_id": "GL-D201ABCD_REF12_q1_event",
+          "text": "Did the issue begin after a power cut or fluctuation?",
+          "expected_answers": [
+            "Yes",
+            "No",
+            "Not sure"
+          ],
+          "branch_by_answer": {
+            "Yes": "GL-D201ABCD_REF12_q2_power",
+            "No": "GL-D201ABCD_REF01",
+            "Not sure": "GL-D201ABCD_REF12_q2_power"
+          },
+          "response_type": "single_select",
+          "accept_free_text": true,
+          "normalize_synonyms": true
+        },
+        {
+          "question_id": "GL-D201ABCD_REF12_q2_power",
+          "text": "Is power available at the wall outlet and is the plug/cable visibly undamaged?",
+          "expected_answers": [
+            "Yes",
+            "No",
+            "Not sure"
+          ],
+          "branch_by_answer": {
+            "Yes": "GL-D201ABCD_REF12_q3_restart",
+            "No": "safety_or_electrician",
+            "Not sure": "safety_or_electrician"
+          },
+          "response_type": "single_select",
+          "accept_free_text": true,
+          "normalize_synonyms": true
+        },
+        {
+          "question_id": "GL-D201ABCD_REF12_q3_restart",
+          "text": "After power returned, did the refrigerator resume cooling?",
+          "expected_answers": [
+            "Yes",
+            "No",
+            "Partially"
+          ],
+          "branch_by_answer": {
+            "Yes": "resolved",
+            "No": "GL-D201ABCD_REF01",
+            "Partially": "GL-D201ABCD_REF02"
+          },
+          "response_type": "single_select",
+          "accept_free_text": true,
+          "normalize_synonyms": true
+        }
+      ],
+      "source_basis": "LG's no-cooling FAQ mentions low voltage/power fluctuation and gives different general advice for Direct Cool and Frost Free; specific stabilizer advice must be checked against exact model/installation requirements.",
+      "source_status": "Proposed diagnostic flow based on FAQ context.",
+      "model_code": "GL-D201ABCD",
+      "appliance": "refrigerator",
+      "model_name": "LG 185 L Direct Cool Single Door Refrigerator",
+      "model_type": "Direct Cool, single door",
+      "start_question_id": "GL-D201ABCD_REF12_q1_event",
+      "source_urls": [
+        "https://www.lg.com/in/faqs/",
+        "https://www.lg.com/in/refrigerators/single-door-refrigerators/gl-d201abcd/"
+      ],
+      "brand_support_url": "https://www.lg.com/in/support/",
+      "model_specific_notes": "Direct Cool branch: manual temperature knob and defrost-related prompts apply only where present on this exact unit. Confirm all control labels against the user manual.",
+      "branch_actions": {
+        "q2_power": "Only inspect the plug/cable visually and check the wall switch if safe; never open electrical fittings.",
+        "safety_or_electrician": "If cable/socket is damaged, hot, wet, or sparking, keep clear and contact a qualified electrician/service provider.",
+        "q3_restart": "Classify as recovered, no cooling, or low cooling.",
+        "resolved": "Confirm cooling is stable.",
+        "REF01": "Start the no-cooling flow.",
+        "REF02": "Start the low-cooling flow."
+      },
+      "diagnosis_policy": "Do not claim a component has failed based only on symptom answers. Use 'possible cause' only when supported; escalate uncertain or persistent faults.",
+      "terminal_outcomes": [
+        {
+          "outcome": "resolved",
+          "assistant_action": "Confirm the issue is resolved and summarize safe steps completed."
+        },
+        {
+          "outcome": "service_escalation",
+          "assistant_action": "Offer authorized service; capture model, serial number, symptom, onset, checks tried, and safety flags."
+        },
+        {
+          "outcome": "safety_stop",
+          "assistant_action": "Stop routine troubleshooting; advise safe isolation only if safe and direct the customer to qualified help."
+        }
+      ]
+    },
+    {
+      "id": "REF13",
+      "title": "Food freezes in refrigerator compartment",
+      "severity": "low",
+      "questions": [
+        {
+          "question_id": "GL-D201ABCD_REF13_q1_scope",
+          "text": "Is food freezing in the main refrigerator compartment rather than the freezer?",
+          "expected_answers": [
+            "Yes",
+            "No",
+            "Not sure"
+          ],
+          "branch_by_answer": {
+            "Yes": "GL-D201ABCD_REF13_q2_setting",
+            "No": "GL-D201ABCD_REF09",
+            "Not sure": "GL-D201ABCD_REF13_q2_setting"
+          },
+          "response_type": "single_select",
+          "accept_free_text": true,
+          "normalize_synonyms": true
+        },
+        {
+          "question_id": "GL-D201ABCD_REF13_q2_setting",
+          "text": "Is the cooling control set colder than intended?",
+          "expected_answers": [
+            "Yes",
+            "No",
+            "Not sure"
+          ],
+          "branch_by_answer": {
+            "Yes": "adjust_setting",
+            "No": "GL-D201ABCD_REF13_q3_position",
+            "Not sure": "check_manual"
+          },
+          "response_type": "single_select",
+          "accept_free_text": true,
+          "normalize_synonyms": true
+        },
+        {
+          "question_id": "GL-D201ABCD_REF13_q3_position",
+          "text": "Are delicate items touching the cooling plate/air outlet or placed in the coldest area?",
+          "expected_answers": [
+            "Yes",
+            "No",
+            "Not sure"
+          ],
+          "branch_by_answer": {
+            "Yes": "rearrange_food",
+            "No": "GL-D201ABCD_REF13_q4_result",
+            "Not sure": "inspect_food_spacing"
+          },
+          "response_type": "single_select",
+          "accept_free_text": true,
+          "normalize_synonyms": true
+        },
+        {
+          "question_id": "GL-D201ABCD_REF13_q4_result",
+          "text": "After adjusting the setting and food placement, is the problem resolved?",
+          "expected_answers": [
+            "Yes",
+            "No"
+          ],
+          "branch_by_answer": {
+            "Yes": "resolved",
+            "No": "service_escalation"
+          },
+          "response_type": "single_select",
+          "accept_free_text": true,
+          "normalize_synonyms": true
+        }
+      ],
+      "source_basis": "Proposed scenario; exact food-freezing FAQ not found in reviewed LG page. Setting/food-load principles are present in LG's cooling FAQ.",
+      "source_status": "Proposed scenario, not a confirmed LG diagnostic flow.",
+      "model_code": "GL-D201ABCD",
+      "appliance": "refrigerator",
+      "model_name": "LG 185 L Direct Cool Single Door Refrigerator",
+      "model_type": "Direct Cool, single door",
+      "start_question_id": "GL-D201ABCD_REF13_q1_scope",
+      "source_urls": [
+        "https://www.lg.com/in/faqs/",
+        "https://www.lg.com/in/refrigerators/single-door-refrigerators/gl-d201abcd/"
+      ],
+      "brand_support_url": "https://www.lg.com/in/support/",
+      "model_specific_notes": "Direct Cool branch: manual temperature knob and defrost-related prompts apply only where present on this exact unit. Confirm all control labels against the user manual.",
+      "branch_actions": {
+        "adjust_setting": "Set the control according to the exact model manual and current food load; do not assume the same numbered setting across models.",
+        "check_manual": "Check the manual for recommended refrigerator compartment settings.",
+        "rearrange_food": "Move sensitive items away from the cooling plate/air outlet and leave appropriate spacing.",
+        "inspect_food_spacing": "Check item placement without removing internal panels.",
+        "q4_result": "Recheck after sufficient time.",
+        "resolved": "Confirm food no longer freezes unexpectedly.",
+        "service_escalation": "Arrange service if freezing continues at a suitable setting."
+      },
+      "diagnosis_policy": "Do not claim a component has failed based only on symptom answers. Use 'possible cause' only when supported; escalate uncertain or persistent faults.",
+      "terminal_outcomes": [
+        {
+          "outcome": "resolved",
+          "assistant_action": "Confirm the issue is resolved and summarize safe steps completed."
+        },
+        {
+          "outcome": "service_escalation",
+          "assistant_action": "Offer authorized service; capture model, serial number, symptom, onset, checks tried, and safety flags."
+        },
+        {
+          "outcome": "safety_stop",
+          "assistant_action": "Stop routine troubleshooting; advise safe isolation only if safe and direct the customer to qualified help."
+        }
+      ]
+    },
+    {
+      "id": "REF14",
+      "title": "Door gasket / condensation around door",
+      "severity": "low",
+      "questions": [
+        {
+          "question_id": "GL-D201ABCD_REF14_q1_condensation",
+          "text": "What are you noticing?",
+          "expected_answers": [
+            "Moisture near door seal",
+            "Door gap",
+            "Door not closing",
+            "Water on floor"
+          ],
+          "branch_by_answer": {
+            "Moisture near door seal": "GL-D201ABCD_REF14_q2_door",
+            "Door gap": "GL-D201ABCD_REF14_q2_door",
+            "Door not closing": "GL-D201ABCD_REF06",
+            "Water on floor": "GL-D201ABCD_REF04"
+          },
+          "response_type": "single_select",
+          "accept_free_text": true,
+          "normalize_synonyms": true
+        },
+        {
+          "question_id": "GL-D201ABCD_REF14_q2_door",
+          "text": "Is the gasket dirty or is food preventing full closure?",
+          "expected_answers": [
+            "Yes",
+            "No",
+            "Not sure"
+          ],
+          "branch_by_answer": {
+            "Yes": "clean_gasket",
+            "No": "GL-D201ABCD_REF14_q3_gasket",
+            "Not sure": "inspect_door"
+          },
+          "response_type": "single_select",
+          "accept_free_text": true,
+          "normalize_synonyms": true
+        },
+        {
+          "question_id": "GL-D201ABCD_REF14_q3_gasket",
+          "text": "Is the gasket cracked, torn, or visibly deformed?",
+          "expected_answers": [
+            "Yes",
+            "No",
+            "Not sure"
+          ],
+          "branch_by_answer": {
+            "Yes": "service_escalation",
+            "No": "GL-D201ABCD_REF14_q4_result",
+            "Not sure": "service_escalation"
+          },
+          "response_type": "single_select",
+          "accept_free_text": true,
+          "normalize_synonyms": true
+        },
+        {
+          "question_id": "GL-D201ABCD_REF14_q4_result",
+          "text": "Does the door now seal normally and has moisture reduced?",
+          "expected_answers": [
+            "Yes",
+            "No"
+          ],
+          "branch_by_answer": {
+            "Yes": "resolved",
+            "No": "service_escalation"
+          },
+          "response_type": "single_select",
+          "accept_free_text": true,
+          "normalize_synonyms": true
+        }
+      ],
+      "source_basis": "LG FAQ links door issues to uneven placement and gasket gaps and recommends cleaning the gasket.",
+      "source_status": "Official FAQ basis; condensation branch is proposed.",
+      "model_code": "GL-D201ABCD",
+      "appliance": "refrigerator",
+      "model_name": "LG 185 L Direct Cool Single Door Refrigerator",
+      "model_type": "Direct Cool, single door",
+      "start_question_id": "GL-D201ABCD_REF14_q1_condensation",
+      "source_urls": [
+        "https://www.lg.com/in/faqs/",
+        "https://www.lg.com/in/refrigerators/single-door-refrigerators/gl-d201abcd/"
+      ],
+      "brand_support_url": "https://www.lg.com/in/support/",
+      "model_specific_notes": "Direct Cool branch: manual temperature knob and defrost-related prompts apply only where present on this exact unit. Confirm all control labels against the user manual.",
+      "branch_actions": {
+        "clean_gasket": "Clean the gasket with a damp cloth and remove door obstructions.",
+        "inspect_door": "Check closure and gasket visually.",
+        "q3_gasket": "Do not attempt to replace or dismantle the gasket in this flow.",
+        "q4_result": "Recheck normal door closure.",
+        "resolved": "Confirm door seals all around.",
+        "service_escalation": "Request service if the gasket is damaged or the door will not seal."
+      },
+      "diagnosis_policy": "Do not claim a component has failed based only on symptom answers. Use 'possible cause' only when supported; escalate uncertain or persistent faults.",
+      "terminal_outcomes": [
+        {
+          "outcome": "resolved",
+          "assistant_action": "Confirm the issue is resolved and summarize safe steps completed."
+        },
+        {
+          "outcome": "service_escalation",
+          "assistant_action": "Offer authorized service; capture model, serial number, symptom, onset, checks tried, and safety flags."
+        },
+        {
+          "outcome": "safety_stop",
+          "assistant_action": "Stop routine troubleshooting; advise safe isolation only if safe and direct the customer to qualified help."
+        }
+      ]
+    },
+    {
+      "id": "REF15",
+      "title": "Maintenance / cleaning request",
+      "severity": "low",
+      "questions": [
+        {
+          "question_id": "GL-D201ABCD_REF15_q1_task",
+          "text": "What do you want to clean?",
+          "expected_answers": [
+            "Interior shelves and bins",
+            "Door gasket",
+            "Exterior surface",
+            "Rear drain tray",
+            "Not sure"
+          ],
+          "branch_by_answer": {
+            "Interior shelves and bins": "safe_clean",
+            "Door gasket": "clean_gasket",
+            "Exterior surface": "safe_clean",
+            "Rear drain tray": "GL-D201ABCD_REF15_q2_access",
+            "Not sure": "check_manual"
+          },
+          "response_type": "single_select",
+          "accept_free_text": true,
+          "normalize_synonyms": true
+        },
+        {
+          "question_id": "GL-D201ABCD_REF15_q2_access",
+          "text": "Is the drain tray safely accessible without removing covers or reaching electrical parts?",
+          "expected_answers": [
+            "Yes",
+            "No",
+            "Not sure"
+          ],
+          "branch_by_answer": {
+            "Yes": "wipe_safe",
+            "No": "service_escalation",
+            "Not sure": "service_escalation"
+          },
+          "response_type": "single_select",
+          "accept_free_text": true,
+          "normalize_synonyms": true
+        },
+        {
+          "question_id": "GL-D201ABCD_REF15_q3_done",
+          "text": "Have you completed the manual-approved cleaning?",
+          "expected_answers": [
+            "Yes",
+            "No"
+          ],
+          "branch_by_answer": {
+            "Yes": "resolved",
+            "No": "check_manual"
+          },
+          "response_type": "single_select",
+          "accept_free_text": true,
+          "normalize_synonyms": true
+        }
+      ],
+      "source_basis": "LG FAQ includes drain tray cleaning video and gasket cleaning; deeper maintenance steps are not specified on the reviewed FAQ.",
+      "source_status": "Partly official support reference; safe cleaning flow is proposed.",
+      "model_code": "GL-D201ABCD",
+      "appliance": "refrigerator",
+      "model_name": "LG 185 L Direct Cool Single Door Refrigerator",
+      "model_type": "Direct Cool, single door",
+      "start_question_id": "GL-D201ABCD_REF15_q1_task",
+      "source_urls": [
+        "https://www.lg.com/in/faqs/",
+        "https://www.lg.com/in/refrigerators/single-door-refrigerators/gl-d201abcd/"
+      ],
+      "brand_support_url": "https://www.lg.com/in/support/",
+      "model_specific_notes": "Direct Cool branch: manual temperature knob and defrost-related prompts apply only where present on this exact unit. Confirm all control labels against the user manual.",
+      "branch_actions": {
+        "safe_clean": "Use only the model manual's approved cleaning method. Keep water away from controls, lights, vents, and electrical parts.",
+        "clean_gasket": "Wipe the gasket with a damp cloth; avoid harsh chemicals.",
+        "q2_access": "Do not remove rear covers or access electrical components for cleaning.",
+        "wipe_safe": "Only clean an externally accessible tray area if safe and specifically permitted by the manual.",
+        "service_escalation": "Refer inaccessible drain-tray or internal cleaning to authorized service.",
+        "check_manual": "Ask the user to consult the exact model's user manual before removing parts.",
+        "resolved": "Confirm reassembly is complete and the area is dry before normal use."
+      },
+      "diagnosis_policy": "Do not claim a component has failed based only on symptom answers. Use 'possible cause' only when supported; escalate uncertain or persistent faults.",
+      "terminal_outcomes": [
+        {
+          "outcome": "resolved",
+          "assistant_action": "Confirm the issue is resolved and summarize safe steps completed."
+        },
+        {
+          "outcome": "service_escalation",
+          "assistant_action": "Offer authorized service; capture model, serial number, symptom, onset, checks tried, and safety flags."
+        },
+        {
+          "outcome": "safety_stop",
+          "assistant_action": "Stop routine troubleshooting; advise safe isolation only if safe and direct the customer to qualified help."
+        }
+      ]
+    }
+  ]
+}

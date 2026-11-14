@@ -1,0 +1,294 @@
+[
+  {
+    "id": "instruct_set_cool_18c",
+    "text": "1. Turn ON the AC using the remote control.\n2. Press the 'MODE' button until 'COOL' is selected.\n3. Lower the temperature setting to 18°C.\n4. Set fan speed to 'HIGH' (Turbo / Jet Cool).\n5. Allow 10-15 minutes for the outdoor compressor to cycle on.",
+    "appliance_type": "air-conditioner",
+    "model": "UW-Q18WUZA",
+    "audience": "customer",
+    "source": "manual_disassembly_maintenance.txt",
+    "verification_status": "verified",
+    "safety_flag": false,
+    "steps": [
+      "Select Cool Mode on remote",
+      "Set temperature to 18°C",
+      "Set fan speed to High / Jet Cool",
+      "Wait 10-15 minutes to evaluate cooling"
+    ]
+  },
+  {
+    "id": "instruct_clean_dry_filter",
+    "text": "1. Turn OFF the AC power switch / breaker.\n2. Open the front intake grille by lifting both sides.\n3. Slide the mesh filters downwards to remove them.\n4. Wash the filters under lukewarm tap water using a soft brush (no harsh chemicals).\n5. Shake off excess moisture and let them dry completely in shade before reinstalling.",
+    "appliance_type": "air-conditioner",
+    "model": "UW-Q18WUZA",
+    "audience": "customer",
+    "source": "manual_disassembly_maintenance.txt",
+    "verification_status": "verified",
+    "safety_flag": false,
+    "steps": [
+      "Turn off power supply",
+      "Open intake grille",
+      "Remove mesh filters",
+      "Wash with running water",
+      "Dry thoroughly in shade"
+    ]
+  },
+  {
+    "id": "instruct_inspect_filter",
+    "text": "Visually inspect the indoor unit air filters for heavy dust, lint or pet hair accumulation that may choke evaporator airflow.",
+    "appliance_type": "air-conditioner",
+    "model": "UW-Q18WUZA",
+    "audience": "customer",
+    "source": "manual_disassembly_maintenance.txt",
+    "verification_status": "verified",
+    "safety_flag": false,
+    "steps": ["Inspect mesh filter surface for clogs"]
+  },
+  {
+    "id": "instruct_safe_mcb_reset",
+    "text": "1. Switch OFF the dedicated AC MCB (Miniature Circuit Breaker) on your electrical distribution board.\n2. Keep it switched off for at least 3 minutes to discharge internal capacitors.\n3. Flip the MCB back to the ON position.\n4. Power on the AC with the remote control.",
+    "appliance_type": "air-conditioner",
+    "model": "UW-Q18WUZA",
+    "audience": "customer",
+    "source": "manual_disassembly_maintenance.txt",
+    "verification_status": "verified",
+    "safety_flag": false,
+    "steps": [
+      "Switch off AC MCB",
+      "Wait 3 full minutes",
+      "Switch MCB back ON",
+      "Power on AC with remote"
+    ]
+  },
+  {
+    "id": "instruct_hard_reset_mcb",
+    "text": "1. Turn OFF the AC MCB breaker switch completely.\n2. Unplug the AC power cord from the wall outlet if accessible.\n3. Wait 5 full minutes to allow microcontrollers and inverter boards to completely reset.\n4. Restore power and turn on.",
+    "appliance_type": "air-conditioner",
+    "model": "UW-Q18WUZA",
+    "audience": "customer",
+    "source": "manual_disassembly_maintenance.txt",
+    "verification_status": "verified",
+    "safety_flag": false,
+    "steps": [
+      "Power off MCB",
+      "Wait 5 minutes",
+      "Restore power"
+    ]
+  },
+  {
+    "id": "instruct_clear_outdoor_airflow",
+    "text": "1. Check the outdoor condenser unit location.\n2. Remove any clothes, plastic covers, flower pots, or boxes stored within 50 cm of the unit.\n3. Ensure at least 30 cm clearance at the rear and 50 cm clearance in front of the fan grille.\n4. Clear dry leaves from the outdoor coil without using pressure washers.",
+    "appliance_type": "air-conditioner",
+    "model": "UW-Q18WUZA",
+    "audience": "customer",
+    "source": "manual_disassembly_maintenance.txt",
+    "verification_status": "verified",
+    "safety_flag": false,
+    "steps": [
+      "Verify 50cm front clearance",
+      "Verify 30cm rear clearance",
+      "Remove obstructing items",
+      "Do NOT use pressure washers"
+    ]
+  },
+  {
+    "id": "instruct_disable_child_lock",
+    "text": "To disable Child Lock (CL code):\n1. Locate the 'Timer' or 'Function' buttons on your LG remote.\n2. Press and hold the designated Lock / Unlock button combination for 3 to 5 seconds until the beep sounds and 'CL' disappears from the display.",
+    "appliance_type": "air-conditioner",
+    "model": "UW-Q18WUZA",
+    "audience": "customer",
+    "source": "airconditioner-manual.pdf",
+    "verification_status": "verified",
+    "safety_flag": false,
+    "steps": [
+      "Locate lock button on remote",
+      "Hold for 3-5 seconds until beep",
+      "Confirm CL clears"
+    ]
+  },
+  {
+    "id": "instruct_clean_filter_fl",
+    "text": "FL is a filter reminder alert (approx. 500 hours of run time).\n1. Remove and wash the mesh air filters.\n2. Once clean and dry, reinstall them.\n3. Press the 'Filter Reset' or hold the 'Air Clean' button on your remote for 3 seconds to clear the FL message.",
+    "appliance_type": "air-conditioner",
+    "model": "UW-Q18WUZA",
+    "audience": "customer",
+    "source": "airconditioner-manual.pdf",
+    "verification_status": "verified",
+    "safety_flag": false,
+    "steps": [
+      "Clean mesh filters",
+      "Reinstall dry filters",
+      "Hold Filter Reset button 3 seconds"
+    ]
+  },
+  {
+    "id": "instruct_exit_status_mode",
+    "text": "Codes like Po (Power Cool), Lo (Low Power), HI (High Test), or Od (Outdoor unit test) are operational indicators, not errors.\nPress the 'Mode' or 'Power' button once on your remote to return to normal cooling.",
+    "appliance_type": "air-conditioner",
+    "model": "UW-Q18WUZA",
+    "audience": "customer",
+    "source": "airconditioner-manual.pdf",
+    "verification_status": "verified",
+    "safety_flag": false,
+    "steps": ["Press Mode button to return to standard operation"]
+  },
+  {
+    "id": "instruct_fix_drain",
+    "text": "1. Inspect the flexible drain pipe exiting the indoor unit.\n2. Ensure the pipe slopes downward continuously with no upward bends.\n3. Make sure the outlet of the hose is not submerged inside a bucket of water.\n4. Clear any visible lint or moss at the outlet tip.",
+    "appliance_type": "air-conditioner",
+    "model": "UW-Q18WUZA",
+    "audience": "customer",
+    "source": "manual_disassembly_maintenance.txt",
+    "verification_status": "verified",
+    "safety_flag": false,
+    "steps": [
+      "Ensure downward slope",
+      "Remove hose kinks",
+      "Do not submerge pipe tip in water"
+    ]
+  },
+  {
+    "id": "instruct_monsoon_mode_high_fan",
+    "text": "To prevent evaporator condensation and musty moisture:\n1. Switch to 'Monsoon' or 'Dry' mode (dehumidification).\n2. Set fan speed to HIGH.\n3. Run continuously for 45 minutes to pull excess room humidity.",
+    "appliance_type": "air-conditioner",
+    "model": "UW-Q18WUZA",
+    "audience": "customer",
+    "source": "manual_disassembly_maintenance.txt",
+    "verification_status": "verified",
+    "safety_flag": false,
+    "steps": ["Switch to Dry / Monsoon mode", "Set fan to High for 45 minutes"]
+  },
+  {
+    "id": "instruct_adjust_vane_angle",
+    "text": "Use the 'Vane' / 'Swing' button on the remote to point horizontal air louvers upward or horizontally into the room, preventing cold air from recirculating straight down onto the temperature sensor.",
+    "appliance_type": "air-conditioner",
+    "model": "UW-Q18WUZA",
+    "audience": "customer",
+    "source": "airconditioner-manual.pdf",
+    "verification_status": "verified",
+    "safety_flag": false,
+    "steps": ["Adjust swing louvers horizontally"]
+  },
+  {
+    "id": "instruct_deep_clean_filter_coil",
+    "text": "1. Turn off AC power.\n2. Remove the mesh filters and wash them.\n3. Use a soft brush attachment on a vacuum cleaner to gently clean dust off the visible front aluminum coil fins.\n4. Do NOT poke fins with sharp objects or spray liquid into electrical boxes.",
+    "appliance_type": "air-conditioner",
+    "model": "UW-Q18WUZA",
+    "audience": "customer",
+    "source": "manual_disassembly_maintenance.txt",
+    "verification_status": "verified",
+    "safety_flag": false,
+    "steps": [
+      "Power off",
+      "Wash filters",
+      "Vacuum front fins gently",
+      "Never bend aluminum fins"
+    ]
+  },
+  {
+    "id": "instruct_ventilate_run_fan_1hr",
+    "text": "1. Open all room windows for fresh air circulation.\n2. Switch AC mode to 'FAN ONLY' (compressor OFF).\n3. Set fan to maximum speed and run for 1 hour to purge stale odors and dry the internal drain pan.",
+    "appliance_type": "air-conditioner",
+    "model": "UW-Q18WUZA",
+    "audience": "customer",
+    "source": "manual_disassembly_maintenance.txt",
+    "verification_status": "verified",
+    "safety_flag": false,
+    "steps": [
+      "Open room windows",
+      "Select Fan Only mode",
+      "Run on maximum speed for 1 hour"
+    ]
+  },
+  {
+    "id": "instruct_replace_remote_batteries",
+    "text": "1. Slide off the back battery cover of your LG remote control.\n2. Remove both old batteries.\n3. Insert two fresh 1.5V AAA alkaline batteries matching + and - polarity.\n4. Check if the LCD display turns on with clear digits.",
+    "appliance_type": "air-conditioner",
+    "model": "UW-Q18WUZA",
+    "audience": "customer",
+    "source": "airconditioner-manual.pdf",
+    "verification_status": "verified",
+    "safety_flag": false,
+    "steps": [
+      "Remove battery cover",
+      "Replace with two new AAA batteries",
+      "Verify display"
+    ]
+  },
+  {
+    "id": "instruct_clean_filter",
+    "text": "Remove the front dust filter, wash gently with clean running water, and dry completely in shade before reinstalling.",
+    "appliance_type": "air-conditioner",
+    "model": "UW-Q18WUZA",
+    "audience": "customer",
+    "source": "manual_disassembly_maintenance.txt",
+    "verification_status": "verified",
+    "safety_flag": false,
+    "steps": ["Clean filter with water and dry in shade"]
+  },
+  {
+    "id": "instruct_filter_clean_steps",
+    "text": "4-Step Filter Care:\n1. Power OFF the unit.\n2. Unclip and remove filter screens.\n3. Rinse under running tap water.\n4. Dry thoroughly in shade away from direct sun.",
+    "appliance_type": "air-conditioner",
+    "model": "UW-Q18WUZA",
+    "audience": "customer",
+    "source": "manual_disassembly_maintenance.txt",
+    "verification_status": "verified",
+    "safety_flag": false,
+    "steps": ["Power off", "Remove screens", "Rinse", "Dry in shade"]
+  },
+  {
+    "id": "instruct_filter_removal_guide",
+    "text": "Locate the small release tabs on the bottom edge of each filter screen. Gently lift up and pull forward towards you.",
+    "appliance_type": "air-conditioner",
+    "model": "UW-Q18WUZA",
+    "audience": "customer",
+    "source": "manual_disassembly_maintenance.txt",
+    "verification_status": "verified",
+    "safety_flag": false,
+    "steps": ["Unhook tabs and pull forward"]
+  },
+  {
+    "id": "instruct_wait_dry_complete",
+    "text": "Never install wet filters. Moisture will cause mold and short circuits. Wait until mesh is 100% dry to the touch.",
+    "appliance_type": "air-conditioner",
+    "model": "UW-Q18WUZA",
+    "audience": "customer",
+    "source": "manual_disassembly_maintenance.txt",
+    "verification_status": "verified",
+    "safety_flag": false,
+    "steps": ["Confirm mesh is completely dry before reinstalling"]
+  },
+  {
+    "id": "instruct_locate_model_serial_sticker",
+    "text": "Find your model & serial number sticker: 1. On the right-hand side of the indoor unit casing, or 2. On the electrical service access panel of the outdoor unit.",
+    "appliance_type": "air-conditioner",
+    "model": "UW-Q18WUZA",
+    "audience": "customer",
+    "source": "manual_disassembly_maintenance.txt",
+    "verification_status": "verified",
+    "safety_flag": false,
+    "steps": ["Locate barcode sticker on right side of indoor casing"]
+  },
+  {
+    "id": "instruct_thinq_ac_wifi_reset",
+    "text": "1. Point remote at the indoor unit.\n2. Press and hold the 'Wi-Fi' button (or Energy Saver + Jet Cool together) for 3 seconds.\n3. The unit will beep and the Wi-Fi icon on the display will start flashing.",
+    "appliance_type": "air-conditioner",
+    "model": "UW-Q18WUZA",
+    "audience": "customer",
+    "source": "airconditioner-manual.pdf",
+    "verification_status": "verified",
+    "safety_flag": false,
+    "steps": ["Hold Wi-Fi button 3 seconds until icon blinks"]
+  },
+  {
+    "id": "instruct_reconfigure_thinq_network",
+    "text": "1. Open the LG ThinQ app on your smartphone.\n2. Ensure your phone is connected to a 2.4 GHz Wi-Fi network (5 GHz is not supported).\n3. Tap '+' to add appliance and follow on-screen pairing steps.",
+    "appliance_type": "air-conditioner",
+    "model": "UW-Q18WUZA",
+    "audience": "customer",
+    "source": "airconditioner-manual.pdf",
+    "verification_status": "verified",
+    "safety_flag": false,
+    "steps": ["Connect phone to 2.4 GHz network", "Re-pair via LG ThinQ app"]
+  }
+]

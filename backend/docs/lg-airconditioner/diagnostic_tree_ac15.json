@@ -1,0 +1,128 @@
+{
+  "issue_id": "AC15",
+  "title": "ThinQ / Smart Features Connectivity",
+  "start_node": "q1_thinq_issue_type",
+  "nodes": [
+    {
+      "id": "q1_thinq_issue_type",
+      "type": "question",
+      "text_en": "What issue are you facing with LG ThinQ smart features?",
+      "text_hi": "LG ThinQ app ya smart features ke sath kya dikkat aa rahi hai?",
+      "options": [
+        {
+          "label": "Wi-Fi Pairing fails during initial setup",
+          "next_node": "q2_wifi_frequency"
+        },
+        {
+          "label": "AC shows 'Offline / Disconnected' in ThinQ App",
+          "next_node": "q3_router_change"
+        },
+        {
+          "label": "Voice Assistant (Alexa / Google) not responding",
+          "conclusion": "diag_voice_assistant_relink"
+        },
+        {
+          "label": "Model does not have Wi-Fi hardware",
+          "conclusion": "diag_model_no_wifi_support"
+        }
+      ]
+    },
+    {
+      "id": "q2_wifi_frequency",
+      "type": "question",
+      "text_en": "Is your Wi-Fi router broadcasting on 2.4 GHz band? (LG ACs only connect to 2.4 GHz Wi-Fi, not 5 GHz).",
+      "text_hi": "Kya aapka Wi-Fi router 2.4 GHz band par hai? (LG AC sirf 2.4 GHz Wi-Fi se connect hota hai).",
+      "options": [
+        {
+          "label": "Connected phone to 2.4 GHz; pairing worked",
+          "resolution": "resolved_thinq_paired_24ghz"
+        },
+        {
+          "label": "Still fails on 2.4 GHz network",
+          "action": "instruct_thinq_ac_wifi_reset",
+          "next_node": "q_wifi_reset_result"
+        }
+      ]
+    },
+    {
+      "id": "q_wifi_reset_result",
+      "type": "question",
+      "text_en": "After pressing the Wi-Fi button on remote for 3 seconds until the Wi-Fi icon blinks, did pairing succeed?",
+      "text_hi": "Remote par Wi-Fi button 3 second dabane ke baad kya app mein AC pair ho gaya?",
+      "options": [
+        {
+          "label": "Yes, connected successfully",
+          "resolution": "resolved_thinq_pairing_success"
+        },
+        {
+          "label": "No, Wi-Fi icon does not blink",
+          "conclusion": "diag_indoor_wifi_module_fault"
+        }
+      ]
+    },
+    {
+      "id": "q3_router_change",
+      "type": "question",
+      "text_en": "Did you recently change your home Wi-Fi password, router, or internet provider?",
+      "text_hi": "Kya aapne haal hi mein Wi-Fi password, router ya internet connection badla hai?",
+      "options": [
+        {
+          "label": "Yes, router/password was changed",
+          "action": "instruct_reconfigure_thinq_network",
+          "resolution": "resolved_thinq_network_reconfigured"
+        },
+        {
+          "label": "No changes, router is ON with active internet",
+          "next_node": "q4_thinq_app_cache"
+        }
+      ]
+    },
+    {
+      "id": "q4_thinq_app_cache",
+      "type": "question",
+      "text_en": "Did turning off the AC MCB for 2 minutes and restarting the ThinQ app bring the AC back online?",
+      "text_hi": "AC ka MCB 2 minute band karke on karne aur app restart karne par kya AC online aaya?",
+      "options": [
+        {
+          "label": "Yes, AC is online now",
+          "resolution": "resolved_thinq_online_restored"
+        },
+        {
+          "label": "No, remains offline permanently",
+          "conclusion": "diag_indoor_wifi_module_fault"
+        }
+      ]
+    }
+  ],
+  "conclusions": {
+    "diag_indoor_wifi_module_fault": {
+      "probable_cause": "Indoor Wi-Fi PCB Module Non-Responsive or Detached Cable",
+      "confidence": 0.85,
+      "parts": [
+        "LG Smart Wi-Fi USB/PCB Module (LCW-004 / LCW-007)"
+      ],
+      "priority": "Medium",
+      "safety_flag": false,
+      "rag_query": "LG AC ThinQ wifi module replacement troubleshooting",
+      "technician_note": "Inspect Wi-Fi module connector on indoor display PCB and check 5V supply."
+    },
+    "diag_voice_assistant_relink": {
+      "probable_cause": "OAuth Token Expired in Alexa / Google Home ThinQ Skill",
+      "confidence": 0.9,
+      "parts": [],
+      "priority": "Low",
+      "safety_flag": false,
+      "rag_query": "LG ThinQ Alexa Google Home unlink and relink skill",
+      "technician_note": "Guide customer to unlink and re-link LG ThinQ skill inside Alexa / Google Home app."
+    },
+    "diag_model_no_wifi_support": {
+      "probable_cause": "Appliance Model Lacks Built-in ThinQ Wi-Fi Hardware",
+      "confidence": 1.0,
+      "parts": [],
+      "priority": "Low",
+      "safety_flag": false,
+      "rag_query": "LG AC model wifi feature compatibility check",
+      "technician_note": "Verify model suffix in manual. Non-Wi-Fi models do not support ThinQ."
+    }
+  }
+}

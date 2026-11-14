@@ -1,0 +1,59 @@
+{
+  "intents": [
+    {
+      "id": "BOOKING",
+      "patterns": [
+        "\\b(book|schedule|arrange|request|call|send|get|need|want)\\b[\\s\\S]{0,30}\\b(technician|tech|mechanic|engineer|expert|service\\s*man|service\\s*visit|service\\s*appointment|repair\\s*visit|home\\s*visit|repair\\s*appointment)\\b",
+        "\\b(technician|tech|mechanic|engineer|expert|service\\s*man)\\b[\\s\\S]{0,20}\\b(visit|come|please|today|tomorrow|asap|immediately|urgently)\\b",
+        "\\bbook\\s+(a\\s+)?(service|visit|repair|tech|slot|appointment)\\b",
+        "\\b(i\\s+need|i\\s+want|please\\s+send|can\\s+you\\s+send)\\s+(a\\s+)?(technician|tech|engineer|service\\s*man)\\b",
+        "\\b(technician|mechanic|engineer)\\s*(bhejo|chahiye|bulao|aa\\s*jao|ko\\s*bhejo)\\b",
+        "\\b(service|repair)\\s*(karo|karwao|chahiye|book)\\b",
+        "\\b(technician|mechanic|engineer)\\s*(anupunga|anuppu|varanum|vanga)\\b",
+        "\\b(service|repair)\\s*(pannga|panna|vendum|book\\s*pannga)\\b"
+      ]
+    },
+    {
+      "id": "WARRANTY",
+      "patterns": [
+        "\\b(warranty|guarantee|warranted|coverage|covered\\s+under)\\b",
+        "\\b(how\\s+long|when\\s+does|is\\s+this\\s+covered|does\\s+warranty|warranty\\s+period|warranty\\s+cover|warranty\\s+expire)\\b",
+        "\\b(varranti|varanti)\\b",
+        "\\b(garantee|garaantee)\\b",
+        "\\b(warranty\\s+kya|warranty\\s+kitne|warranty\\s+hai)\\b"
+      ]
+    },
+    {
+      "id": "REPAIR_STATUS",
+      "patterns": [
+        "\\b(status|update|progress|follow[\\s-]?up)\\b[\\s\\S]{0,30}\\b(service|repair|ticket|request|case|job|visit)\\b",
+        "\\b(my\\s+ticket|service\\s+ticket|ticket\\s+number|case\\s+number|reference\\s+number|job\\s+id)\\b",
+        "\\b(when\\s+(is|will|are)\\s+(the\\s+)?(technician|tech|engineer)|technician\\s+coming|when\\s+will\\s+someone\\s+come)\\b",
+        "\\b(already\\s+raised|already\\s+booked|i\\s+raised\\s+a|i\\s+booked\\s+a)\\s+(complaint|service|ticket|request)\\b",
+        "\\b(mera\\s+ticket|meri\\s+request|case\\s+kab|status\\s+batao)\\b"
+      ]
+    },
+    {
+      "id": "GENERAL_SUPPORT",
+      "patterns": [
+        "^(hey|hello|hi|howdy|good\\s*(morning|evening|afternoon|day))\\b",
+        "\\b(who\\s+are\\s+you|what\\s+are\\s+you|your\\s+name|shriya|assistant\\s+name)\\b",
+        "\\b(how\\s+are\\s+you|what\\s+can\\s+you\\s+do|help\\s+me)\\b",
+        "\\b(thank\\s+you|thanks|okay|alright|understood|got\\s+it)\\b"
+      ]
+    },
+    {
+      "id": "AUDIBILITY_CHECK",
+      "patterns": [
+        "(கேட்குதா|கேக்குதா|பேசுறது|என்\\s*குரல்|can\\s+you\\s+hear\\s+me|are\\s+you\\s+(there|listening)|am\\s+i\\s+audible|sun\\s+rahe\\s+ho|meri\\s+aawa?z|sunai\\s+de\\s+raha|naa\\s*paisa\\s*cake\\s*tha|naan\\s*pesa\\s*ke|pesa\\s*ke|pesurathu\\s*ke)"
+      ]
+    },
+    {
+      "id": "LANGUAGE_COMMAND",
+      "patterns": [
+        "(தங்கிலீ|தமிங்கிலீ|tanglish|தமிழ்|tamil|speak\\s+in\\s+(tanglish|tamil|english|hindi)|hindi\\s+me\\s+(bolo|baat)|hinglish\\s+me\\s+(bolo|baat)|english\\s+me\\s+bolo|english\\s+la\\s+pesu|tamil\\s+pesu)"
+      ]
+    }
+  ]
+}
+

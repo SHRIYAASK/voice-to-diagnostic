@@ -1,0 +1,2747 @@
+{
+  "schema_version": "1.0",
+  "description": "Combined LG AC diagnostic decision trees",
+  "issue_count": 16,
+  "issues": {
+    "AC01": {
+      "issue_id": "AC01",
+      "title": "Cooling Performance / Not Cooling",
+      "start_node": "q1_power_check",
+      "nodes": [
+        {
+          "id": "q1_power_check",
+          "type": "question",
+          "text_en": "Is the AC turning on and showing lights on the display?",
+          "text_hi": "Kya AC chal raha hai aur display par lights dikhai de rahi hain?",
+          "options": [
+            {
+              "label": "Yes",
+              "next_node": "q2_cooling_symptom"
+            },
+            {
+              "label": "No",
+              "redirect_issue": "AC02"
+            }
+          ]
+        },
+        {
+          "id": "q2_cooling_symptom",
+          "type": "question",
+          "text_en": "Which best describes the cooling issue?",
+          "text_hi": "Cooling ki samasya ko kaunsa option sabse achha describe karta hai?",
+          "options": [
+            {
+              "label": "No cool air / Only warm air blowing",
+              "next_node": "q3_mode_check"
+            },
+            {
+              "label": "Air is slightly cool / Weak cooling",
+              "next_node": "q3_mode_check"
+            },
+            {
+              "label": "Cooling starts and stops intermittently",
+              "next_node": "q5_voltage_compressor"
+            },
+            {
+              "label": "Room does not reach set temperature",
+              "next_node": "q3_mode_check"
+            }
+          ]
+        },
+        {
+          "id": "q3_mode_check",
+          "type": "question",
+          "text_en": "Is the AC set to 'Cool' mode (Snowflake symbol) at 18°C with High Fan Speed?",
+          "text_hi": "Kya AC 'Cool' mode (Snowflake icon) par 18°C aur High Fan Speed par set hai?",
+          "options": [
+            {
+              "label": "Yes, already set to 18°C Cool mode",
+              "next_node": "q4_filter_check"
+            },
+            {
+              "label": "No / Not sure",
+              "action": "instruct_set_cool_18c",
+              "next_node": "q4_filter_check"
+            }
+          ]
+        },
+        {
+          "id": "q4_filter_check",
+          "type": "question",
+          "text_en": "Is the air filter dusty or clogged with dirt?",
+          "text_hi": "Kya air filter dhool ya kachre se bhara hua hai?",
+          "options": [
+            {
+              "label": "Filter is clean",
+              "next_node": "q5_voltage_compressor"
+            },
+            {
+              "label": "Filter is dirty",
+              "action": "instruct_clean_dry_filter",
+              "next_node": "q_filter_resolution"
+            },
+            {
+              "label": "Haven't checked yet",
+              "action": "instruct_inspect_filter",
+              "next_node": "q_filter_resolution"
+            }
+          ]
+        },
+        {
+          "id": "q_filter_resolution",
+          "type": "question",
+          "text_en": "Did cleaning and drying the filter resolve the cooling issue?",
+          "text_hi": "Filter ko dho kar sukhane ke baad kya cooling behtar hui?",
+          "options": [
+            {
+              "label": "Yes, cooling is restored",
+              "resolution": "resolved_filter_cleaning"
+            },
+            {
+              "label": "No, cooling is still poor",
+              "next_node": "q5_voltage_compressor"
+            }
+          ]
+        },
+        {
+          "id": "q5_voltage_compressor",
+          "type": "question",
+          "text_en": "Is the outdoor unit compressor and fan running smoothly without unusual humming or clicking?",
+          "text_hi": "Kya outdoor unit ka fan aur compressor bina kisi ajeeb awaaz ke chal rahe hain?",
+          "options": [
+            {
+              "label": "Yes, outdoor unit is running normally",
+              "next_node": "q6_refrigerant_check"
+            },
+            {
+              "label": "Outdoor fan stops frequently / humming sound",
+              "conclusion": "diag_capacitor_outdoor_fan"
+            },
+            {
+              "label": "Outdoor unit is completely off / not starting",
+              "conclusion": "diag_compressor_pcb_failure"
+            }
+          ]
+        },
+        {
+          "id": "q6_refrigerant_check",
+          "type": "question",
+          "text_en": "Is there ice or frost forming on the thin copper pipe or indoor cooling coil?",
+          "text_hi": "Kya patle copper pipe ya indoor cooling coil par barf (ice) jam rahi hai?",
+          "options": [
+            {
+              "label": "Yes, frost/ice is visible",
+              "conclusion": "diag_refrigerant_gas_leak"
+            },
+            {
+              "label": "No ice, just normal room air",
+              "conclusion": "diag_low_cooling_efficiency"
+            }
+          ]
+        }
+      ],
+      "conclusions": {
+        "diag_refrigerant_gas_leak": {
+          "probable_cause": "Low Refrigerant Gas (R32) due to Micro-leakage",
+          "confidence": 0.9,
+          "parts": [
+            "R32 Refrigerant Gas (1kg)",
+            "Flare Brass Nuts",
+            "Nitrogen Leak Testing Kit"
+          ],
+          "priority": "High",
+          "safety_flag": false,
+          "rag_query": "LG AC poor cooling ice on coil refrigerant recharge",
+          "technician_note": "Conduct 300 PSI nitrogen leak test on indoor/outdoor flare joints. Braze leak, vacuum down to 500 microns, refill R32 by weight."
+        },
+        "diag_capacitor_outdoor_fan": {
+          "probable_cause": "Outdoor Fan Motor or Starting Capacitor Failure / Low Grid Voltage",
+          "confidence": 0.85,
+          "parts": [
+            "Dual Run Capacitor 35+5uF",
+            "Outdoor Fan Motor"
+          ],
+          "priority": "High",
+          "safety_flag": true,
+          "rag_query": "LG AC outdoor fan motor humming capacitor replacement",
+          "technician_note": "Discharge capacitor safely before testing capacitance. Measure voltage under compressor start load."
+        },
+        "diag_compressor_pcb_failure": {
+          "probable_cause": "Inverter Compressor Drive / Outdoor Main PCB Failure",
+          "confidence": 0.85,
+          "parts": [
+            "Outdoor Inverter PCB",
+            "Compressor Overload Protector"
+          ],
+          "priority": "Critical",
+          "safety_flag": true,
+          "rag_query": "LG AC outdoor unit not starting inverter board troubleshooting",
+          "technician_note": "High voltage risk. Check DC Link voltage and IPM output to compressor U, V, W terminals."
+        },
+        "diag_low_cooling_efficiency": {
+          "probable_cause": "Clogged Heat Exchanger Coils or Thermal Sensor Drift",
+          "confidence": 0.75,
+          "parts": [
+            "Condenser Chemical Wash",
+            "Indoor Room Thermistor 10kΩ"
+          ],
+          "priority": "Medium",
+          "safety_flag": false,
+          "rag_query": "LG AC poor cooling room temperature sensor check",
+          "technician_note": "Check indoor thermistor calibration at 25°C. Perform foam jet cleaning of condenser."
+        }
+      }
+    },
+    "AC02": {
+      "issue_id": "AC02",
+      "title": "No Power / AC Won't Turn On",
+      "start_node": "q1_display_lights",
+      "nodes": [
+        {
+          "id": "q1_display_lights",
+          "type": "question",
+          "text_en": "Does the AC display or any indicator LED turn on?",
+          "text_hi": "Kya AC display ya koi bhi LED light ON ho rahi hai?",
+          "options": [
+            {
+              "label": "Yes, lights/display turn on",
+              "next_node": "q2_remote_operation"
+            },
+            {
+              "label": "No lights at all (Dead Unit)",
+              "next_node": "q3_remote_power_button"
+            }
+          ]
+        },
+        {
+          "id": "q2_remote_operation",
+          "type": "question",
+          "text_en": "Display lights up, but does the AC start blowing air when you press Power on the remote?",
+          "text_hi": "Display par light aa rahi hai, par remote se power dabane par kya hawa chalu hoti hai?",
+          "options": [
+            {
+              "label": "Yes, but stops immediately",
+              "conclusion": "diag_pcb_surge_protection"
+            },
+            {
+              "label": "No response to remote",
+              "redirect_issue": "AC08"
+            },
+            {
+              "label": "Shows error code instead",
+              "redirect_issue": "AC03"
+            }
+          ]
+        },
+        {
+          "id": "q3_remote_power_button",
+          "type": "question",
+          "text_en": "Have you tried pressing the ON/OFF button on the AC unit itself (manual emergency switch under the front panel)?",
+          "text_hi": "Kya aapne indoor unit ke panel ke andar diye gaye manual power button ko dabaya?",
+          "options": [
+            {
+              "label": "Yes, manual button also does not work",
+              "next_node": "q4_mcb_check"
+            },
+            {
+              "label": "Manual button turns on AC (Remote failed)",
+              "redirect_issue": "AC08"
+            }
+          ]
+        },
+        {
+          "id": "q4_mcb_check",
+          "type": "question",
+          "text_en": "Is the dedicated MCB (breaker) for the AC switched ON in your home's main distribution board?",
+          "text_hi": "Kya aapke distribution box mein AC ka MCB switch ON hai?",
+          "options": [
+            {
+              "label": "Yes, MCB is in UP (ON) position",
+              "next_node": "q5_home_power_check"
+            },
+            {
+              "label": "MCB was tripped / OFF",
+              "action": "instruct_safe_mcb_reset",
+              "next_node": "q6_mcb_retrip_check"
+            },
+            {
+              "label": "Unsure where MCB is",
+              "conclusion": "diag_power_socket_inspection"
+            }
+          ]
+        },
+        {
+          "id": "q5_home_power_check",
+          "type": "question",
+          "text_en": "Is power available in other appliances connected to the same room or power outlet?",
+          "text_hi": "Kya usi kamre ke baki switches aur appliances mein light aa rahi hai?",
+          "options": [
+            {
+              "label": "Yes, room power is normal",
+              "conclusion": "diag_internal_fuse_pcb"
+            },
+            {
+              "label": "No, home/room power is totally out",
+              "resolution": "resolved_mains_power_outage"
+            }
+          ]
+        },
+        {
+          "id": "q6_mcb_retrip_check",
+          "type": "question",
+          "text_en": "Did the MCB trip down again immediately when you switched it ON?",
+          "text_hi": "Kya MCB ko ON karte hi wo dobara turant trip (band) ho gaya?",
+          "options": [
+            {
+              "label": "Yes, trips immediately with spark/click",
+              "conclusion": "diag_severe_short_circuit"
+            },
+            {
+              "label": "No, MCB stayed ON and AC started",
+              "resolution": "resolved_mcb_reset"
+            }
+          ]
+        }
+      ],
+      "conclusions": {
+        "diag_severe_short_circuit": {
+          "probable_cause": "Dead Short Circuit in Inverter Compressor / Outdoor PCB / Power Cord",
+          "confidence": 0.95,
+          "parts": [
+            "Inverter Compressor",
+            "Outdoor Main PCB",
+            "20A Isolator MCB"
+          ],
+          "priority": "Critical",
+          "safety_flag": true,
+          "rag_query": "LG AC MCB trips immediately short circuit safety troubleshooting",
+          "technician_note": "DANGER: DO NOT ATTEMPT TO FORCE MCB ON. Disconnect power cord and megger test compressor windings to ground."
+        },
+        "diag_internal_fuse_pcb": {
+          "probable_cause": "Indoor PCB Power Fuse Blown (3.15A/250V) or Varistor Surge Damage",
+          "confidence": 0.9,
+          "parts": [
+            "Indoor Main PCB",
+            "3.15A Ceramic Fuse",
+            "Surge Varistor"
+          ],
+          "priority": "High",
+          "safety_flag": true,
+          "rag_query": "LG AC indoor PCB blown fuse surge repair",
+          "technician_note": "Check input AC 230V at CN-POWER terminal. Test continuity of PCB fuse and primary SMPS transformer."
+        },
+        "diag_pcb_surge_protection": {
+          "probable_cause": "PCB SMPS Power Supply Fault or Microcontroller Lockup",
+          "confidence": 0.8,
+          "parts": [
+            "Indoor Main PCB"
+          ],
+          "priority": "Medium",
+          "safety_flag": false,
+          "rag_query": "LG AC power shuts down immediately after start",
+          "technician_note": "Inspect 12V and 5V DC regulated rails on indoor PCB."
+        },
+        "diag_power_socket_inspection": {
+          "probable_cause": "Loose AC Wall Plug / Burnt Isolator Switch Contacts",
+          "confidence": 0.7,
+          "parts": [
+            "16A Power Plug Top",
+            "Wall Socket Isolator"
+          ],
+          "priority": "Medium",
+          "safety_flag": true,
+          "rag_query": "LG AC power plug loose neutral wire test",
+          "technician_note": "Verify 230V line-to-neutral and <2V neutral-to-earth at wall socket."
+        }
+      }
+    },
+    "AC03": {
+      "issue_id": "AC03",
+      "title": "Error Code or Display Issue",
+      "start_node": "q1_display_status",
+      "nodes": [
+        {
+          "id": "q1_display_status",
+          "type": "question",
+          "text_en": "What do you see on your AC display panel?",
+          "text_hi": "Aapko AC display panel par kya dikhai de raha hai?",
+          "options": [
+            {
+              "label": "Specific Error Code (e.g., CH 05, CH 38, HL, CL)",
+              "next_node": "q2_code_category"
+            },
+            {
+              "label": "Blinking LED Lights (No Digits)",
+              "next_node": "q_blinking_led_count"
+            },
+            {
+              "label": "Completely Blank / No Display",
+              "redirect_issue": "AC02"
+            },
+            {
+              "label": "Status Codes (Po, Lo, HI, Od)",
+              "next_node": "q_status_indicator_check"
+            }
+          ]
+        },
+        {
+          "id": "q2_code_category",
+          "type": "question",
+          "text_en": "Which category does your displayed code belong to?",
+          "text_hi": "Display par dikhne wala code kis category ka hai?",
+          "options": [
+            {
+              "label": "Communication (CH 05 / C5 / CH 53)",
+              "next_node": "q_ch05_power_cycle"
+            },
+            {
+              "label": "Refrigerant & Pressure (CH 32, CH 35, CH 38)",
+              "next_node": "q_ch_gas_pressure_select"
+            },
+            {
+              "label": "Fan Motor & Blower (CH 06, CH 10, CH 67)",
+              "next_node": "q_ch_motor_select"
+            },
+            {
+              "label": "Compressor & Electrical (CH 21, CH 22, CH 23, CH 26, CH 27, CH 29)",
+              "next_node": "q_ch_inverter_comp_select"
+            },
+            {
+              "label": "Temperature Sensors (CH 01, CH 02, CH 12, CH 41, CH 44, CH 45, CH 46)",
+              "next_node": "q_ch_sensor_select"
+            },
+            {
+              "label": "PCB & Overheat (CH 09, CH 60, CH 61, CH 62)",
+              "next_node": "q_ch_pcb_overheat_select"
+            },
+            {
+              "label": "Water Overflow (HL)",
+              "next_node": "q_hl_water_check"
+            },
+            {
+              "label": "Lock & Filter (CL, FL)",
+              "next_node": "q_lock_filter_select"
+            },
+            {
+              "label": "Other / Unknown Code",
+              "next_node": "q_unknown_code_reboot"
+            }
+          ]
+        },
+        {
+          "id": "q_ch05_power_cycle",
+          "type": "question",
+          "text_en": "CH 05 indicates a communication breakdown between indoor and outdoor units. Have you switched off the AC MCB for 3 minutes and turned it back ON?",
+          "text_hi": "CH 05 indoor aur outdoor unit ke beech communication error dikhata hai. Kya aapne AC ka MCB 3 minute ke liye band karke dobara ON kiya?",
+          "options": [
+            {
+              "label": "Yes, but CH 05 returns immediately",
+              "conclusion": "diag_ch05_comm_failure"
+            },
+            {
+              "label": "No, let me try",
+              "action": "instruct_hard_reset_mcb",
+              "next_node": "q_ch05_reset_result"
+            }
+          ]
+        },
+        {
+          "id": "q_ch05_reset_result",
+          "type": "question",
+          "text_en": "Did the CH 05 error disappear and normal cooling resume after the MCB power reset?",
+          "text_hi": "Kya MCB reset karne ke baad CH 05 error hat gaya aur cooling shuru hui?",
+          "options": [
+            {
+              "label": "Yes, working normally now",
+              "resolution": "resolved_glitch_reset"
+            },
+            {
+              "label": "No, code persists",
+              "conclusion": "diag_ch05_comm_failure"
+            }
+          ]
+        },
+        {
+          "id": "q_ch_gas_pressure_select",
+          "type": "question",
+          "text_en": "Which exact refrigerant/pressure code is shown: CH 38 (Gas Leak), CH 32 (Discharge Overheat), or CH 35 (Low Pressure)?",
+          "text_hi": "Display par inme se kaunsa code hai: CH 38 (Gas Leak), CH 32 (Discharge Overheat), ya CH 35 (Low Pressure)?",
+          "options": [
+            {
+              "label": "CH 38 (Refrigerant Gas Leakage)",
+              "next_node": "q_ch38_cooling_check"
+            },
+            {
+              "label": "CH 32 (Discharge High Temp / Condenser Overheat)",
+              "next_node": "q_ch32_outdoor_blockage"
+            },
+            {
+              "label": "CH 35 (Low Pressure Sensor)",
+              "conclusion": "diag_ch35_pressure_fault"
+            }
+          ]
+        },
+        {
+          "id": "q_ch38_cooling_check",
+          "type": "question",
+          "text_en": "CH 38 means low refrigerant gas detected. Is the AC blowing room-temperature or warm air instead of cool air?",
+          "text_hi": "CH 38 gas ki kami ka sanket hai. Kya AC thandi hawa ki jagah kamre jaisi normal hawa fenk raha hai?",
+          "options": [
+            {
+              "label": "Yes, blowing room temperature air",
+              "conclusion": "diag_ch38_gas_leak"
+            },
+            {
+              "label": "No, cools for a few minutes then stops",
+              "conclusion": "diag_ch38_gas_leak"
+            }
+          ]
+        },
+        {
+          "id": "q_ch32_outdoor_blockage",
+          "type": "question",
+          "text_en": "CH 32 indicates high compressor discharge temperature. Is the outdoor unit blocked by walls, debris, or dirty condenser fins?",
+          "text_hi": "CH 32 compressor ke garam hone ka sanket hai. Kya outdoor unit ke paas dhool, parda ya hawa rukne ki rukawat hai?",
+          "options": [
+            {
+              "label": "Yes, outdoor airflow is blocked / dirty",
+              "action": "instruct_clear_outdoor_airflow",
+              "next_node": "q_ch32_airflow_result"
+            },
+            {
+              "label": "No, outdoor unit is clear",
+              "conclusion": "diag_ch32_discharge_fault"
+            }
+          ]
+        },
+        {
+          "id": "q_ch32_airflow_result",
+          "type": "question",
+          "text_en": "After clearing outdoor unit blockage and allowing it to cool down for 15 minutes, did the error clear?",
+          "text_hi": "Outdoor unit ki rukawat hatane aur 15 minute thanda hone ke baad kya error theek hua?",
+          "options": [
+            {
+              "label": "Yes, cooling restored",
+              "resolution": "resolved_airflow_cleared"
+            },
+            {
+              "label": "No, CH 32 reappears",
+              "conclusion": "diag_ch32_discharge_fault"
+            }
+          ]
+        },
+        {
+          "id": "q_ch_motor_select",
+          "type": "question",
+          "text_en": "Which fan motor code is shown: CH 10 (Indoor Blower Fan), CH 06 (Outdoor Fan/Thermistor), or CH 67 (Outdoor BLDC Motor)?",
+          "text_hi": "Kaunsa motor error code dikh raha hai: CH 10 (Indoor Blower), CH 06 (Outdoor Fan/Sensor), ya CH 67 (Outdoor BLDC Motor)?",
+          "options": [
+            {
+              "label": "CH 10 (Indoor Blower Motor Locked)",
+              "next_node": "q_ch10_indoor_blower_check"
+            },
+            {
+              "label": "CH 06 (Outdoor Fan / Pipe Temp Sensor)",
+              "conclusion": "diag_ch06_outdoor_fan_sensor"
+            },
+            {
+              "label": "CH 67 (Outdoor BLDC Motor Lock)",
+              "conclusion": "diag_ch67_outdoor_motor_lock"
+            }
+          ]
+        },
+        {
+          "id": "q_ch10_indoor_blower_check",
+          "type": "question",
+          "text_en": "CH 10 means the indoor blower fan cannot spin freely. Can you hear the indoor fan spinning or is it completely silent?",
+          "text_hi": "CH 10 ka matlab indoor blower fan ghum nahi pa raha. Kya fan ki chalne ki awaaz aa rahi hai ya bilkul shant hai?",
+          "options": [
+            {
+              "label": "Silent / Not spinning / Jammed",
+              "conclusion": "diag_ch10_indoor_motor_lock"
+            },
+            {
+              "label": "Spins briefly and stops with beep",
+              "conclusion": "diag_ch10_hall_sensor_fault"
+            }
+          ]
+        },
+        {
+          "id": "q_ch_inverter_comp_select",
+          "type": "question",
+          "text_en": "Which inverter/compressor code is shown on display?",
+          "text_hi": "Display par kaunsa inverter/compressor error code dikh raha hai?",
+          "options": [
+            {
+              "label": "CH 21 (Inverter DC Peak / IPM Current)",
+              "conclusion": "diag_ch21_ipm_overcurrent"
+            },
+            {
+              "label": "CH 22 (AC Input Overcurrent / Overload)",
+              "next_node": "q_ch22_voltage_check"
+            },
+            {
+              "label": "CH 23 (DC Link Low Voltage)",
+              "next_node": "q_ch23_grid_voltage"
+            },
+            {
+              "label": "CH 26 (Compressor Starting Drive Failure)",
+              "conclusion": "diag_ch26_comp_start_fail"
+            },
+            {
+              "label": "CH 27 (PFC Circuit Overcurrent)",
+              "conclusion": "diag_ch27_pfc_fault"
+            },
+            {
+              "label": "CH 29 (Inverter Phase Overcurrent)",
+              "conclusion": "diag_ch29_phase_overcurrent"
+            }
+          ]
+        },
+        {
+          "id": "q_ch22_voltage_check",
+          "type": "question",
+          "text_en": "CH 22 occurs when total AC input current exceeds safety limits. Are other heavy appliances (geyser, oven) causing home voltage drop?",
+          "text_hi": "CH 22 tab aata hai jab AC ka current safety limit se zyada ho jaye. Kya ghar mein low voltage ki samasya hai?",
+          "options": [
+            {
+              "label": "Yes, voltage is fluctuating/low",
+              "conclusion": "diag_ch22_voltage_strain"
+            },
+            {
+              "label": "No, grid power is steady at 230V",
+              "conclusion": "diag_ch22_pcb_compressor_overload"
+            }
+          ]
+        },
+        {
+          "id": "q_ch23_grid_voltage",
+          "type": "question",
+          "text_en": "CH 23 means DC bus voltage dropped below 140V DC. Do you have a voltage stabilizer installed with the AC?",
+          "text_hi": "CH 23 DC voltage kam hone par aata hai. Kya aapke AC ke sath stabilizer laga hua hai?",
+          "options": [
+            {
+              "label": "No stabilizer / Direct connection",
+              "conclusion": "diag_ch23_stabilizer_needed"
+            },
+            {
+              "label": "Yes, stabilizer is installed",
+              "conclusion": "diag_ch23_pcb_rectifier_fault"
+            }
+          ]
+        },
+        {
+          "id": "q_ch_sensor_select",
+          "type": "question",
+          "text_en": "Which temperature sensor code is shown: CH 01, CH 02, CH 12, CH 41, CH 44, CH 45, or CH 46?",
+          "text_hi": "Inme se kaunsa sensor code display par hai?",
+          "options": [
+            {
+              "label": "CH 01 (Indoor Room Thermistor)",
+              "conclusion": "diag_ch01_room_sensor"
+            },
+            {
+              "label": "CH 02 or CH 12 (Indoor Pipe Thermistor)",
+              "conclusion": "diag_ch02_indoor_pipe_sensor"
+            },
+            {
+              "label": "CH 41 (Compressor Discharge Pipe Thermistor)",
+              "conclusion": "diag_ch41_discharge_sensor"
+            },
+            {
+              "label": "CH 44 or CH 45 (Outdoor Air / Condenser Sensor)",
+              "conclusion": "diag_ch44_outdoor_sensor"
+            },
+            {
+              "label": "CH 46 (Suction Pipe Sensor)",
+              "conclusion": "diag_ch46_suction_sensor"
+            }
+          ]
+        },
+        {
+          "id": "q_ch_pcb_overheat_select",
+          "type": "question",
+          "text_en": "Which PCB / Overheat code is displayed?",
+          "text_hi": "Kaunsa PCB ya Overheating error code aa raha hai?",
+          "options": [
+            {
+              "label": "CH 09 / CH 60 (EEPROM Memory Error)",
+              "conclusion": "diag_ch09_eeprom_failure"
+            },
+            {
+              "label": "CH 61 (Condenser Heat Exchanger Overheat)",
+              "conclusion": "diag_ch61_condenser_overheat"
+            },
+            {
+              "label": "CH 62 (Inverter PCB Heat Sink Overheat)",
+              "conclusion": "diag_ch62_heatsink_overheat"
+            }
+          ]
+        },
+        {
+          "id": "q_hl_water_check",
+          "type": "question",
+          "text_en": "HL code indicates High Water Level in the condensate drain pan. Is water overflowing or leaking inside the room?",
+          "text_hi": "HL code drain pan mein paani bharne ka sanket hai. Kya kamre ke andar paani tapak raha hai?",
+          "options": [
+            {
+              "label": "Yes, dripping inside",
+              "redirect_issue": "AC04"
+            },
+            {
+              "label": "No, just HL code on display",
+              "conclusion": "diag_hl_float_switch_tripped"
+            }
+          ]
+        },
+        {
+          "id": "q_lock_filter_select",
+          "type": "question",
+          "text_en": "Is the code CL (Child Lock) or FL (Filter Cleaning reminder)?",
+          "text_hi": "Kya display par CL (Child Lock) ya FL (Filter Clean) likha hai?",
+          "options": [
+            {
+              "label": "CL (Child Lock Active)",
+              "action": "instruct_disable_child_lock",
+              "next_node": "q_cl_unlock_result"
+            },
+            {
+              "label": "FL (Filter Clean Reminder)",
+              "action": "instruct_clean_filter_fl",
+              "next_node": "q_fl_reset_result"
+            }
+          ]
+        },
+        {
+          "id": "q_cl_unlock_result",
+          "type": "question",
+          "text_en": "Did holding the Timer/Function button for 3 seconds remove the CL code?",
+          "text_hi": "Kya remote par Timer/Function button 3 second dabane se CL code hat gaya?",
+          "options": [
+            {
+              "label": "Yes, unlocked and working",
+              "resolution": "resolved_child_lock_disabled"
+            },
+            {
+              "label": "No, still locked",
+              "conclusion": "diag_remote_control_service"
+            }
+          ]
+        },
+        {
+          "id": "q_fl_reset_result",
+          "type": "question",
+          "text_en": "Did cleaning the air filter and pressing Filter Reset clear the FL code?",
+          "text_hi": "Filter saaf karke Filter Reset dabane se kya FL code hat gaya?",
+          "options": [
+            {
+              "label": "Yes, reset successfully",
+              "resolution": "resolved_filter_cleaned"
+            },
+            {
+              "label": "No, code remains",
+              "redirect_issue": "AC10"
+            }
+          ]
+        },
+        {
+          "id": "q_blinking_led_count",
+          "type": "question",
+          "text_en": "How many times does the power or timer LED blink repeatedly between pauses?",
+          "text_hi": "Power ya timer LED light lagatar kitni baar blink (chamakti) karti hai pause lene se pehle?",
+          "options": [
+            {
+              "label": "5 Blinks (Equivalent to CH 05 Communication)",
+              "conclusion": "diag_ch05_comm_failure"
+            },
+            {
+              "label": "6 Blinks (Equivalent to CH 06 Fan / Sensor)",
+              "conclusion": "diag_ch06_outdoor_fan_sensor"
+            },
+            {
+              "label": "1 or 2 Blinks (Equivalent to CH 01 / 02 Temp Sensor)",
+              "conclusion": "diag_ch01_room_sensor"
+            },
+            {
+              "label": "Rapid Blinking or Uncounted",
+              "next_node": "q_unknown_code_reboot"
+            }
+          ]
+        },
+        {
+          "id": "q_status_indicator_check",
+          "type": "question",
+          "text_en": "Display shows Po (Jet Mode), Lo (<10°C), HI (>36°C), or Od (Outdoor Temp). These are normal status indicators. Would you like to return to standard cooling mode?",
+          "text_hi": "Po (Jet Mode), Lo, HI ya Od normal status indicators hain, koi kharabi nahi hai. Kya aap standard cooling mode par aana chahte hain?",
+          "options": [
+            {
+              "label": "Yes, guide me to exit status mode",
+              "action": "instruct_exit_status_mode",
+              "resolution": "resolved_status_mode_explained"
+            },
+            {
+              "label": "No, I suspect actual cooling problem",
+              "redirect_issue": "AC01"
+            }
+          ]
+        },
+        {
+          "id": "q_unknown_code_reboot",
+          "type": "question",
+          "text_en": "Let's perform a clean electrical reset: Switch off the AC MCB for 5 minutes, turn it back on, and start via remote. Does the error persist?",
+          "text_hi": "Chaliye ek electrical reset karte hain: AC ka MCB 5 minute band karke wapas ON karein. Kya error code abhi bhi aa raha hai?",
+          "options": [
+            {
+              "label": "Error is gone and AC is cooling",
+              "resolution": "resolved_glitch_reset"
+            },
+            {
+              "label": "Error persists on display",
+              "conclusion": "diag_unlisted_error_technician"
+            }
+          ]
+        }
+      ],
+      "conclusions": {
+        "diag_ch05_comm_failure": {
+          "probable_cause": "Communication Cable Fault or Outdoor PCB Communication Circuit Failure (CH 05 / CH 53)",
+          "confidence": 0.95,
+          "parts": [
+            "Outdoor Main PCB",
+            "Communication Wire Harness",
+            "Indoor Main PCB"
+          ],
+          "priority": "High",
+          "safety_flag": false,
+          "rag_query": "CH 05 communication troubleshooting steps and PCB voltage check",
+          "technician_note": "Measure DC pulse voltage between Terminal 1/2 and Neutral. Check for loose terminal block screws or rodent-damaged wires."
+        },
+        "diag_ch38_gas_leak": {
+          "probable_cause": "Refrigerant Gas Leakage / Insufficient R32 Charge (CH 38)",
+          "confidence": 0.95,
+          "parts": [
+            "R32 Refrigerant Gas (1kg)",
+            "Flare Brass Nuts 1/4 & 3/8",
+            "Nitrogen Testing Kit"
+          ],
+          "priority": "High",
+          "safety_flag": false,
+          "rag_query": "CH 38 refrigerant gas leak detection and vacuum recharge procedure",
+          "technician_note": "Pressurize system with Nitrogen to 350 PSI. Soap test flare joints and U-bends. Braze leaks, evacuate to 500 microns, weigh gas in grams per nameplate."
+        },
+        "diag_ch32_discharge_fault": {
+          "probable_cause": "Compressor Discharge Pipe Overheating (>105°C) or Clogged Condenser (CH 32)",
+          "confidence": 0.9,
+          "parts": [
+            "Discharge Pipe Thermistor (200kΩ)",
+            "R32 Refrigerant Gas",
+            "Condenser Cleaning Service"
+          ],
+          "priority": "Critical",
+          "safety_flag": true,
+          "rag_query": "CH 32 high discharge temperature troubleshooting",
+          "technician_note": "Inspect discharge pipe temperature sensor and refrigerant subcooling. Pressure wash outdoor coil."
+        },
+        "diag_ch35_pressure_fault": {
+          "probable_cause": "Low Pressure Drop or Electronic Expansion Valve (EEV) Blockage (CH 35)",
+          "confidence": 0.85,
+          "parts": [
+            "Electronic Expansion Valve (EEV)",
+            "Low Pressure Sensor",
+            "R32 Gas"
+          ],
+          "priority": "High",
+          "safety_flag": false,
+          "rag_query": "CH 35 low pressure sensor fault fix",
+          "technician_note": "Verify EEV coil pulse signals and suction operating pressure."
+        },
+        "diag_ch06_outdoor_fan_sensor": {
+          "probable_cause": "Outdoor Pipe Sensor Open/Short or Outdoor Fan Motor Stalled (CH 06)",
+          "confidence": 0.9,
+          "parts": [
+            "Outdoor Pipe Thermistor 5kΩ",
+            "Outdoor Fan Motor",
+            "Fan Run Capacitor"
+          ],
+          "priority": "High",
+          "safety_flag": true,
+          "rag_query": "CH 06 outdoor sensor and fan motor diagnostic",
+          "technician_note": "Measure outdoor pipe sensor resistance. Test outdoor fan motor winding continuity."
+        },
+        "diag_ch10_indoor_motor_lock": {
+          "probable_cause": "Indoor BLDC Blower Motor Locked or Casing Obstruction (CH 10)",
+          "confidence": 0.95,
+          "parts": [
+            "Indoor BLDC Blower Motor",
+            "Cross-Flow Blower Wheel",
+            "Indoor PCB"
+          ],
+          "priority": "High",
+          "safety_flag": true,
+          "rag_query": "CH 10 indoor blower fan motor lock troubleshooting",
+          "technician_note": "Inspect for physical obstruction. Check motor shaft bearing play and Hall sensor feedback pulses on CN-MOTOR connector."
+        },
+        "diag_ch10_hall_sensor_fault": {
+          "probable_cause": "Indoor Fan Motor Hall Sensor IC Failure (CH 10)",
+          "confidence": 0.9,
+          "parts": [
+            "Indoor BLDC Fan Motor",
+            "Indoor Main PCB"
+          ],
+          "priority": "Medium",
+          "safety_flag": false,
+          "rag_query": "CH 10 Hall sensor feedback circuit check",
+          "technician_note": "Check 5V DC supply and feedback pulse on PCB connector while rotating blower wheel by hand."
+        },
+        "diag_ch67_outdoor_motor_lock": {
+          "probable_cause": "Outdoor BLDC Fan Motor Overcurrent / Rotor Lock (CH 67)",
+          "confidence": 0.95,
+          "parts": [
+            "Outdoor BLDC Fan Motor",
+            "Outdoor Inverter PCB"
+          ],
+          "priority": "High",
+          "safety_flag": true,
+          "rag_query": "CH 67 outdoor BLDC motor lock repair",
+          "technician_note": "Check outdoor fan blade freedom. Measure U-V-W motor winding resistances (balanced approx 40-70Ω)."
+        },
+        "diag_ch21_ipm_overcurrent": {
+          "probable_cause": "Inverter IPM DC Peak / Compressor Overcurrent (CH 21)",
+          "confidence": 0.95,
+          "parts": [
+            "Outdoor Inverter PCB (IPM)",
+            "Inverter Rotary Compressor"
+          ],
+          "priority": "Critical",
+          "safety_flag": true,
+          "rag_query": "CH 21 IPM overcurrent inverter diagnostic",
+          "technician_note": "High voltage risk. Check IPM diode resistance. Megger test compressor winding insulation to ground."
+        },
+        "diag_ch22_voltage_strain": {
+          "probable_cause": "Input AC Overcurrent Due to Low Grid Voltage (CH 22)",
+          "confidence": 0.85,
+          "parts": [
+            "4kVA Digital Voltage Stabilizer",
+            "MCB 16A/20A"
+          ],
+          "priority": "High",
+          "safety_flag": false,
+          "rag_query": "CH 22 AC input current limit low voltage fix",
+          "technician_note": "Measure running AC current with clamp meter. If grid voltage dips below 190V under compressor load, install stabilizer."
+        },
+        "diag_ch22_pcb_compressor_overload": {
+          "probable_cause": "Current Transformer (CT) Sensor Fault or Compressor Overload (CH 22)",
+          "confidence": 0.85,
+          "parts": [
+            "Outdoor Main PCB",
+            "CT Sensor Coil"
+          ],
+          "priority": "High",
+          "safety_flag": true,
+          "rag_query": "CH 22 CT sensor replacement and compressor load test",
+          "technician_note": "Check Outdoor PCB CT sensor output voltage and cleanliness of condenser coils."
+        },
+        "diag_ch23_stabilizer_needed": {
+          "probable_cause": "DC Link Under-Voltage Caused by Severe Low Input AC (CH 23)",
+          "confidence": 0.9,
+          "parts": [
+            "Voltage Stabilizer (130V-280V Range)",
+            "Power Cable Harness"
+          ],
+          "priority": "High",
+          "safety_flag": false,
+          "rag_query": "CH 23 DC link low voltage stabilizer requirement",
+          "technician_note": "Check DC bus capacitor voltage (normal 310V DC at 230V AC input). Recommend wide-range voltage stabilizer."
+        },
+        "diag_ch23_pcb_rectifier_fault": {
+          "probable_cause": "DC Bus Bridge Rectifier or DC Link Capacitor Degradation (CH 23)",
+          "confidence": 0.85,
+          "parts": [
+            "Outdoor Inverter PCB",
+            "DC Link Electrolytic Capacitors",
+            "PFC Reactor"
+          ],
+          "priority": "High",
+          "safety_flag": true,
+          "rag_query": "CH 23 DC link PCB capacitor inspection",
+          "technician_note": "Discharge DC link capacitors safely before measuring resistance across bridge rectifier terminals."
+        },
+        "diag_ch26_comp_start_fail": {
+          "probable_cause": "Inverter Compressor Drive / Starting Position Detection Failure (CH 26)",
+          "confidence": 0.95,
+          "parts": [
+            "Outdoor Inverter PCB",
+            "Inverter Dual Rotary Compressor"
+          ],
+          "priority": "Critical",
+          "safety_flag": true,
+          "rag_query": "CH 26 compressor starting failure position detection",
+          "technician_note": "Check compressor U-V-W wiring harness. Check phase resistance balance (0.7Ω - 1.5Ω). If compressor rotor is locked, replacement required."
+        },
+        "diag_ch27_pfc_fault": {
+          "probable_cause": "PFC (Power Factor Correction) Overcurrent / Reactor Failure (CH 27)",
+          "confidence": 0.9,
+          "parts": [
+            "Outdoor Inverter PCB",
+            "PFC Reactor Coil"
+          ],
+          "priority": "High",
+          "safety_flag": true,
+          "rag_query": "CH 27 PFC circuit fault troubleshooting",
+          "technician_note": "Inspect PFC IGBT module on outdoor board and reactor continuity."
+        },
+        "diag_ch29_phase_overcurrent": {
+          "probable_cause": "Compressor Phase Overcurrent / System Restriction (CH 29)",
+          "confidence": 0.9,
+          "parts": [
+            "Outdoor Inverter PCB",
+            "Electronic Expansion Valve (EEV)",
+            "Inverter Compressor"
+          ],
+          "priority": "High",
+          "safety_flag": true,
+          "rag_query": "CH 29 inverter phase overcurrent diagnostic",
+          "technician_note": "Check for mechanical compressor overload or clogged capillary/EEV."
+        },
+        "diag_ch01_room_sensor": {
+          "probable_cause": "Indoor Room Air Temperature Sensor (Thermistor) Open/Short Circuit (CH 01)",
+          "confidence": 0.95,
+          "parts": [
+            "Indoor Room Thermistor 10kΩ",
+            "Indoor PCB Connector CN-TH1"
+          ],
+          "priority": "Medium",
+          "safety_flag": false,
+          "rag_query": "CH 01 indoor room thermistor replacement resistance test",
+          "technician_note": "Measure resistance with multimeter: 10kΩ at 25°C. Check for rodent bites on sensor wire."
+        },
+        "diag_ch02_indoor_pipe_sensor": {
+          "probable_cause": "Indoor Pipe Temperature Sensor Open/Short (CH 02 / CH 12)",
+          "confidence": 0.95,
+          "parts": [
+            "Indoor Pipe Thermistor 5kΩ",
+            "Copper Sensor Clip"
+          ],
+          "priority": "Medium",
+          "safety_flag": false,
+          "rag_query": "CH 02 CH 12 indoor pipe thermistor troubleshooting",
+          "technician_note": "Measure sensor resistance: 5kΩ at 25°C. Ensure firm contact with copper pipe pocket."
+        },
+        "diag_ch41_discharge_sensor": {
+          "probable_cause": "Compressor Discharge Pipe Thermistor Sensor Error (CH 41)",
+          "confidence": 0.95,
+          "parts": [
+            "Discharge Pipe Thermistor 200kΩ",
+            "Outdoor PCB Sensor Harness"
+          ],
+          "priority": "Medium",
+          "safety_flag": false,
+          "rag_query": "CH 41 discharge pipe thermistor resistance specs",
+          "technician_note": "Measure thermistor resistance: 200kΩ at 25°C. Replace sensor assembly."
+        },
+        "diag_ch44_outdoor_sensor": {
+          "probable_cause": "Outdoor Ambient / Condenser Pipe Thermistor Error (CH 44 / CH 45)",
+          "confidence": 0.95,
+          "parts": [
+            "Outdoor Sensor Assembly (Air 10kΩ / Pipe 5kΩ)"
+          ],
+          "priority": "Low",
+          "safety_flag": false,
+          "rag_query": "CH 44 CH 45 outdoor thermistor replacement",
+          "technician_note": "Check outdoor thermistor assembly connector on Outdoor PCB."
+        },
+        "diag_ch46_suction_sensor": {
+          "probable_cause": "Compressor Suction Pipe Thermistor Sensor Error (CH 46)",
+          "confidence": 0.95,
+          "parts": [
+            "Suction Pipe Thermistor 5kΩ"
+          ],
+          "priority": "Medium",
+          "safety_flag": false,
+          "rag_query": "CH 46 suction thermistor test",
+          "technician_note": "Measure resistance: 5kΩ at 25°C. Replace thermistor."
+        },
+        "diag_ch09_eeprom_failure": {
+          "probable_cause": "PCB EEPROM Checksum Read Error (CH 09 / CH 60)",
+          "confidence": 0.9,
+          "parts": [
+            "Main Control PCB",
+            "Option Code Reset"
+          ],
+          "priority": "High",
+          "safety_flag": false,
+          "rag_query": "CH 09 CH 60 EEPROM error option code reprogram",
+          "technician_note": "Attempt remote option code entry per model service manual. If persistent, replace PCB."
+        },
+        "diag_ch61_condenser_overheat": {
+          "probable_cause": "Outdoor Condenser Coil Severe Overheating (>65°C) (CH 61)",
+          "confidence": 0.9,
+          "parts": [
+            "Condenser Deep Clean Kit",
+            "Outdoor Fan Motor"
+          ],
+          "priority": "High",
+          "safety_flag": true,
+          "rag_query": "CH 61 outdoor condenser overheating solution",
+          "technician_note": "Wash clogged condenser coil. Ensure minimum 30cm clearance around outdoor unit."
+        },
+        "diag_ch62_heatsink_overheat": {
+          "probable_cause": "Inverter PCB IPM Heat Sink Overheating (>85°C) (CH 62)",
+          "confidence": 0.9,
+          "parts": [
+            "Thermal Grease Paste",
+            "Outdoor Inverter PCB",
+            "Outdoor Fan Motor"
+          ],
+          "priority": "High",
+          "safety_flag": true,
+          "rag_query": "CH 62 inverter heat sink overheat thermal paste repair",
+          "technician_note": "Apply fresh silicone thermal compound between IPM and heat sink. Check outdoor fan speed."
+        },
+        "diag_hl_float_switch_tripped": {
+          "probable_cause": "Condensate Drain Pan Water Float Switch Tripped (HL)",
+          "confidence": 0.9,
+          "parts": [
+            "Condensate Drain Pump",
+            "Water Level Float Switch",
+            "Drain Hose 1/2-inch"
+          ],
+          "priority": "Medium",
+          "safety_flag": false,
+          "rag_query": "LG AC HL code drain pump float switch troubleshooting",
+          "technician_note": "Clean sludge from indoor drain tray. Test drain pump electrical continuity."
+        },
+        "diag_remote_control_service": {
+          "probable_cause": "Remote Control Keypad Lock Malfunction",
+          "confidence": 0.75,
+          "parts": [
+            "LG AC Universal/OEM Remote Control"
+          ],
+          "priority": "Low",
+          "safety_flag": false,
+          "rag_query": "LG AC Child Lock disable without remote",
+          "technician_note": "Test IR emitter output with phone camera. Replace remote if keypad non-responsive."
+        },
+        "diag_unlisted_error_technician": {
+          "probable_cause": "Unidentified Hardware Fault / PCB Microcontroller Error",
+          "confidence": 0.8,
+          "parts": [
+            "General AC Diagnostic Kit",
+            "Multimeter"
+          ],
+          "priority": "High",
+          "safety_flag": true,
+          "rag_query": "LG AC digital display error code technician troubleshooting manual",
+          "technician_note": "Inspect PCB LEDs, check supply voltage, measure thermistors, and check refrigerant pressures."
+        }
+      }
+    },
+    "AC04": {
+      "issue_id": "AC04",
+      "title": "Water Leaking from AC",
+      "start_node": "q1_leak_location",
+      "nodes": [
+        {
+          "id": "q1_leak_location",
+          "type": "question",
+          "text_en": "Where is the water coming from? Inside the room or outside?",
+          "text_hi": "Paani kahan se aa raha hai? Kamre ke andar ya bahar?",
+          "options": [
+            {
+              "label": "Inside Room (Dripping from indoor unit)",
+              "next_node": "q2_drain_pipe"
+            },
+            {
+              "label": "Outside Unit (Condensate drain or pipe)",
+              "next_node": "q_condensation_check"
+            }
+          ]
+        },
+        {
+          "id": "q2_drain_pipe",
+          "type": "question",
+          "text_en": "Is the drain pipe bent, twisted, inclined upwards, or submerged in a bucket of water?",
+          "text_hi": "Kya drain pipe muda hua hai, upar utha hai ya paani ki bucket mein duba hua hai?",
+          "options": [
+            {
+              "label": "Yes, pipe was bent/submerged",
+              "action": "instruct_fix_drain",
+              "next_node": "q_resolution_check"
+            },
+            {
+              "label": "No, pipe is straight and free",
+              "next_node": "q3_water_rate"
+            }
+          ]
+        },
+        {
+          "id": "q3_water_rate",
+          "type": "question",
+          "text_en": "Is water dripping heavily like a stream, or only minor droplets forming on the casing?",
+          "text_hi": "Kya paani tezi se dhaar ban kar beh raha hai ya sirf halki boondein tapak rahi hain?",
+          "options": [
+            {
+              "label": "Heavy continuous leak",
+              "conclusion": "diag_blocked_drain_tray"
+            },
+            {
+              "label": "Minor droplets on panel",
+              "redirect_issue": "AC05"
+            }
+          ]
+        },
+        {
+          "id": "q_condensation_check",
+          "type": "question",
+          "text_en": "Is it very humid or rainy today, and is water draining normally through the outdoor drain outlet?",
+          "text_hi": "Kya aaj mausam bahut nam/barish wala hai aur outdoor pipe se paani nikal raha hai?",
+          "options": [
+            {
+              "label": "Yes, normal outdoor condensation",
+              "resolution": "normal_condensation"
+            },
+            {
+              "label": "No, dripping from copper pipe joints",
+              "conclusion": "diag_insulation_issue"
+            }
+          ]
+        },
+        {
+          "id": "q_resolution_check",
+          "type": "question",
+          "text_en": "Did straightening the pipe and clearing the outlet stop the leak?",
+          "text_hi": "Pipe seedha karne aur paani nikalne par kya leak ruk gayi?",
+          "options": [
+            {
+              "label": "Yes, leakage stopped",
+              "resolution": "resolved_self_help"
+            },
+            {
+              "label": "No, still leaking inside",
+              "conclusion": "diag_blocked_drain_tray"
+            }
+          ]
+        }
+      ],
+      "conclusions": {
+        "diag_blocked_drain_tray": {
+          "probable_cause": "Clogged Drain Pan, Algae Sludge in Drain Line, or Dirty Air Filter",
+          "confidence": 0.85,
+          "parts": [
+            "Drain Cleaning Pump Kit",
+            "Anti-Fungal Drain Tablets",
+            "Replacement Drain Hose 1/2-inch"
+          ],
+          "priority": "Medium",
+          "safety_flag": false,
+          "rag_query": "LG AC indoor water leakage clogged drain tray cleaning",
+          "technician_note": "Flush drain line with nitrogen or hand pump. Inspect drain pan cracks and verify proper fall slope."
+        },
+        "diag_insulation_issue": {
+          "probable_cause": "Torn or Missing Thermal Armaflex Insulation on Suction/Liquid Copper Pipes",
+          "confidence": 0.8,
+          "parts": [
+            "Armaflex Nitrile Foam Pipe Insulation",
+            "Non-Adhesive Wrapping Tape"
+          ],
+          "priority": "Low",
+          "safety_flag": false,
+          "rag_query": "LG AC copper pipe sweat condensation insulation repair",
+          "technician_note": "Re-insulate exposed copper piping and wrap tightly with UV-resistant vinyl tape."
+        }
+      }
+    },
+    "AC05": {
+      "issue_id": "AC05",
+      "title": "Moisture / Water Droplets on Panel",
+      "start_node": "q1_moisture_type",
+      "nodes": [
+        {
+          "id": "q1_moisture_type",
+          "type": "question",
+          "text_en": "Are you noticing light mist/droplets (sweating) on the louvers or water streaming down?",
+          "text_hi": "Kya AC ke louvers/panel par halki boondein (sweating) hain ya paani beh raha hai?",
+          "options": [
+            {
+              "label": "Light droplets / Sweating on front louvers",
+              "next_node": "q2_weather_humidity"
+            },
+            {
+              "label": "Water is actively streaming/flowing down",
+              "redirect_issue": "AC04"
+            }
+          ]
+        },
+        {
+          "id": "q2_weather_humidity",
+          "type": "question",
+          "text_en": "Is the weather currently very humid, rainy, or is a window/door left open in the room?",
+          "text_hi": "Kya aaj mausam bahut nam (humid) ya barish wala hai, ya kamre ki khidki/darwaza khula hai?",
+          "options": [
+            {
+              "label": "Yes, high humidity / Monsoon weather",
+              "next_node": "q3_fan_mode_settings"
+            },
+            {
+              "label": "No, normal dry indoor weather",
+              "next_node": "q4_air_deflector_angle"
+            }
+          ]
+        },
+        {
+          "id": "q3_fan_mode_settings",
+          "type": "question",
+          "text_en": "Is the AC running on Low Fan Speed with temperature set very low (18°C-20°C)?",
+          "text_hi": "Kya AC Low fan speed aur bahut kam temperature (18°C-20°C) par chal raha hai?",
+          "options": [
+            {
+              "label": "Yes, Low Fan and low temperature",
+              "action": "instruct_monsoon_mode_high_fan",
+              "next_node": "q_monsoon_test"
+            },
+            {
+              "label": "No, normal High/Auto Fan",
+              "next_node": "q4_air_deflector_angle"
+            }
+          ]
+        },
+        {
+          "id": "q_monsoon_test",
+          "type": "question",
+          "text_en": "Did switching to Monsoon (Dry) Mode or increasing fan speed stop the panel droplets?",
+          "text_hi": "Dry Mode lagane ya Fan Speed badhane se kya boondein banna band hui?",
+          "options": [
+            {
+              "label": "Yes, condensation stopped",
+              "resolution": "resolved_humidity_settings_adjusted"
+            },
+            {
+              "label": "No, droplets continue forming",
+              "next_node": "q5_electrical_safety"
+            }
+          ]
+        },
+        {
+          "id": "q4_air_deflector_angle",
+          "type": "question",
+          "text_en": "Is the horizontal air louver angled straight down causing cold air to hit the lower casing?",
+          "text_hi": "Kya AC ka flap bilkul neeche jhuka hua hai jisse thandi hawa body se takra rahi hai?",
+          "options": [
+            {
+              "label": "Yes, flap is angled downwards",
+              "action": "instruct_adjust_vane_angle",
+              "resolution": "resolved_louver_angle_adjusted"
+            },
+            {
+              "label": "No, flap is positioned normally",
+              "next_node": "q5_electrical_safety"
+            }
+          ]
+        },
+        {
+          "id": "q5_electrical_safety",
+          "type": "question",
+          "text_en": "Is any water droplet or condensation reaching electrical sockets, power cords, or wiring?",
+          "text_hi": "Kya paani ki boondein kisi power switch, taar ya socket tak pahunch rahi hain?",
+          "options": [
+            {
+              "label": "Yes, moisture is near electrical wires",
+              "conclusion": "diag_urgent_insulation_leak"
+            },
+            {
+              "label": "No, only on plastic casing",
+              "conclusion": "diag_casing_insulation_gap"
+            }
+          ]
+        }
+      ],
+      "conclusions": {
+        "diag_urgent_insulation_leak": {
+          "probable_cause": "Condensation Dripping Near Electricals / Damaged Internal Insulation",
+          "confidence": 0.9,
+          "parts": [
+            "Thermal Insulation Foam",
+            "Anti-sweat Gasket Tape"
+          ],
+          "priority": "Critical",
+          "safety_flag": true,
+          "rag_query": "LG AC condensation droplets near electrical wiring safety",
+          "technician_note": "SHUT OFF POWER IMMEDIATELY. Inspect indoor backplate insulation and seal vapor barrier gaps."
+        },
+        "diag_casing_insulation_gap": {
+          "probable_cause": "Internal Styrofoam Casing Gap or High Room Infiltration",
+          "confidence": 0.8,
+          "parts": [
+            "Front Panel Gasket",
+            "EVA Insulation Strip"
+          ],
+          "priority": "Low",
+          "safety_flag": false,
+          "rag_query": "LG AC front panel condensation sweating fix",
+          "technician_note": "Reseat front panel louvers and inspect internal EPS air duct insulation for cracks."
+        }
+      }
+    },
+    "AC06": {
+      "issue_id": "AC06",
+      "title": "Bad Smell / Odor",
+      "start_node": "q1_smell_type",
+      "nodes": [
+        {
+          "id": "q1_smell_type",
+          "type": "question",
+          "text_en": "What type of smell do you notice coming from the AC?",
+          "text_hi": "AC se kis tarah ki badboo aa rahi hai?",
+          "options": [
+            {
+              "label": "Musty / Moldy / Stale Water smell",
+              "next_node": "q2_musty_filter_drain"
+            },
+            {
+              "label": "Burning / Electrical / Plastic smell",
+              "next_node": "q_burning_safety"
+            },
+            {
+              "label": "Chemical / Gas-like / Sour smell",
+              "conclusion": "diag_chemical_refrigerant_odor"
+            },
+            {
+              "label": "Dead rodent / Foul pest smell",
+              "conclusion": "diag_pest_in_blower"
+            }
+          ]
+        },
+        {
+          "id": "q_burning_safety",
+          "type": "question",
+          "text_en": "Is there any visible smoke, sparks, or is the burning smell intense?",
+          "text_hi": "Kya koi dhuan, chingari ya bahut tezz jalne ki badboo aa rahi hai?",
+          "options": [
+            {
+              "label": "Yes, strong burning / smoke",
+              "conclusion": "diag_burning_wire_motor"
+            },
+            {
+              "label": "No smoke, just faint warm plastic smell on initial turn-on",
+              "next_node": "q3_recent_turn_on"
+            }
+          ]
+        },
+        {
+          "id": "q2_musty_filter_drain",
+          "type": "question",
+          "text_en": "When was the air filter and indoor cooling coil last cleaned?",
+          "text_hi": "Air filter aur indoor coil aakhri baar kab saaf kiye gaye the?",
+          "options": [
+            {
+              "label": "More than a month ago / Dirty",
+              "action": "instruct_deep_clean_filter_coil",
+              "next_node": "q_musty_resolution"
+            },
+            {
+              "label": "Cleaned recently",
+              "next_node": "q4_drain_pan_standing_water"
+            }
+          ]
+        },
+        {
+          "id": "q_musty_resolution",
+          "type": "question",
+          "text_en": "Did cleaning the filter and running the AC on Fan Mode for 30 minutes eliminate the musty odor?",
+          "text_hi": "Filter saaf karke 30 minute Fan Mode chalane se kya badboo khatam hui?",
+          "options": [
+            {
+              "label": "Yes, smell is gone",
+              "resolution": "resolved_filter_dryout"
+            },
+            {
+              "label": "No, mold smell persists",
+              "next_node": "q4_drain_pan_standing_water"
+            }
+          ]
+        },
+        {
+          "id": "q4_drain_pan_standing_water",
+          "type": "question",
+          "text_en": "Does the odor smell like stagnant drain water coming from the indoor drain tray?",
+          "text_hi": "Kya drain tray mein jama paani ya keechad jaisi badboo aa rahi hai?",
+          "options": [
+            {
+              "label": "Yes, stagnant water smell",
+              "conclusion": "diag_drain_pan_mold_bacteria"
+            },
+            {
+              "label": "No, general stale air",
+              "conclusion": "diag_evaporator_coil_foam_clean"
+            }
+          ]
+        },
+        {
+          "id": "q3_recent_turn_on",
+          "type": "question",
+          "text_en": "Is this a brand new AC or first time turning on after winter season?",
+          "text_hi": "Kya ye naya AC hai ya lambe samay baad pehli baar chalu kiya hai?",
+          "options": [
+            {
+              "label": "Yes, new AC or seasonal start",
+              "action": "instruct_ventilate_run_fan_1hr",
+              "resolution": "resolved_normal_initial_burnoff"
+            },
+            {
+              "label": "No, running regularly",
+              "conclusion": "diag_blower_motor_friction"
+            }
+          ]
+        }
+      ],
+      "conclusions": {
+        "diag_burning_wire_motor": {
+          "probable_cause": "Burnt Terminal Block Wiring, Fan Motor Stator, or PCB Relay",
+          "confidence": 0.95,
+          "parts": [
+            "Indoor Main PCB",
+            "BLDC Blower Motor",
+            "Terminal Wiring Block"
+          ],
+          "priority": "Critical",
+          "safety_flag": true,
+          "rag_query": "LG AC burning electrical smell safety hazard shutoff",
+          "technician_note": "CRITICAL FIRE HAZARD: Disconnect MCB immediately. Check terminal block and motor windings for burnt insulation."
+        },
+        "diag_drain_pan_mold_bacteria": {
+          "probable_cause": "Stagnant Water and Bacterial Algae in Condensate Drain Pan",
+          "confidence": 0.9,
+          "parts": [
+            "Antimicrobial Drain Pan Tablets",
+            "Drain Line Flush Kit"
+          ],
+          "priority": "Medium",
+          "safety_flag": false,
+          "rag_query": "LG AC musty smell drain pan algae cleaning",
+          "technician_note": "Flush drain line with disinfectant solution and verify slope of drain hose."
+        },
+        "diag_evaporator_coil_foam_clean": {
+          "probable_cause": "Fungal & Mold Growth Deep Inside Evaporator Fin Pack",
+          "confidence": 0.85,
+          "parts": [
+            "AC Coil Cleaning Foam Spray",
+            "Blower Wheel Deep Service"
+          ],
+          "priority": "Medium",
+          "safety_flag": false,
+          "rag_query": "LG AC evaporator deep chemical foam cleaning",
+          "technician_note": "Perform high pressure jet wash with anti-fungal chemical foam on indoor evaporator."
+        },
+        "diag_pest_in_blower": {
+          "probable_cause": "Deceased Pest or Insect Hive Inside Blower Housing",
+          "confidence": 0.85,
+          "parts": [
+            "Indoor Blower Wheel Disassembly Service"
+          ],
+          "priority": "High",
+          "safety_flag": true,
+          "rag_query": "LG AC foul dead animal odor blower wheel removal",
+          "technician_note": "Dismantle indoor fascia and blower wheel to sanitize casing thoroughly."
+        },
+        "diag_chemical_refrigerant_odor": {
+          "probable_cause": "Formaldehyde / Volatile Organic Compounds or Refrigerant Oil Mist Leak",
+          "confidence": 0.75,
+          "parts": [
+            "Electronic Leak Detector",
+            "R32 Gas"
+          ],
+          "priority": "High",
+          "safety_flag": true,
+          "rag_query": "LG AC chemical vinegar sour smell evaporator leak",
+          "technician_note": "Sniff test evaporator coil for formicary corrosion pinholes using halogen/ultrasonic leak detector."
+        },
+        "diag_blower_motor_friction": {
+          "probable_cause": "Blower Motor Bush Bearing Friction Heating",
+          "confidence": 0.8,
+          "parts": [
+            "Blower Motor Bushing Rubber",
+            "BLDC Motor"
+          ],
+          "priority": "Medium",
+          "safety_flag": true,
+          "rag_query": "LG AC blower motor plastic friction smell",
+          "technician_note": "Check rubber damper cushion on indoor blower motor mount."
+        }
+      }
+    },
+    "AC07": {
+      "issue_id": "AC07",
+      "title": "Noise / Vibration",
+      "start_node": "q1_noise_category",
+      "nodes": [
+        {
+          "id": "q1_noise_category",
+          "type": "question",
+          "text_en": "What kind of noise is your AC making?",
+          "text_hi": "Aapke AC se kis tarah ki ajeeb awaaz aa rahi hai?",
+          "options": [
+            {
+              "label": "Rattling / Shaking / Heavy Vibration",
+              "next_node": "q2_unit_vibration_location"
+            },
+            {
+              "label": "Grinding / Squeaking / Screeching",
+              "conclusion": "diag_bearing_wear"
+            },
+            {
+              "label": "Loud Humming / Buzzing / Drone",
+              "next_node": "q3_humming_pattern"
+            },
+            {
+              "label": "Hissing / Gurgling / Water sound",
+              "next_node": "q4_gurgling_sound"
+            }
+          ]
+        },
+        {
+          "id": "q2_unit_vibration_location",
+          "type": "question",
+          "text_en": "Is the rattling coming from the indoor wall unit or the outdoor unit?",
+          "text_hi": "Rattling ki awaaz indoor unit se aa rahi hai ya bahar wale outdoor unit se?",
+          "options": [
+            {
+              "label": "Indoor Unit (Panel / Filter loose)",
+              "next_node": "q5_indoor_panel_check"
+            },
+            {
+              "label": "Outdoor Unit (Wall bracket / Stand shaking)",
+              "conclusion": "diag_outdoor_mounting_unbalanced"
+            }
+          ]
+        },
+        {
+          "id": "q5_indoor_panel_check",
+          "type": "question",
+          "text_en": "Is the front grill or air filter firmly snapped in place?",
+          "text_hi": "Kya indoor front grill aur filter theek se band hai?",
+          "options": [
+            {
+              "label": "Was loose; snapped it back",
+              "resolution": "resolved_panel_reseated"
+            },
+            {
+              "label": "Panel is tight, noise is inside fan",
+              "conclusion": "diag_blower_wheel_debris_unbalance"
+            }
+          ]
+        },
+        {
+          "id": "q3_humming_pattern",
+          "type": "question",
+          "text_en": "Does the loud humming occur continuously when compressor starts or only at turn on?",
+          "text_hi": "Kya tezz humming awaaz compressor start hote hi aati hai?",
+          "options": [
+            {
+              "label": "Continuous loud drone / Compressor strain",
+              "conclusion": "diag_compressor_strain_low_voltage"
+            },
+            {
+              "label": "Humming with click then stops",
+              "conclusion": "diag_capacitor_contactor_buzz"
+            }
+          ]
+        },
+        {
+          "id": "q4_gurgling_sound",
+          "type": "question",
+          "text_en": "Is the gurgling/hissing heard during defrosting / right after turning off?",
+          "text_hi": "Kya gurgling/hissing ki awaaz AC band hone ya mode badalne par aati hai?",
+          "options": [
+            {
+              "label": "Yes, brief sound after stop (Normal gas equalization)",
+              "resolution": "resolved_normal_refrigerant_flow"
+            },
+            {
+              "label": "Continuous loud hissing during cooling",
+              "conclusion": "diag_refrigerant_expansion_noise"
+            }
+          ]
+        }
+      ],
+      "conclusions": {
+        "diag_outdoor_mounting_unbalanced": {
+          "probable_cause": "Outdoor Stand Vibration Dampers Degraded / Loose Anchor Bolts",
+          "confidence": 0.9,
+          "parts": [
+            "Anti-Vibration Rubber Pads (Set of 4)",
+            "Heavy Duty Wall Brackets",
+            "Anchor Fasteners"
+          ],
+          "priority": "Medium",
+          "safety_flag": false,
+          "rag_query": "LG AC outdoor unit shaking vibration pad installation",
+          "technician_note": "Tighten mounting anchor bolts and place 20mm rubber vibration dampeners under outdoor unit feet."
+        },
+        "diag_blower_wheel_debris_unbalance": {
+          "probable_cause": "Indoor Cross-Flow Blower Fan Unbalanced by Dust Clumps or Broken Blade",
+          "confidence": 0.9,
+          "parts": [
+            "Indoor Cross-Flow Blower Wheel",
+            "Blower Bearing Bush"
+          ],
+          "priority": "Medium",
+          "safety_flag": false,
+          "rag_query": "LG AC indoor blower wheel rattling balance clip",
+          "technician_note": "Inspect blower wheel balance weight clip and clean accumulated dust clumps from blade curve."
+        },
+        "diag_bearing_wear": {
+          "probable_cause": "Motor Ball Bearing Wear in Blower Motor or Outdoor Fan Motor",
+          "confidence": 0.95,
+          "parts": [
+            "BLDC Fan Motor (Indoor/Outdoor)",
+            "Motor Bearing 608ZZ"
+          ],
+          "priority": "High",
+          "safety_flag": false,
+          "rag_query": "LG AC squeaking grinding bearing noise replacement",
+          "technician_note": "Spin shaft by hand to check for radial play or grinding resistance. Replace defective fan motor."
+        },
+        "diag_compressor_strain_low_voltage": {
+          "probable_cause": "Compressor Running Under High Load Strain or Low Operating Voltage",
+          "confidence": 0.85,
+          "parts": [
+            "4kVA Voltage Stabilizer",
+            "Condenser Coil Wash"
+          ],
+          "priority": "High",
+          "safety_flag": true,
+          "rag_query": "LG AC loud compressor humming low voltage vibration",
+          "technician_note": "Measure running voltage and current. Ensure condenser is free of obstruction."
+        },
+        "diag_capacitor_contactor_buzz": {
+          "probable_cause": "Weak Run Capacitor or Chattering Magnetic Relay",
+          "confidence": 0.85,
+          "parts": [
+            "Start/Run Capacitor",
+            "Main Power Relay"
+          ],
+          "priority": "High",
+          "safety_flag": true,
+          "rag_query": "LG AC outdoor humming click not starting capacitor",
+          "technician_note": "Test capacitor microfarad rating against rated spec."
+        },
+        "diag_refrigerant_expansion_noise": {
+          "probable_cause": "Refrigerant Partial Restriction at Expansion Valve / Capillary",
+          "confidence": 0.75,
+          "parts": [
+            "Electronic Expansion Valve (EEV)",
+            "Refrigerant Filter Drier"
+          ],
+          "priority": "Medium",
+          "safety_flag": false,
+          "rag_query": "LG AC hissing restriction EEV valve",
+          "technician_note": "Check temperature differential across EEV / capillary tube."
+        }
+      }
+    },
+    "AC08": {
+      "issue_id": "AC08",
+      "title": "Remote Control / Buttons Not Working",
+      "start_node": "q1_remote_display",
+      "nodes": [
+        {
+          "id": "q1_remote_display",
+          "type": "question",
+          "text_en": "Is the LCD display on your remote control showing any text or icons?",
+          "text_hi": "Kya remote ke screen (display) par koi text ya icon dikh raha hai?",
+          "options": [
+            {
+              "label": "Yes, remote screen is clear and active",
+              "next_node": "q2_camera_ir_test"
+            },
+            {
+              "label": "No, remote screen is totally blank or faded",
+              "action": "instruct_replace_remote_batteries",
+              "next_node": "q_battery_result"
+            }
+          ]
+        },
+        {
+          "id": "q_battery_result",
+          "type": "question",
+          "text_en": "Did inserting a brand new pair of AAA alkaline batteries restore the remote display?",
+          "text_hi": "Nayi AAA batteries daalne ke baad kya remote display chalu hua?",
+          "options": [
+            {
+              "label": "Yes, display turned on and AC works",
+              "resolution": "resolved_batteries_replaced"
+            },
+            {
+              "label": "Display turned on, but AC still does not respond",
+              "next_node": "q2_camera_ir_test"
+            },
+            {
+              "label": "No, remote screen is still completely dead",
+              "conclusion": "diag_faulty_remote_hardware"
+            }
+          ]
+        },
+        {
+          "id": "q2_camera_ir_test",
+          "type": "question",
+          "text_en": "Point the remote tip at your smartphone camera and press buttons. Do you see a flashing purplish/red light on the camera screen?",
+          "text_hi": "Remote ko phone ke camera ke aage rakh kar button dabayein. Kya phone screen par pink/purple light chamakti dikhi?",
+          "options": [
+            {
+              "label": "Yes, camera sees purple flashing light (Remote transmits OK)",
+              "next_node": "q3_indoor_receiver_test"
+            },
+            {
+              "label": "No light visible on camera screen",
+              "conclusion": "diag_faulty_remote_ir_led"
+            }
+          ]
+        },
+        {
+          "id": "q3_indoor_receiver_test",
+          "type": "question",
+          "text_en": "Does the AC beep or respond to any button on the indoor unit's manual emergency switch?",
+          "text_hi": "Kya AC par manual power switch dabane se beep ki awaaz aati hai?",
+          "options": [
+            {
+              "label": "Yes, AC works via manual switch (IR receiver fault)",
+              "conclusion": "diag_indoor_display_ir_pcb"
+            },
+            {
+              "label": "No response to manual switch either",
+              "redirect_issue": "AC02"
+            }
+          ]
+        }
+      ],
+      "conclusions": {
+        "diag_faulty_remote_hardware": {
+          "probable_cause": "Corroded Battery Terminals or Broken Remote PCB Crystal",
+          "confidence": 0.95,
+          "parts": [
+            "LG AC Universal / OEM Remote Control (AKB74955604)"
+          ],
+          "priority": "Low",
+          "safety_flag": false,
+          "rag_query": "LG AC remote control replacement model UW-Q18WUZA",
+          "technician_note": "Provide replacement OEM remote control to customer."
+        },
+        "diag_faulty_remote_ir_led": {
+          "probable_cause": "Damaged IR Emitter LED or Remote Keypad Membrane",
+          "confidence": 0.9,
+          "parts": [
+            "LG AC Genuine Remote Control"
+          ],
+          "priority": "Low",
+          "safety_flag": false,
+          "rag_query": "LG AC remote IR emitter test replacement",
+          "technician_note": "Replace remote control handset."
+        },
+        "diag_indoor_display_ir_pcb": {
+          "probable_cause": "Indoor Display PCB IR Receiver Sensor (Photo-diode) Failure",
+          "confidence": 0.9,
+          "parts": [
+            "Indoor Display PCB Assembly (IR Receiver Board)",
+            "Ribbon Cable Harness"
+          ],
+          "priority": "Medium",
+          "safety_flag": false,
+          "rag_query": "LG AC indoor IR receiver board replacement",
+          "technician_note": "Measure 5V supply and IR signal pin on display PCB while firing remote."
+        }
+      }
+    },
+    "AC09": {
+      "issue_id": "AC09",
+      "title": "Weak Airflow or No Air Coming Out",
+      "start_node": "q1_air_output",
+      "nodes": [
+        {
+          "id": "q1_air_output",
+          "type": "question",
+          "text_en": "Is any air coming out of the AC vents at all?",
+          "text_hi": "Kya AC ke vents se bilkul bhi hawa nikal rahi hai?",
+          "options": [
+            {
+              "label": "No air at all / Completely dead vent",
+              "next_node": "q2_fan_motor_hum"
+            },
+            {
+              "label": "Air is coming out, but airflow is very weak",
+              "next_node": "q3_filter_ice_check"
+            }
+          ]
+        },
+        {
+          "id": "q2_fan_motor_hum",
+          "type": "question",
+          "text_en": "Can you hear the indoor fan motor humming or does it show error CH 10?",
+          "text_hi": "Kya indoor fan motor ki humming sunai de rahi hai ya display par CH 10 aa raha hai?",
+          "options": [
+            {
+              "label": "Yes, humming or CH 10 appears",
+              "redirect_issue": "AC03"
+            },
+            {
+              "label": "No sound, completely silent",
+              "conclusion": "diag_blower_motor_capacitor_open"
+            }
+          ]
+        },
+        {
+          "id": "q3_filter_ice_check",
+          "type": "question",
+          "text_en": "Is the air filter heavily clogged with dust, or is there visible ice on the indoor coil fins?",
+          "text_hi": "Kya filter dhool se jam gaya hai ya cooling fins par barf (ice) dikh rahi hai?",
+          "options": [
+            {
+              "label": "Visible ice/frost on coil",
+              "conclusion": "diag_evaporator_coil_frozen"
+            },
+            {
+              "label": "Filter is very dirty",
+              "action": "instruct_clean_filter",
+              "next_node": "q_airflow_resolution"
+            },
+            {
+              "label": "Filter is clean and no ice",
+              "next_node": "q4_fan_speed_setting"
+            }
+          ]
+        },
+        {
+          "id": "q_airflow_resolution",
+          "type": "question",
+          "text_en": "Did cleaning the filter restore strong, normal airflow?",
+          "text_hi": "Filter saaf karne se kya hawa ka pressure wapas normal ho gaya?",
+          "options": [
+            {
+              "label": "Yes, airflow is strong now",
+              "resolution": "resolved_airflow_restored_filter"
+            },
+            {
+              "label": "No, airflow remains weak",
+              "next_node": "q4_fan_speed_setting"
+            }
+          ]
+        },
+        {
+          "id": "q4_fan_speed_setting",
+          "type": "question",
+          "text_en": "Is the fan speed set to High (F3/F5) or is the indoor blower wheel visibly caked with deep dirt?",
+          "text_hi": "Kya fan speed High par hai aur kya blower wheel ke blades par moti dhool ki parat jami hai?",
+          "options": [
+            {
+              "label": "Blower wheel blades are heavily choked with dust",
+              "conclusion": "diag_blower_wheel_deep_clog"
+            },
+            {
+              "label": "Clean blower wheel, but fan spins slowly on high setting",
+              "conclusion": "diag_blower_motor_degraded"
+            }
+          ]
+        }
+      ],
+      "conclusions": {
+        "diag_evaporator_coil_frozen": {
+          "probable_cause": "Evaporator Coil Choked with Ice due to Low Gas or Blower Failure",
+          "confidence": 0.9,
+          "parts": [
+            "R32 Refrigerant Gas",
+            "Indoor Pipe Thermistor 5kΩ"
+          ],
+          "priority": "High",
+          "safety_flag": false,
+          "rag_query": "LG AC ice on cooling coil weak airflow defrosting",
+          "technician_note": "Turn off cooling, melt ice. Check gas pressure and clean evaporator."
+        },
+        "diag_blower_wheel_deep_clog": {
+          "probable_cause": "Indoor Blower Wheel Blades Choked with Dirt / Fungal Sludge",
+          "confidence": 0.9,
+          "parts": [
+            "High Pressure Water Jet Wash Service"
+          ],
+          "priority": "Medium",
+          "safety_flag": false,
+          "rag_query": "LG AC blower fan cleaning pressure jet service",
+          "technician_note": "Dismantle indoor fascia, pressure wash cross-flow blower."
+        },
+        "diag_blower_motor_capacitor_open": {
+          "probable_cause": "Indoor BLDC Blower Motor Failure / Blown Thermal Fuse",
+          "confidence": 0.9,
+          "parts": [
+            "Indoor BLDC Blower Motor",
+            "Indoor Main PCB"
+          ],
+          "priority": "High",
+          "safety_flag": true,
+          "rag_query": "LG AC indoor blower motor not spinning replacement",
+          "technician_note": "Check motor winding continuity and 310V DC / 15V DC supply to motor."
+        },
+        "diag_blower_motor_degraded": {
+          "probable_cause": "Fan Motor Run Capacitor Weak or Motor Hall Sensor Degraded",
+          "confidence": 0.8,
+          "parts": [
+            "Fan Run Capacitor 1.5uF",
+            "BLDC Motor"
+          ],
+          "priority": "Medium",
+          "safety_flag": false,
+          "rag_query": "LG AC fan speed slow low airflow capacitor check",
+          "technician_note": "Measure motor RPM and capacitor rating."
+        }
+      }
+    },
+    "AC10": {
+      "issue_id": "AC10",
+      "title": "Cleaning & Maintenance",
+      "start_node": "q1_maintenance_reason",
+      "nodes": [
+        {
+          "id": "q1_maintenance_reason",
+          "type": "question",
+          "text_en": "Are you performing routine 15-day cleaning or troubleshooting poor cooling / bad odor?",
+          "text_hi": "Kya aap 15-din ki routine safai kar rahe hain ya kam cooling/badboo ki vajah se saaf kar rahe hain?",
+          "options": [
+            {
+              "label": "Routine 15-Day Filter Maintenance",
+              "action": "instruct_filter_clean_steps",
+              "next_node": "q2_filter_removal_help"
+            },
+            {
+              "label": "Poor Cooling issue",
+              "redirect_issue": "AC01"
+            },
+            {
+              "label": "Bad Odor / Mold smell",
+              "redirect_issue": "AC06"
+            }
+          ]
+        },
+        {
+          "id": "q2_filter_removal_help",
+          "type": "question",
+          "text_en": "Have you removed the filter using the designated tabs and washed it with normal water and a soft brush?",
+          "text_hi": "Kya aapne filter ko tabs se bahar nikal kar normal paani aur soft brush se dho liya hai?",
+          "options": [
+            {
+              "label": "Yes, washed cleanly",
+              "next_node": "q3_drying_check"
+            },
+            {
+              "label": "Need help removing filter",
+              "action": "instruct_filter_removal_guide",
+              "next_node": "q3_drying_check"
+            }
+          ]
+        },
+        {
+          "id": "q3_drying_check",
+          "type": "question",
+          "text_en": "Is the air filter 100% dry in shade? (Never install a wet filter as it causes mold and short circuit risk).",
+          "text_hi": "Kya filter chhaon mein poori tarah sookh chuka hai? (Geela filter kabhi na lagayein).",
+          "options": [
+            {
+              "label": "Yes, completely dry; reinstalled firmly",
+              "resolution": "resolved_routine_filter_maintenance"
+            },
+            {
+              "label": "Filter is still damp / drying",
+              "action": "instruct_wait_dry_complete",
+              "resolution": "resolved_filter_drying_guided"
+            }
+          ]
+        }
+      ],
+      "conclusions": {
+        "diag_deep_chemical_service_needed": {
+          "probable_cause": "Cooling Coils Need Annual Professional Jet Wash Service",
+          "confidence": 0.85,
+          "parts": [
+            "Annual Preventative Maintenance Service Kit"
+          ],
+          "priority": "Low",
+          "safety_flag": false,
+          "rag_query": "LG AC annual preventive maintenance service schedule",
+          "technician_note": "Perform foam wash of condenser and evaporator coils."
+        }
+      }
+    },
+    "AC11": {
+      "issue_id": "AC11",
+      "title": "Function / Settings Problem",
+      "start_node": "q1_function_issue",
+      "nodes": [
+        {
+          "id": "q1_function_issue",
+          "type": "question",
+          "text_en": "Which operating function or setting is not behaving as expected?",
+          "text_hi": "Kaunsa feature ya setting theek se kaam nahi kar raha?",
+          "options": [
+            {
+              "label": "Mode switching (Cool / Dry / Fan / Auto)",
+              "next_node": "q2_mode_response"
+            },
+            {
+              "label": "Sleep / On-Off Timer setting",
+              "next_node": "q3_timer_cancel"
+            },
+            {
+              "label": "Horizontal / Vertical Swing louver",
+              "next_node": "q4_swing_motor"
+            },
+            {
+              "label": "Display Dim / Energy Saver mode",
+              "next_node": "q5_special_mode"
+            }
+          ]
+        },
+        {
+          "id": "q2_mode_response",
+          "type": "question",
+          "text_en": "When you press the 'Mode' button on remote, does the mode icon change on both remote and AC panel?",
+          "text_hi": "Remote par 'Mode' dabane par kya icon remote aur AC panel dono par badalta hai?",
+          "options": [
+            {
+              "label": "Yes, icon changes but compressor won't kick in",
+              "next_node": "q_compressor_delay"
+            },
+            {
+              "label": "No response to Mode button",
+              "redirect_issue": "AC08"
+            }
+          ]
+        },
+        {
+          "id": "q_compressor_delay",
+          "type": "question",
+          "text_en": "Inverter ACs have a 3-minute compressor protection safety delay before starting cooling. Has 3 minutes passed?",
+          "text_hi": "Inverter AC mein cooling shuru hone mein 3 minute ka safety delay hota hai. Kya 3 minute ho chuke hain?",
+          "options": [
+            {
+              "label": "Yes, cooling starts after 3 minutes",
+              "resolution": "resolved_compressor_time_delay_normal"
+            },
+            {
+              "label": "Waited 10+ minutes, still no cooling",
+              "redirect_issue": "AC01"
+            }
+          ]
+        },
+        {
+          "id": "q3_timer_cancel",
+          "type": "question",
+          "text_en": "Is the AC turning off automatically due to an active Timer or Sleep Mode?",
+          "text_hi": "Kya AC kisi purane Timer ya Sleep mode ki vajah se khud band ho raha hai?",
+          "options": [
+            {
+              "label": "Yes, Timer icon was ON; pressed Cancel",
+              "resolution": "resolved_timer_cancelled"
+            },
+            {
+              "label": "No timer set, still turns off randomly",
+              "redirect_issue": "AC02"
+            }
+          ]
+        },
+        {
+          "id": "q4_swing_motor",
+          "type": "question",
+          "text_en": "Is the swing flap stuck in one position or making a clicking sound?",
+          "text_hi": "Kya swing flap ek jagah atka hua hai ya tik-tik ki awaaz kar raha hai?",
+          "options": [
+            {
+              "label": "Flap is stuck / clicking sound",
+              "conclusion": "diag_step_motor_swing_broken"
+            },
+            {
+              "label": "Works fine via remote",
+              "resolution": "resolved_swing_normal"
+            }
+          ]
+        },
+        {
+          "id": "q5_special_mode",
+          "type": "question",
+          "text_en": "Is 'Energy Saver' or '6-in-1 AI Convertible' mode limiting cooling capacity to 40% / 60%?",
+          "text_hi": "Kya Convertible mode ne capacity ko 40% ya 60% par limit kar rakha hai?",
+          "options": [
+            {
+              "label": "Yes, returned to 100% capacity",
+              "resolution": "resolved_capacity_restored"
+            },
+            {
+              "label": "Running at 100%, still poor response",
+              "redirect_issue": "AC01"
+            }
+          ]
+        }
+      ],
+      "conclusions": {
+        "diag_step_motor_swing_broken": {
+          "probable_cause": "Indoor Louver Stepper Motor Broken or Gear Stripped",
+          "confidence": 0.9,
+          "parts": [
+            "12V DC Stepper Swing Motor (24BYJ48)",
+            "Louver Linkage Bushing"
+          ],
+          "priority": "Low",
+          "safety_flag": false,
+          "rag_query": "LG AC swing flap motor replacement clicking sound",
+          "technician_note": "Inspect stepper motor connector CN-STEP on indoor PCB and replace motor."
+        }
+      }
+    },
+    "AC12": {
+      "issue_id": "AC12",
+      "title": "Installation / Connection Problem",
+      "start_node": "q1_installation_time",
+      "nodes": [
+        {
+          "id": "q1_installation_time",
+          "type": "question",
+          "text_en": "Was this AC newly installed within the last 7 to 30 days?",
+          "text_hi": "Kya ye AC pichhle 7 se 30 dino ke andar naya install hua hai?",
+          "options": [
+            {
+              "label": "Yes, brand new installation",
+              "next_node": "q2_installation_symptom"
+            },
+            {
+              "label": "No, installed long ago / re-installed after shifting",
+              "next_node": "q2_installation_symptom"
+            }
+          ]
+        },
+        {
+          "id": "q2_installation_symptom",
+          "type": "question",
+          "text_en": "What specific installation issue are you observing?",
+          "text_hi": "Installation mein kaunsi specific dikkat dikh rahi hai?",
+          "options": [
+            {
+              "label": "Unit is visibly tilted or loose on wall",
+              "conclusion": "diag_improper_mounting_tilt"
+            },
+            {
+              "label": "Water leaking from backplate / wall hole",
+              "redirect_issue": "AC04"
+            },
+            {
+              "label": "Outdoor unit vibrating heavily against wall",
+              "redirect_issue": "AC07"
+            },
+            {
+              "label": "No cooling immediately after technician left",
+              "conclusion": "diag_installation_gas_valve_closed"
+            }
+          ]
+        }
+      ],
+      "conclusions": {
+        "diag_improper_mounting_tilt": {
+          "probable_cause": "Indoor Unit Backplate Installed Reverse Tilted (Preventing Drainage)",
+          "confidence": 0.95,
+          "parts": [
+            "Level Alignment Re-installation Service"
+          ],
+          "priority": "High",
+          "safety_flag": true,
+          "rag_query": "LG AC wall mount tilt water drainage installation standard",
+          "technician_note": "Re-level indoor backplate with spirit level ensuring slight 2-3mm slope towards drain hose side."
+        },
+        "diag_installation_gas_valve_closed": {
+          "probable_cause": "Service Valves Not Opened or Flare Nut Not Torqued properly (Gas Leak)",
+          "confidence": 0.9,
+          "parts": [
+            "Refrigerant R32 Top-up",
+            "Flare Re-torqueing Service"
+          ],
+          "priority": "High",
+          "safety_flag": false,
+          "rag_query": "LG AC service valve open 2-way 3-way hex key check",
+          "technician_note": "Check service valve stems are fully open with Allen key. Perform nitrogen bubble test on both flare joints."
+        }
+      }
+    },
+    "AC13": {
+      "issue_id": "AC13",
+      "title": "Cosmetic / Physical Damage",
+      "start_node": "q1_damage_part",
+      "nodes": [
+        {
+          "id": "q1_damage_part",
+          "type": "question",
+          "text_en": "Which physical part of the AC is cracked, broken, or damaged?",
+          "text_hi": "AC ka kaunsa hissa toota ya damage hua hai?",
+          "options": [
+            {
+              "label": "Front Panel / Grill / Display Casing",
+              "next_node": "q2_exposed_wires"
+            },
+            {
+              "label": "Air Louver / Swing Blade broken",
+              "conclusion": "diag_broken_louver_blade"
+            },
+            {
+              "label": "Outdoor unit casing / Condenser fin bent",
+              "next_node": "q3_outdoor_fin_damage"
+            },
+            {
+              "label": "Power Cord cut / Rodent bite",
+              "conclusion": "diag_rodent_damaged_power_cord"
+            }
+          ]
+        },
+        {
+          "id": "q2_exposed_wires",
+          "type": "question",
+          "text_en": "Is there any exposed high-voltage wiring, internal PCB, or live parts visible through the damage?",
+          "text_hi": "Kya toote hisse se koi nanga bijli ka taar ya internal PCB bahar dikh raha hai?",
+          "options": [
+            {
+              "label": "Yes, exposed wiring or live metal",
+              "conclusion": "diag_exposed_live_wiring_hazard"
+            },
+            {
+              "label": "No, only superficial plastic crack",
+              "conclusion": "diag_cosmetic_front_panel_replace"
+            }
+          ]
+        },
+        {
+          "id": "q3_outdoor_fin_damage",
+          "type": "question",
+          "text_en": "Are the outdoor condenser blue fins bent over a large area, blocking air flow?",
+          "text_hi": "Kya outdoor unit ke blue fins mude hue hain jisse hawa ruk rahi hai?",
+          "options": [
+            {
+              "label": "Yes, large bent fin area",
+              "conclusion": "diag_fin_comb_straightening"
+            },
+            {
+              "label": "Minor cosmetic scratches on cabinet",
+              "resolution": "resolved_minor_cosmetic_acceptable"
+            }
+          ]
+        }
+      ],
+      "conclusions": {
+        "diag_exposed_live_wiring_hazard": {
+          "probable_cause": "Broken Plastic Housing Exposing 230V Mains Terminals",
+          "confidence": 0.95,
+          "parts": [
+            "Front Fascia Assembly",
+            "Indoor Terminal Cover"
+          ],
+          "priority": "Critical",
+          "safety_flag": true,
+          "rag_query": "LG AC broken casing exposed wire safety hazard",
+          "technician_note": "SHUT OFF MCB. Replace damaged front fascia and electrical enclosure cover."
+        },
+        "diag_broken_louver_blade": {
+          "probable_cause": "Physical Impact Snapped Horizontal Louver Hinge Pin",
+          "confidence": 0.95,
+          "parts": [
+            "Horizontal Air Louver Blade",
+            "Louver Center Guide"
+          ],
+          "priority": "Low",
+          "safety_flag": false,
+          "rag_query": "LG AC horizontal louver vane replacement",
+          "technician_note": "Snap in replacement genuine louver blade into motor hinge."
+        },
+        "diag_cosmetic_front_panel_replace": {
+          "probable_cause": "Cracked Front Panel Grille",
+          "confidence": 0.9,
+          "parts": [
+            "Indoor Front Panel Grille (OEM)"
+          ],
+          "priority": "Low",
+          "safety_flag": false,
+          "rag_query": "LG AC front panel replacement UW-Q18WUZA",
+          "technician_note": "Provide replacement front panel."
+        },
+        "diag_rodent_damaged_power_cord": {
+          "probable_cause": "Rodent / Rat Chewed Power Cord or Interconnecting Cable",
+          "confidence": 0.95,
+          "parts": [
+            "3-Core 2.5sqmm Power Cable",
+            "Anti-Rodent PVC Sleeve"
+          ],
+          "priority": "Critical",
+          "safety_flag": true,
+          "rag_query": "LG AC rat bite cable replacement safety",
+          "technician_note": "Do not join with tape. Replace full interconnecting cable harness with rodent-proof braided sleeve."
+        },
+        "diag_fin_comb_straightening": {
+          "probable_cause": "Bent Aluminum Condenser Fins Restricting Heat Transfer",
+          "confidence": 0.85,
+          "parts": [
+            "Fin Comb Tool Straightening Service"
+          ],
+          "priority": "Medium",
+          "safety_flag": false,
+          "rag_query": "LG AC condenser fin comb repair",
+          "technician_note": "Use fin comb to gently align bent condenser fins."
+        }
+      }
+    },
+    "AC14": {
+      "issue_id": "AC14",
+      "title": "Spare Parts & Accessories Request",
+      "start_node": "q1_requested_part",
+      "nodes": [
+        {
+          "id": "q1_requested_part",
+          "type": "question",
+          "text_en": "Which spare part or accessory do you need for your LG AC?",
+          "text_hi": "Aapko LG AC ke liye kaunsa spare part ya accessory chahiye?",
+          "options": [
+            {
+              "label": "Remote Control Handset",
+              "next_node": "q2_model_confirmation"
+            },
+            {
+              "label": "Air Filter Mesh (Anti-bacterial/HD)",
+              "next_node": "q2_model_confirmation"
+            },
+            {
+              "label": "Copper Piping Kit / Drain Pipe",
+              "conclusion": "diag_part_piping_kit"
+            },
+            {
+              "label": "Outdoor Wall Mounting Bracket",
+              "conclusion": "diag_part_mounting_bracket"
+            },
+            {
+              "label": "Other Electronic / Mechanical Part",
+              "next_node": "q3_warranty_check"
+            }
+          ]
+        },
+        {
+          "id": "q2_model_confirmation",
+          "type": "question",
+          "text_en": "Do you have the exact model number (e.g., UW-Q18WUZA, MS-Q18YNZA) from the side sticker?",
+          "text_hi": "Kya aapke paas AC ka exact model number likha hua hai?",
+          "options": [
+            {
+              "label": "Yes, model verified",
+              "next_node": "q3_warranty_check"
+            },
+            {
+              "label": "Not sure, need model identification guide",
+              "action": "instruct_locate_model_serial_sticker",
+              "next_node": "q3_warranty_check"
+            }
+          ]
+        },
+        {
+          "id": "q3_warranty_check",
+          "type": "question",
+          "text_en": "Is the AC within the 1-Year Comprehensive Warranty period or covered under AMC?",
+          "text_hi": "Kya AC 1 saal ki warranty ya AMC ke andar hai?",
+          "options": [
+            {
+              "label": "Yes, within active warranty (with invoice)",
+              "conclusion": "diag_warranty_part_dispatch"
+            },
+            {
+              "label": "No, out of warranty / purchased as paid spare",
+              "conclusion": "diag_chargeable_part_order"
+            }
+          ]
+        }
+      ],
+      "conclusions": {
+        "diag_warranty_part_dispatch": {
+          "probable_cause": "Warranty Replacement Part Request",
+          "confidence": 1.0,
+          "parts": [
+            "OEM Genuine Part under Warranty"
+          ],
+          "priority": "Medium",
+          "safety_flag": false,
+          "rag_query": "LG AC warranty spare part claim invoice verification",
+          "technician_note": "Validate customer purchase invoice and serial number in LG GSFS system."
+        },
+        "diag_chargeable_part_order": {
+          "probable_cause": "Out of Warranty Genuine Spare Part Order",
+          "confidence": 1.0,
+          "parts": [
+            "LG Genuine Spare Part"
+          ],
+          "priority": "Low",
+          "safety_flag": false,
+          "rag_query": "LG AC spare parts price list catalog",
+          "technician_note": "Generate quote with MRP and arrange dispatch or technician delivery."
+        },
+        "diag_part_piping_kit": {
+          "probable_cause": "Installation Copper Pipe Extension / Drain Hose Request",
+          "confidence": 0.95,
+          "parts": [
+            "Copper Tube 1/4 & 1/2 Pair 3M",
+            "Drain Hose 1/2-inch 5M"
+          ],
+          "priority": "Low",
+          "safety_flag": false,
+          "rag_query": "LG AC genuine copper pipe extension kit specifications",
+          "technician_note": "Ensure insulated copper tubes meet ASTM B280 pressure specifications."
+        },
+        "diag_part_mounting_bracket": {
+          "probable_cause": "Heavy-Duty Outdoor Stand / Vibration Bracket",
+          "confidence": 0.95,
+          "parts": [
+            "Outdoor Powder-Coated Bracket 2.0mm",
+            "Vibration Dampener Kit"
+          ],
+          "priority": "Low",
+          "safety_flag": false,
+          "rag_query": "LG AC outdoor heavy duty wall mounting stand bracket",
+          "technician_note": "Supply ISI standard galvanized powder-coated outdoor bracket."
+        }
+      }
+    },
+    "AC15": {
+      "issue_id": "AC15",
+      "title": "ThinQ / Smart Features Connectivity",
+      "start_node": "q1_thinq_issue_type",
+      "nodes": [
+        {
+          "id": "q1_thinq_issue_type",
+          "type": "question",
+          "text_en": "What issue are you facing with LG ThinQ smart features?",
+          "text_hi": "LG ThinQ app ya smart features ke sath kya dikkat aa rahi hai?",
+          "options": [
+            {
+              "label": "Wi-Fi Pairing fails during initial setup",
+              "next_node": "q2_wifi_frequency"
+            },
+            {
+              "label": "AC shows 'Offline / Disconnected' in ThinQ App",
+              "next_node": "q3_router_change"
+            },
+            {
+              "label": "Voice Assistant (Alexa / Google) not responding",
+              "conclusion": "diag_voice_assistant_relink"
+            },
+            {
+              "label": "Model does not have Wi-Fi hardware",
+              "conclusion": "diag_model_no_wifi_support"
+            }
+          ]
+        },
+        {
+          "id": "q2_wifi_frequency",
+          "type": "question",
+          "text_en": "Is your Wi-Fi router broadcasting on 2.4 GHz band? (LG ACs only connect to 2.4 GHz Wi-Fi, not 5 GHz).",
+          "text_hi": "Kya aapka Wi-Fi router 2.4 GHz band par hai? (LG AC sirf 2.4 GHz Wi-Fi se connect hota hai).",
+          "options": [
+            {
+              "label": "Connected phone to 2.4 GHz; pairing worked",
+              "resolution": "resolved_thinq_paired_24ghz"
+            },
+            {
+              "label": "Still fails on 2.4 GHz network",
+              "action": "instruct_thinq_ac_wifi_reset",
+              "next_node": "q_wifi_reset_result"
+            }
+          ]
+        },
+        {
+          "id": "q_wifi_reset_result",
+          "type": "question",
+          "text_en": "After pressing the Wi-Fi button on remote for 3 seconds until the Wi-Fi icon blinks, did pairing succeed?",
+          "text_hi": "Remote par Wi-Fi button 3 second dabane ke baad kya app mein AC pair ho gaya?",
+          "options": [
+            {
+              "label": "Yes, connected successfully",
+              "resolution": "resolved_thinq_pairing_success"
+            },
+            {
+              "label": "No, Wi-Fi icon does not blink",
+              "conclusion": "diag_indoor_wifi_module_fault"
+            }
+          ]
+        },
+        {
+          "id": "q3_router_change",
+          "type": "question",
+          "text_en": "Did you recently change your home Wi-Fi password, router, or internet provider?",
+          "text_hi": "Kya aapne haal hi mein Wi-Fi password, router ya internet connection badla hai?",
+          "options": [
+            {
+              "label": "Yes, router/password was changed",
+              "action": "instruct_reconfigure_thinq_network",
+              "resolution": "resolved_thinq_network_reconfigured"
+            },
+            {
+              "label": "No changes, router is ON with active internet",
+              "next_node": "q4_thinq_app_cache"
+            }
+          ]
+        },
+        {
+          "id": "q4_thinq_app_cache",
+          "type": "question",
+          "text_en": "Did turning off the AC MCB for 2 minutes and restarting the ThinQ app bring the AC back online?",
+          "text_hi": "AC ka MCB 2 minute band karke on karne aur app restart karne par kya AC online aaya?",
+          "options": [
+            {
+              "label": "Yes, AC is online now",
+              "resolution": "resolved_thinq_online_restored"
+            },
+            {
+              "label": "No, remains offline permanently",
+              "conclusion": "diag_indoor_wifi_module_fault"
+            }
+          ]
+        }
+      ],
+      "conclusions": {
+        "diag_indoor_wifi_module_fault": {
+          "probable_cause": "Indoor Wi-Fi PCB Module Non-Responsive or Detached Cable",
+          "confidence": 0.85,
+          "parts": [
+            "LG Smart Wi-Fi USB/PCB Module (LCW-004 / LCW-007)"
+          ],
+          "priority": "Medium",
+          "safety_flag": false,
+          "rag_query": "LG AC ThinQ wifi module replacement troubleshooting",
+          "technician_note": "Inspect Wi-Fi module connector on indoor display PCB and check 5V supply."
+        },
+        "diag_voice_assistant_relink": {
+          "probable_cause": "OAuth Token Expired in Alexa / Google Home ThinQ Skill",
+          "confidence": 0.9,
+          "parts": [],
+          "priority": "Low",
+          "safety_flag": false,
+          "rag_query": "LG ThinQ Alexa Google Home unlink and relink skill",
+          "technician_note": "Guide customer to unlink and re-link LG ThinQ skill inside Alexa / Google Home app."
+        },
+        "diag_model_no_wifi_support": {
+          "probable_cause": "Appliance Model Lacks Built-in ThinQ Wi-Fi Hardware",
+          "confidence": 1.0,
+          "parts": [],
+          "priority": "Low",
+          "safety_flag": false,
+          "rag_query": "LG AC model wifi feature compatibility check",
+          "technician_note": "Verify model suffix in manual. Non-Wi-Fi models do not support ThinQ."
+        }
+      }
+    },
+    "AC16": {
+      "issue_id": "AC16",
+      "title": "Technical Support & Escalation",
+      "start_node": "q1_troubleshooting_history",
+      "nodes": [
+        {
+          "id": "q1_troubleshooting_history",
+          "type": "question",
+          "text_en": "Have you already attempted self-troubleshooting steps without success?",
+          "text_hi": "Kya aap pehle hi troubleshooting steps try kar chuke hain par dikkat bani hui hai?",
+          "options": [
+            {
+              "label": "Yes, all basic checks failed",
+              "next_node": "q2_safety_critical_check"
+            },
+            {
+              "label": "No, this is my first time diagnosing",
+              "next_node": "q3_main_symptom_triage"
+            }
+          ]
+        },
+        {
+          "id": "q2_safety_critical_check",
+          "type": "question",
+          "text_en": "Is there any smoke, burning smell, exposed wiring, water near electrical sockets, or repeated breaker tripping?",
+          "text_hi": "Kya koi dhuan, jalne ki smell, nanga taar, socket ke paas paani ya baar-baar MCB trip hone ki dikkat hai?",
+          "options": [
+            {
+              "label": "YES - Critical Safety Risk Present",
+              "conclusion": "diag_emergency_safety_escalation"
+            },
+            {
+              "label": "No safety hazard, but product needs repair",
+              "next_node": "q4_service_preference"
+            }
+          ]
+        },
+        {
+          "id": "q3_main_symptom_triage",
+          "type": "question",
+          "text_en": "Which primary category best describes your issue?",
+          "text_hi": "Aapki dikkat kis category mein aati hai?",
+          "options": [
+            {
+              "label": "Cooling / Temperature issue",
+              "redirect_issue": "AC01"
+            },
+            {
+              "label": "Power / Not turning on",
+              "redirect_issue": "AC02"
+            },
+            {
+              "label": "Error code on display",
+              "redirect_issue": "AC03"
+            },
+            {
+              "label": "Water leaking",
+              "redirect_issue": "AC04"
+            }
+          ]
+        },
+        {
+          "id": "q4_service_preference",
+          "type": "question",
+          "text_en": "How would you like to proceed with LG Service Support?",
+          "text_hi": "Aap LG Service Support se kis tarah sampark karna chahte hain?",
+          "options": [
+            {
+              "label": "Book Technician Home Visit (Service Request)",
+              "conclusion": "diag_book_technician_visit"
+            },
+            {
+              "label": "Connect to LG WhatsApp / Call Support",
+              "conclusion": "diag_connect_live_support"
+            }
+          ]
+        }
+      ],
+      "conclusions": {
+        "diag_emergency_safety_escalation": {
+          "probable_cause": "Critical Electrical / Thermal Safety Hazard Detected",
+          "confidence": 1.0,
+          "parts": [
+            "Emergency Service Priority Dispatch"
+          ],
+          "priority": "Critical",
+          "safety_flag": true,
+          "rag_query": "LG customer care emergency escalation fire safety protocol",
+          "technician_note": "PRIORITY 1 ESCALATION: Advise customer to keep MCB turned OFF. Dispatch technician within 2-4 hours."
+        },
+        "diag_book_technician_visit": {
+          "probable_cause": "Unresolved Hardware / Electrical Component Malfunction",
+          "confidence": 0.9,
+          "parts": [
+            "Standard Technician Diagnostic Toolkit"
+          ],
+          "priority": "High",
+          "safety_flag": false,
+          "rag_query": "LG AC home service ticket generation field dispatch",
+          "technician_note": "Generate structured service ticket with collected symptoms, error history, and model number."
+        },
+        "diag_connect_live_support": {
+          "probable_cause": "Customer Support Consultation Requested",
+          "confidence": 1.0,
+          "parts": [],
+          "priority": "Medium",
+          "safety_flag": false,
+          "rag_query": "LG India support helpline 1800-315-9999 WhatsApp service link",
+          "technician_note": "Provide LG Toll-Free 1800-315-9999 and WhatsApp Support +91-9711709999."
+        }
+      }
+    }
+  }
+}

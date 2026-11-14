@@ -1,0 +1,493 @@
+{
+  "issue_id": "AC03",
+  "title": "Error Code or Display Issue",
+  "start_node": "q1_display_status",
+  "nodes": [
+    {
+      "id": "q1_display_status",
+      "type": "question",
+      "text_en": "What do you see on your AC display panel?",
+      "text_hi": "Aapko AC display panel par kya dikhai de raha hai?",
+      "options": [
+        { "label": "Specific Error Code (e.g., CH 05, CH 38, HL, CL)", "next_node": "q2_code_category" },
+        { "label": "Blinking LED Lights (No Digits)", "next_node": "q_blinking_led_count" },
+        { "label": "Completely Blank / No Display", "redirect_issue": "AC02" },
+        { "label": "Status Codes (Po, Lo, HI, Od)", "next_node": "q_status_indicator_check" }
+      ]
+    },
+    {
+      "id": "q2_code_category",
+      "type": "question",
+      "text_en": "Which category does your displayed code belong to?",
+      "text_hi": "Display par dikhne wala code kis category ka hai?",
+      "options": [
+        { "label": "Communication (CH 05 / C5 / CH 53)", "next_node": "q_ch05_power_cycle" },
+        { "label": "Refrigerant & Pressure (CH 32, CH 35, CH 38)", "next_node": "q_ch_gas_pressure_select" },
+        { "label": "Fan Motor & Blower (CH 06, CH 10, CH 67)", "next_node": "q_ch_motor_select" },
+        { "label": "Compressor & Electrical (CH 21, CH 22, CH 23, CH 26, CH 27, CH 29)", "next_node": "q_ch_inverter_comp_select" },
+        { "label": "Temperature Sensors (CH 01, CH 02, CH 12, CH 41, CH 44, CH 45, CH 46)", "next_node": "q_ch_sensor_select" },
+        { "label": "PCB & Overheat (CH 09, CH 60, CH 61, CH 62)", "next_node": "q_ch_pcb_overheat_select" },
+        { "label": "Water Overflow (HL)", "next_node": "q_hl_water_check" },
+        { "label": "Lock & Filter (CL, FL)", "next_node": "q_lock_filter_select" },
+        { "label": "Other / Unknown Code", "next_node": "q_unknown_code_reboot" }
+      ]
+    },
+    {
+      "id": "q_ch05_power_cycle",
+      "type": "question",
+      "text_en": "CH 05 indicates a communication breakdown between indoor and outdoor units. Have you switched off the AC MCB for 3 minutes and turned it back ON?",
+      "text_hi": "CH 05 indoor aur outdoor unit ke beech communication error dikhata hai. Kya aapne AC ka MCB 3 minute ke liye band karke dobara ON kiya?",
+      "options": [
+        { "label": "Yes, but CH 05 returns immediately", "conclusion": "diag_ch05_comm_failure" },
+        { "label": "No, let me try", "action": "instruct_hard_reset_mcb", "next_node": "q_ch05_reset_result" }
+      ]
+    },
+    {
+      "id": "q_ch05_reset_result",
+      "type": "question",
+      "text_en": "Did the CH 05 error disappear and normal cooling resume after the MCB power reset?",
+      "text_hi": "Kya MCB reset karne ke baad CH 05 error hat gaya aur cooling shuru hui?",
+      "options": [
+        { "label": "Yes, working normally now", "resolution": "resolved_glitch_reset" },
+        { "label": "No, code persists", "conclusion": "diag_ch05_comm_failure" }
+      ]
+    },
+    {
+      "id": "q_ch_gas_pressure_select",
+      "type": "question",
+      "text_en": "Which exact refrigerant/pressure code is shown: CH 38 (Gas Leak), CH 32 (Discharge Overheat), or CH 35 (Low Pressure)?",
+      "text_hi": "Display par inme se kaunsa code hai: CH 38 (Gas Leak), CH 32 (Discharge Overheat), ya CH 35 (Low Pressure)?",
+      "options": [
+        { "label": "CH 38 (Refrigerant Gas Leakage)", "next_node": "q_ch38_cooling_check" },
+        { "label": "CH 32 (Discharge High Temp / Condenser Overheat)", "next_node": "q_ch32_outdoor_blockage" },
+        { "label": "CH 35 (Low Pressure Sensor)", "conclusion": "diag_ch35_pressure_fault" }
+      ]
+    },
+    {
+      "id": "q_ch38_cooling_check",
+      "type": "question",
+      "text_en": "CH 38 means low refrigerant gas detected. Is the AC blowing room-temperature or warm air instead of cool air?",
+      "text_hi": "CH 38 gas ki kami ka sanket hai. Kya AC thandi hawa ki jagah kamre jaisi normal hawa fenk raha hai?",
+      "options": [
+        { "label": "Yes, blowing room temperature air", "conclusion": "diag_ch38_gas_leak" },
+        { "label": "No, cools for a few minutes then stops", "conclusion": "diag_ch38_gas_leak" }
+      ]
+    },
+    {
+      "id": "q_ch32_outdoor_blockage",
+      "type": "question",
+      "text_en": "CH 32 indicates high compressor discharge temperature. Is the outdoor unit blocked by walls, debris, or dirty condenser fins?",
+      "text_hi": "CH 32 compressor ke garam hone ka sanket hai. Kya outdoor unit ke paas dhool, parda ya hawa rukne ki rukawat hai?",
+      "options": [
+        { "label": "Yes, outdoor airflow is blocked / dirty", "action": "instruct_clear_outdoor_airflow", "next_node": "q_ch32_airflow_result" },
+        { "label": "No, outdoor unit is clear", "conclusion": "diag_ch32_discharge_fault" }
+      ]
+    },
+    {
+      "id": "q_ch32_airflow_result",
+      "type": "question",
+      "text_en": "After clearing outdoor unit blockage and allowing it to cool down for 15 minutes, did the error clear?",
+      "text_hi": "Outdoor unit ki rukawat hatane aur 15 minute thanda hone ke baad kya error theek hua?",
+      "options": [
+        { "label": "Yes, cooling restored", "resolution": "resolved_airflow_cleared" },
+        { "label": "No, CH 32 reappears", "conclusion": "diag_ch32_discharge_fault" }
+      ]
+    },
+    {
+      "id": "q_ch_motor_select",
+      "type": "question",
+      "text_en": "Which fan motor code is shown: CH 10 (Indoor Blower Fan), CH 06 (Outdoor Fan/Thermistor), or CH 67 (Outdoor BLDC Motor)?",
+      "text_hi": "Kaunsa motor error code dikh raha hai: CH 10 (Indoor Blower), CH 06 (Outdoor Fan/Sensor), ya CH 67 (Outdoor BLDC Motor)?",
+      "options": [
+        { "label": "CH 10 (Indoor Blower Motor Locked)", "next_node": "q_ch10_indoor_blower_check" },
+        { "label": "CH 06 (Outdoor Fan / Pipe Temp Sensor)", "conclusion": "diag_ch06_outdoor_fan_sensor" },
+        { "label": "CH 67 (Outdoor BLDC Motor Lock)", "conclusion": "diag_ch67_outdoor_motor_lock" }
+      ]
+    },
+    {
+      "id": "q_ch10_indoor_blower_check",
+      "type": "question",
+      "text_en": "CH 10 means the indoor blower fan cannot spin freely. Can you hear the indoor fan spinning or is it completely silent?",
+      "text_hi": "CH 10 ka matlab indoor blower fan ghum nahi pa raha. Kya fan ki chalne ki awaaz aa rahi hai ya bilkul shant hai?",
+      "options": [
+        { "label": "Silent / Not spinning / Jammed", "conclusion": "diag_ch10_indoor_motor_lock" },
+        { "label": "Spins briefly and stops with beep", "conclusion": "diag_ch10_hall_sensor_fault" }
+      ]
+    },
+    {
+      "id": "q_ch_inverter_comp_select",
+      "type": "question",
+      "text_en": "Which inverter/compressor code is shown on display?",
+      "text_hi": "Display par kaunsa inverter/compressor error code dikh raha hai?",
+      "options": [
+        { "label": "CH 21 (Inverter DC Peak / IPM Current)", "conclusion": "diag_ch21_ipm_overcurrent" },
+        { "label": "CH 22 (AC Input Overcurrent / Overload)", "next_node": "q_ch22_voltage_check" },
+        { "label": "CH 23 (DC Link Low Voltage)", "next_node": "q_ch23_grid_voltage" },
+        { "label": "CH 26 (Compressor Starting Drive Failure)", "conclusion": "diag_ch26_comp_start_fail" },
+        { "label": "CH 27 (PFC Circuit Overcurrent)", "conclusion": "diag_ch27_pfc_fault" },
+        { "label": "CH 29 (Inverter Phase Overcurrent)", "conclusion": "diag_ch29_phase_overcurrent" }
+      ]
+    },
+    {
+      "id": "q_ch22_voltage_check",
+      "type": "question",
+      "text_en": "CH 22 occurs when total AC input current exceeds safety limits. Are other heavy appliances (geyser, oven) causing home voltage drop?",
+      "text_hi": "CH 22 tab aata hai jab AC ka current safety limit se zyada ho jaye. Kya ghar mein low voltage ki samasya hai?",
+      "options": [
+        { "label": "Yes, voltage is fluctuating/low", "conclusion": "diag_ch22_voltage_strain" },
+        { "label": "No, grid power is steady at 230V", "conclusion": "diag_ch22_pcb_compressor_overload" }
+      ]
+    },
+    {
+      "id": "q_ch23_grid_voltage",
+      "type": "question",
+      "text_en": "CH 23 means DC bus voltage dropped below 140V DC. Do you have a voltage stabilizer installed with the AC?",
+      "text_hi": "CH 23 DC voltage kam hone par aata hai. Kya aapke AC ke sath stabilizer laga hua hai?",
+      "options": [
+        { "label": "No stabilizer / Direct connection", "conclusion": "diag_ch23_stabilizer_needed" },
+        { "label": "Yes, stabilizer is installed", "conclusion": "diag_ch23_pcb_rectifier_fault" }
+      ]
+    },
+    {
+      "id": "q_ch_sensor_select",
+      "type": "question",
+      "text_en": "Which temperature sensor code is shown: CH 01, CH 02, CH 12, CH 41, CH 44, CH 45, or CH 46?",
+      "text_hi": "Inme se kaunsa sensor code display par hai?",
+      "options": [
+        { "label": "CH 01 (Indoor Room Thermistor)", "conclusion": "diag_ch01_room_sensor" },
+        { "label": "CH 02 or CH 12 (Indoor Pipe Thermistor)", "conclusion": "diag_ch02_indoor_pipe_sensor" },
+        { "label": "CH 41 (Compressor Discharge Pipe Thermistor)", "conclusion": "diag_ch41_discharge_sensor" },
+        { "label": "CH 44 or CH 45 (Outdoor Air / Condenser Sensor)", "conclusion": "diag_ch44_outdoor_sensor" },
+        { "label": "CH 46 (Suction Pipe Sensor)", "conclusion": "diag_ch46_suction_sensor" }
+      ]
+    },
+    {
+      "id": "q_ch_pcb_overheat_select",
+      "type": "question",
+      "text_en": "Which PCB / Overheat code is displayed?",
+      "text_hi": "Kaunsa PCB ya Overheating error code aa raha hai?",
+      "options": [
+        { "label": "CH 09 / CH 60 (EEPROM Memory Error)", "conclusion": "diag_ch09_eeprom_failure" },
+        { "label": "CH 61 (Condenser Heat Exchanger Overheat)", "conclusion": "diag_ch61_condenser_overheat" },
+        { "label": "CH 62 (Inverter PCB Heat Sink Overheat)", "conclusion": "diag_ch62_heatsink_overheat" }
+      ]
+    },
+    {
+      "id": "q_hl_water_check",
+      "type": "question",
+      "text_en": "HL code indicates High Water Level in the condensate drain pan. Is water overflowing or leaking inside the room?",
+      "text_hi": "HL code drain pan mein paani bharne ka sanket hai. Kya kamre ke andar paani tapak raha hai?",
+      "options": [
+        { "label": "Yes, dripping inside", "redirect_issue": "AC04" },
+        { "label": "No, just HL code on display", "conclusion": "diag_hl_float_switch_tripped" }
+      ]
+    },
+    {
+      "id": "q_lock_filter_select",
+      "type": "question",
+      "text_en": "Is the code CL (Child Lock) or FL (Filter Cleaning reminder)?",
+      "text_hi": "Kya display par CL (Child Lock) ya FL (Filter Clean) likha hai?",
+      "options": [
+        { "label": "CL (Child Lock Active)", "action": "instruct_disable_child_lock", "next_node": "q_cl_unlock_result" },
+        { "label": "FL (Filter Clean Reminder)", "action": "instruct_clean_filter_fl", "next_node": "q_fl_reset_result" }
+      ]
+    },
+    {
+      "id": "q_cl_unlock_result",
+      "type": "question",
+      "text_en": "Did holding the Timer/Function button for 3 seconds remove the CL code?",
+      "text_hi": "Kya remote par Timer/Function button 3 second dabane se CL code hat gaya?",
+      "options": [
+        { "label": "Yes, unlocked and working", "resolution": "resolved_child_lock_disabled" },
+        { "label": "No, still locked", "conclusion": "diag_remote_control_service" }
+      ]
+    },
+    {
+      "id": "q_fl_reset_result",
+      "type": "question",
+      "text_en": "Did cleaning the air filter and pressing Filter Reset clear the FL code?",
+      "text_hi": "Filter saaf karke Filter Reset dabane se kya FL code hat gaya?",
+      "options": [
+        { "label": "Yes, reset successfully", "resolution": "resolved_filter_cleaned" },
+        { "label": "No, code remains", "redirect_issue": "AC10" }
+      ]
+    },
+    {
+      "id": "q_blinking_led_count",
+      "type": "question",
+      "text_en": "How many times does the power or timer LED blink repeatedly between pauses?",
+      "text_hi": "Power ya timer LED light lagatar kitni baar blink (chamakti) karti hai pause lene se pehle?",
+      "options": [
+        { "label": "5 Blinks (Equivalent to CH 05 Communication)", "conclusion": "diag_ch05_comm_failure" },
+        { "label": "6 Blinks (Equivalent to CH 06 Fan / Sensor)", "conclusion": "diag_ch06_outdoor_fan_sensor" },
+        { "label": "1 or 2 Blinks (Equivalent to CH 01 / 02 Temp Sensor)", "conclusion": "diag_ch01_room_sensor" },
+        { "label": "Rapid Blinking or Uncounted", "next_node": "q_unknown_code_reboot" }
+      ]
+    },
+    {
+      "id": "q_status_indicator_check",
+      "type": "question",
+      "text_en": "Display shows Po (Jet Mode), Lo (<10°C), HI (>36°C), or Od (Outdoor Temp). These are normal status indicators. Would you like to return to standard cooling mode?",
+      "text_hi": "Po (Jet Mode), Lo, HI ya Od normal status indicators hain, koi kharabi nahi hai. Kya aap standard cooling mode par aana chahte hain?",
+      "options": [
+        { "label": "Yes, guide me to exit status mode", "action": "instruct_exit_status_mode", "resolution": "resolved_status_mode_explained" },
+        { "label": "No, I suspect actual cooling problem", "redirect_issue": "AC01" }
+      ]
+    },
+    {
+      "id": "q_unknown_code_reboot",
+      "type": "question",
+      "text_en": "Let's perform a clean electrical reset: Switch off the AC MCB for 5 minutes, turn it back on, and start via remote. Does the error persist?",
+      "text_hi": "Chaliye ek electrical reset karte hain: AC ka MCB 5 minute band karke wapas ON karein. Kya error code abhi bhi aa raha hai?",
+      "options": [
+        { "label": "Error is gone and AC is cooling", "resolution": "resolved_glitch_reset" },
+        { "label": "Error persists on display", "conclusion": "diag_unlisted_error_technician" }
+      ]
+    }
+  ],
+  "conclusions": {
+    "diag_ch05_comm_failure": {
+      "probable_cause": "Communication Cable Fault or Outdoor PCB Communication Circuit Failure (CH 05 / CH 53)",
+      "confidence": 0.95,
+      "parts": ["Outdoor Main PCB", "Communication Wire Harness", "Indoor Main PCB"],
+      "priority": "High",
+      "safety_flag": false,
+      "rag_query": "CH 05 communication troubleshooting steps and PCB voltage check",
+      "technician_note": "Measure DC pulse voltage between Terminal 1/2 and Neutral. Check for loose terminal block screws or rodent-damaged wires."
+    },
+    "diag_ch38_gas_leak": {
+      "probable_cause": "Refrigerant Gas Leakage / Insufficient R32 Charge (CH 38)",
+      "confidence": 0.95,
+      "parts": ["R32 Refrigerant Gas (1kg)", "Flare Brass Nuts 1/4 & 3/8", "Nitrogen Testing Kit"],
+      "priority": "High",
+      "safety_flag": false,
+      "rag_query": "CH 38 refrigerant gas leak detection and vacuum recharge procedure",
+      "technician_note": "Pressurize system with Nitrogen to 350 PSI. Soap test flare joints and U-bends. Braze leaks, evacuate to 500 microns, weigh gas in grams per nameplate."
+    },
+    "diag_ch32_discharge_fault": {
+      "probable_cause": "Compressor Discharge Pipe Overheating (>105°C) or Clogged Condenser (CH 32)",
+      "confidence": 0.9,
+      "parts": ["Discharge Pipe Thermistor (200kΩ)", "R32 Refrigerant Gas", "Condenser Cleaning Service"],
+      "priority": "Critical",
+      "safety_flag": true,
+      "rag_query": "CH 32 high discharge temperature troubleshooting",
+      "technician_note": "Inspect discharge pipe temperature sensor and refrigerant subcooling. Pressure wash outdoor coil."
+    },
+    "diag_ch35_pressure_fault": {
+      "probable_cause": "Low Pressure Drop or Electronic Expansion Valve (EEV) Blockage (CH 35)",
+      "confidence": 0.85,
+      "parts": ["Electronic Expansion Valve (EEV)", "Low Pressure Sensor", "R32 Gas"],
+      "priority": "High",
+      "safety_flag": false,
+      "rag_query": "CH 35 low pressure sensor fault fix",
+      "technician_note": "Verify EEV coil pulse signals and suction operating pressure."
+    },
+    "diag_ch06_outdoor_fan_sensor": {
+      "probable_cause": "Outdoor Pipe Sensor Open/Short or Outdoor Fan Motor Stalled (CH 06)",
+      "confidence": 0.9,
+      "parts": ["Outdoor Pipe Thermistor 5kΩ", "Outdoor Fan Motor", "Fan Run Capacitor"],
+      "priority": "High",
+      "safety_flag": true,
+      "rag_query": "CH 06 outdoor sensor and fan motor diagnostic",
+      "technician_note": "Measure outdoor pipe sensor resistance. Test outdoor fan motor winding continuity."
+    },
+    "diag_ch10_indoor_motor_lock": {
+      "probable_cause": "Indoor BLDC Blower Motor Locked or Casing Obstruction (CH 10)",
+      "confidence": 0.95,
+      "parts": ["Indoor BLDC Blower Motor", "Cross-Flow Blower Wheel", "Indoor PCB"],
+      "priority": "High",
+      "safety_flag": true,
+      "rag_query": "CH 10 indoor blower fan motor lock troubleshooting",
+      "technician_note": "Inspect for physical obstruction. Check motor shaft bearing play and Hall sensor feedback pulses on CN-MOTOR connector."
+    },
+    "diag_ch10_hall_sensor_fault": {
+      "probable_cause": "Indoor Fan Motor Hall Sensor IC Failure (CH 10)",
+      "confidence": 0.9,
+      "parts": ["Indoor BLDC Fan Motor", "Indoor Main PCB"],
+      "priority": "Medium",
+      "safety_flag": false,
+      "rag_query": "CH 10 Hall sensor feedback circuit check",
+      "technician_note": "Check 5V DC supply and feedback pulse on PCB connector while rotating blower wheel by hand."
+    },
+    "diag_ch67_outdoor_motor_lock": {
+      "probable_cause": "Outdoor BLDC Fan Motor Overcurrent / Rotor Lock (CH 67)",
+      "confidence": 0.95,
+      "parts": ["Outdoor BLDC Fan Motor", "Outdoor Inverter PCB"],
+      "priority": "High",
+      "safety_flag": true,
+      "rag_query": "CH 67 outdoor BLDC motor lock repair",
+      "technician_note": "Check outdoor fan blade freedom. Measure U-V-W motor winding resistances (balanced approx 40-70Ω)."
+    },
+    "diag_ch21_ipm_overcurrent": {
+      "probable_cause": "Inverter IPM DC Peak / Compressor Overcurrent (CH 21)",
+      "confidence": 0.95,
+      "parts": ["Outdoor Inverter PCB (IPM)", "Inverter Rotary Compressor"],
+      "priority": "Critical",
+      "safety_flag": true,
+      "rag_query": "CH 21 IPM overcurrent inverter diagnostic",
+      "technician_note": "High voltage risk. Check IPM diode resistance. Megger test compressor winding insulation to ground."
+    },
+    "diag_ch22_voltage_strain": {
+      "probable_cause": "Input AC Overcurrent Due to Low Grid Voltage (CH 22)",
+      "confidence": 0.85,
+      "parts": ["4kVA Digital Voltage Stabilizer", "MCB 16A/20A"],
+      "priority": "High",
+      "safety_flag": false,
+      "rag_query": "CH 22 AC input current limit low voltage fix",
+      "technician_note": "Measure running AC current with clamp meter. If grid voltage dips below 190V under compressor load, install stabilizer."
+    },
+    "diag_ch22_pcb_compressor_overload": {
+      "probable_cause": "Current Transformer (CT) Sensor Fault or Compressor Overload (CH 22)",
+      "confidence": 0.85,
+      "parts": ["Outdoor Main PCB", "CT Sensor Coil"],
+      "priority": "High",
+      "safety_flag": true,
+      "rag_query": "CH 22 CT sensor replacement and compressor load test",
+      "technician_note": "Check Outdoor PCB CT sensor output voltage and cleanliness of condenser coils."
+    },
+    "diag_ch23_stabilizer_needed": {
+      "probable_cause": "DC Link Under-Voltage Caused by Severe Low Input AC (CH 23)",
+      "confidence": 0.9,
+      "parts": ["Voltage Stabilizer (130V-280V Range)", "Power Cable Harness"],
+      "priority": "High",
+      "safety_flag": false,
+      "rag_query": "CH 23 DC link low voltage stabilizer requirement",
+      "technician_note": "Check DC bus capacitor voltage (normal 310V DC at 230V AC input). Recommend wide-range voltage stabilizer."
+    },
+    "diag_ch23_pcb_rectifier_fault": {
+      "probable_cause": "DC Bus Bridge Rectifier or DC Link Capacitor Degradation (CH 23)",
+      "confidence": 0.85,
+      "parts": ["Outdoor Inverter PCB", "DC Link Electrolytic Capacitors", "PFC Reactor"],
+      "priority": "High",
+      "safety_flag": true,
+      "rag_query": "CH 23 DC link PCB capacitor inspection",
+      "technician_note": "Discharge DC link capacitors safely before measuring resistance across bridge rectifier terminals."
+    },
+    "diag_ch26_comp_start_fail": {
+      "probable_cause": "Inverter Compressor Drive / Starting Position Detection Failure (CH 26)",
+      "confidence": 0.95,
+      "parts": ["Outdoor Inverter PCB", "Inverter Dual Rotary Compressor"],
+      "priority": "Critical",
+      "safety_flag": true,
+      "rag_query": "CH 26 compressor starting failure position detection",
+      "technician_note": "Check compressor U-V-W wiring harness. Check phase resistance balance (0.7Ω - 1.5Ω). If compressor rotor is locked, replacement required."
+    },
+    "diag_ch27_pfc_fault": {
+      "probable_cause": "PFC (Power Factor Correction) Overcurrent / Reactor Failure (CH 27)",
+      "confidence": 0.9,
+      "parts": ["Outdoor Inverter PCB", "PFC Reactor Coil"],
+      "priority": "High",
+      "safety_flag": true,
+      "rag_query": "CH 27 PFC circuit fault troubleshooting",
+      "technician_note": "Inspect PFC IGBT module on outdoor board and reactor continuity."
+    },
+    "diag_ch29_phase_overcurrent": {
+      "probable_cause": "Compressor Phase Overcurrent / System Restriction (CH 29)",
+      "confidence": 0.9,
+      "parts": ["Outdoor Inverter PCB", "Electronic Expansion Valve (EEV)", "Inverter Compressor"],
+      "priority": "High",
+      "safety_flag": true,
+      "rag_query": "CH 29 inverter phase overcurrent diagnostic",
+      "technician_note": "Check for mechanical compressor overload or clogged capillary/EEV."
+    },
+    "diag_ch01_room_sensor": {
+      "probable_cause": "Indoor Room Air Temperature Sensor (Thermistor) Open/Short Circuit (CH 01)",
+      "confidence": 0.95,
+      "parts": ["Indoor Room Thermistor 10kΩ", "Indoor PCB Connector CN-TH1"],
+      "priority": "Medium",
+      "safety_flag": false,
+      "rag_query": "CH 01 indoor room thermistor replacement resistance test",
+      "technician_note": "Measure resistance with multimeter: 10kΩ at 25°C. Check for rodent bites on sensor wire."
+    },
+    "diag_ch02_indoor_pipe_sensor": {
+      "probable_cause": "Indoor Pipe Temperature Sensor Open/Short (CH 02 / CH 12)",
+      "confidence": 0.95,
+      "parts": ["Indoor Pipe Thermistor 5kΩ", "Copper Sensor Clip"],
+      "priority": "Medium",
+      "safety_flag": false,
+      "rag_query": "CH 02 CH 12 indoor pipe thermistor troubleshooting",
+      "technician_note": "Measure sensor resistance: 5kΩ at 25°C. Ensure firm contact with copper pipe pocket."
+    },
+    "diag_ch41_discharge_sensor": {
+      "probable_cause": "Compressor Discharge Pipe Thermistor Sensor Error (CH 41)",
+      "confidence": 0.95,
+      "parts": ["Discharge Pipe Thermistor 200kΩ", "Outdoor PCB Sensor Harness"],
+      "priority": "Medium",
+      "safety_flag": false,
+      "rag_query": "CH 41 discharge pipe thermistor resistance specs",
+      "technician_note": "Measure thermistor resistance: 200kΩ at 25°C. Replace sensor assembly."
+    },
+    "diag_ch44_outdoor_sensor": {
+      "probable_cause": "Outdoor Ambient / Condenser Pipe Thermistor Error (CH 44 / CH 45)",
+      "confidence": 0.95,
+      "parts": ["Outdoor Sensor Assembly (Air 10kΩ / Pipe 5kΩ)"],
+      "priority": "Low",
+      "safety_flag": false,
+      "rag_query": "CH 44 CH 45 outdoor thermistor replacement",
+      "technician_note": "Check outdoor thermistor assembly connector on Outdoor PCB."
+    },
+    "diag_ch46_suction_sensor": {
+      "probable_cause": "Compressor Suction Pipe Thermistor Sensor Error (CH 46)",
+      "confidence": 0.95,
+      "parts": ["Suction Pipe Thermistor 5kΩ"],
+      "priority": "Medium",
+      "safety_flag": false,
+      "rag_query": "CH 46 suction thermistor test",
+      "technician_note": "Measure resistance: 5kΩ at 25°C. Replace thermistor."
+    },
+    "diag_ch09_eeprom_failure": {
+      "probable_cause": "PCB EEPROM Checksum Read Error (CH 09 / CH 60)",
+      "confidence": 0.9,
+      "parts": ["Main Control PCB", "Option Code Reset"],
+      "priority": "High",
+      "safety_flag": false,
+      "rag_query": "CH 09 CH 60 EEPROM error option code reprogram",
+      "technician_note": "Attempt remote option code entry per model service manual. If persistent, replace PCB."
+    },
+    "diag_ch61_condenser_overheat": {
+      "probable_cause": "Outdoor Condenser Coil Severe Overheating (>65°C) (CH 61)",
+      "confidence": 0.9,
+      "parts": ["Condenser Deep Clean Kit", "Outdoor Fan Motor"],
+      "priority": "High",
+      "safety_flag": true,
+      "rag_query": "CH 61 outdoor condenser overheating solution",
+      "technician_note": "Wash clogged condenser coil. Ensure minimum 30cm clearance around outdoor unit."
+    },
+    "diag_ch62_heatsink_overheat": {
+      "probable_cause": "Inverter PCB IPM Heat Sink Overheating (>85°C) (CH 62)",
+      "confidence": 0.9,
+      "parts": ["Thermal Grease Paste", "Outdoor Inverter PCB", "Outdoor Fan Motor"],
+      "priority": "High",
+      "safety_flag": true,
+      "rag_query": "CH 62 inverter heat sink overheat thermal paste repair",
+      "technician_note": "Apply fresh silicone thermal compound between IPM and heat sink. Check outdoor fan speed."
+    },
+    "diag_hl_float_switch_tripped": {
+      "probable_cause": "Condensate Drain Pan Water Float Switch Tripped (HL)",
+      "confidence": 0.9,
+      "parts": ["Condensate Drain Pump", "Water Level Float Switch", "Drain Hose 1/2-inch"],
+      "priority": "Medium",
+      "safety_flag": false,
+      "rag_query": "LG AC HL code drain pump float switch troubleshooting",
+      "technician_note": "Clean sludge from indoor drain tray. Test drain pump electrical continuity."
+    },
+    "diag_remote_control_service": {
+      "probable_cause": "Remote Control Keypad Lock Malfunction",
+      "confidence": 0.75,
+      "parts": ["LG AC Universal/OEM Remote Control"],
+      "priority": "Low",
+      "safety_flag": false,
+      "rag_query": "LG AC Child Lock disable without remote",
+      "technician_note": "Test IR emitter output with phone camera. Replace remote if keypad non-responsive."
+    },
+    "diag_unlisted_error_technician": {
+      "probable_cause": "Unidentified Hardware Fault / PCB Microcontroller Error",
+      "confidence": 0.8,
+      "parts": ["General AC Diagnostic Kit", "Multimeter"],
+      "priority": "High",
+      "safety_flag": true,
+      "rag_query": "LG AC digital display error code technician troubleshooting manual",
+      "technician_note": "Inspect PCB LEDs, check supply voltage, measure thermistors, and check refrigerant pressures."
+    }
+  }
+}

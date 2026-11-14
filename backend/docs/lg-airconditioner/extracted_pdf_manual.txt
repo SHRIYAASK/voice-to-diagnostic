@@ -1,0 +1,1202 @@
+1. AIR CONDITIONER
+AIR CONDITIONER
+In order to use the product safely and conveniently, please
+read the owner’s manual before using the product.
+
+
+2. ENGLISH
+ENGLISH
+MFL72020508
+Rev.02_112124
+www.lg.com
+Copyright © 2017-2024 LG Electronics. All Rights Reserved
+
+-- 1 of 32 --
+
+TABLE OF CONTENTS 	This manual may contain images or
+content that may be different from the
+model you purchased.
+This manual is subject to revision by the
+manufacturer.
+
+
+3. SAFETY INSTRUCTIONS
+SAFETY INSTRUCTIONS
+READ ALL INSTRUCTIONS BEFORE USE...........................................................3
+WARNING INSTRUCTIONS ................................................................................4
+CAUTION INSTRUCTIONS .................................................................................9
+
+
+4. INSTALLATION
+INSTALLATION
+Before Installation ...........................................................................................11
+Installing the Unit ............................................................................................14
+
+
+5. OPERATION
+OPERATION
+Control Panel and Remote Control................................................................18
+Additional Features..........................................................................................21
+
+
+6. SMART FUNCTIONS
+SMART FUNCTIONS
+LG ThinQ Application .......................................................................................22
+Diagnosis Using LG ThinQ ..............................................................................24
+
+
+7. MAINTENANCE
+MAINTENANCE
+Cleaning ............................................................................................................25
+
+
+8. TROUBLESHOOTING
+TROUBLESHOOTING
+Before Calling for Service................................................................................27
+
+
+9. APPENDIX
+APPENDIX
+Information.......................................................................................................30
+
+-- 2 of 32 --
+
+3	SAFETY INSTRUCTIONS
+
+
+10. SAFETY INSTRUCTIONS
+SAFETY INSTRUCTIONS
+READ ALL INSTRUCTIONS BEFORE USE
+The following safety guidelines are intended to prevent unforeseen
+risks or damage from unsafe or incorrect operation of the appliance.
+The guidelines are separated into ‘WARNING’ and ‘CAUTION’ as
+described below.
+Safety Messages
+Your safety and the safety of others are very important.
+We have provided many important safety messages in this manual and
+on your appliance. Always read and follow all safety messages.
+All safety messages will tell you what the potential hazard is, tell you
+how to reduce the chance of injury, and tell you what may happen if the
+instructions are not followed.
+This is the safety alert symbol.
+This symbol alerts you to potential hazards that can kill or
+injure you and others. All safety messages will follow the
+safety alert symbol and either the word WARNING or
+CAUTION.
+These words mean:
+
+
+11. CAUTION
+CAUTION
+You may be injured or cause damage to the product if you
+do not follow instructions.
+
+-- 3 of 32 --
+
+4 	SAFETY INSTRUCTIONS
+Notes for Flammable Refrigerant
+The following symbols are displayed on units.
+
+
+12. WARNING
+WARNING
+• To reduce the risk of explosion, fire, death, electric shock, injury or
+scalding to persons when using this product, follow basic
+precautions, including the following:
+Technical Safety
+• This appliance is not intended for use by persons (including children)
+with reduced physical, sensory or mental capabilities, or lack of
+experience and knowledge, unless they have been given supervision
+or instruction concerning use of the appliance by a person
+responsible for their safety.
+• Young children should be supervised to ensure that they do not play
+with the air conditioner.
+• When the power cord is to be replaced, the replacement work must
+be performed by authorized personnel using only genuine
+replacement parts.
+This symbol indicates that this appliance uses a flammable
+refrigerant. If the refrigerant is leaked and exposed to an
+external ignition source, there is a risk of fire.
+This symbol indicates that the Owner's Manual should be
+read carefully.
+This symbol indicates that service personnel should be
+handling this equipment with reference to the Installation
+Manual.
+This symbol indicates that information is available in the
+Owner's Manual or Installation Manual.
+
+-- 4 of 32 --
+
+5	SAFETY INSTRUCTIONS
+
+
+13. ENGLISH
+ENGLISH
+Installation
+• Before use, the appliance must be properly installed as described in
+this manual.
+• Contact an authorized service technician for repair or maintenance of
+this unit.
+• Contact an installer for installation of this unit.
+• The air conditioner is not intended for use by young children or
+invalids without supervision.
+• Keep any required ventilation openings clear of obstruction.
+• Compliance with national gas regulations shall be observed.
+• Installation work must be performed in accordance with the National
+Electric Code by qualified and authorized personnel only.
+• Connect to a properly rated, protected, and sized power circuit to
+avoid electrical overload.
+• Always plug into a grounded outlet.
+• Do not, under any circumstances, cut or remove the third (ground)
+prong from the power cord.
+• When installing or moving the appliance, be careful not to pinch,
+crush, or damage the power cord.
+• Plug in the power plug properly.
+• Do not modify or extend the power cord.
+• If the cord/plug is damaged, have it replaced by an authorized service
+person using authorized replacement parts.
+• Do not turn on the circuit breaker or power under condition that front
+grille, cabinet, control box are removed or opened. Otherwise, it may
+cause fire, electric shock, explosion or death.
+• Use a dedicated circuit.
+• Do not disassemble or modify the product.
+• Adhere to all industry recommended safety procedures including the
+use of long-sleeved gloves and safety glasses.
+• Disconnect the power cord or circuit breaker before installing or
+servicing the appliance.
+
+-- 5 of 32 --
+
+6 	SAFETY INSTRUCTIONS
+• Keep packaging materials out of the reach of children. These
+materials can pose a suffocation risk to children.
+• Store and install the product where it will not be exposed to
+temperatures below freezing or exposed to outdoor weather
+conditions.
+• Do not store or use gasoline or other flammable vapors and liquids in
+the vicinity of this or any other appliance.
+• Do not install the unit in potentially explosive atmospheres.
+Operation
+• Do not start/stop operation by plugging/unplugging the power cord.
+• Use this appliance only for its intended purpose.
+• Never attempt to operate this appliance if it is damaged,
+malfunctioning, partially disassembled, or has missing or broken
+parts, including a damaged cord or plug.
+• Do not run the power cord under carpets or mats where it could be
+stepped on and damaged.
+• Keep the power cord out from under heavy objects like tables or
+chairs.
+• Do not place the power cord near a heat source.
+• Do not use an adaptor or plug the product into a shared outlet.
+• Do not tamper with controls.
+• If you detect a strange sound, a chemical or burning smell, or smoke
+coming from the appliance, unplug it immediately, and contact an LG
+Electronics Customer Information Center.
+• Never unplug the appliance by pulling on the power cord. Always grip
+the plug firmly and pull straight out from the outlet.
+• Do not grasp the power cord or touch the appliance controls with wet
+hands.
+• If water enters the product, turn off the power at the main circuit,
+then unplug the product and call for service.
+• If the product has been submerged, contact an LG Electronics
+Customer Information Center for instructions before resuming use.
+
+-- 6 of 32 --
+
+7	SAFETY INSTRUCTIONS
+
+
+14. ENGLISH
+ENGLISH
+• Unplug the product when unused for long periods.
+• Unplug the product before cleaning.
+• In the event of a gas leak (propane gas, etc.) do not operate this or
+any other appliance. Open a window or door to ventilate the area
+immediately.
+• The interior of the product must only be cleaned by an authorized
+service center or a dealer.
+• Do not use solvent-based detergent on the product. Doing so can
+cause corrosion or damage, product failure, electrical shock, or fire.
+Grounding Instructions
+• The power cord of this appliance is equipped with a three-prong
+(grounding) plug. Use this with a standard three-slot (grounding) wall
+power outlet to minimize the hazard of electric shock. Have the wall
+receptacle and circuit checked by a qualified electrician to make sure
+the receptacle is properly grounded. DO NOT CUT OR REMOVE THE
+THIRD (GROUND) PRONG FROM THE POWER PLUG.
+- Situations when the appliance will be disconnected occasionally:
+Because of potential safety hazards, we strongly discourage the use
+of an adapter plug.
+• Attaching the adapter ground terminal to the wall receptacle cover
+screw does not ground the appliance unless the cover screw is metal,
+is not insulated, and the wall receptacle is grounded through the
+house wiring. The customer should have the circuit checked by a
+qualified electrician to make sure the receptacle is properly
+grounded.
+• Disconnect the power cord from the adapter, using one hand on
+each. Otherwise, the adapter ground terminal might break. Do not
+use the appliance with a broken adapter plug.
+- Situations when the appliance will be disconnected often: Do not
+use an adapter plug in these situations. Unplugging the power cord
+frequently can lead to an eventual breakage of the ground terminal.
+The wall power outlet should be replaced by a three-slot
+(grounding) outlet instead.
+
+-- 7 of 32 --
+
+8 	SAFETY INSTRUCTIONS
+Refrigerant (For R32 Only)
+• Do not use means to accelerate the defrosting process or to clean,
+other than those recommended by the manufacturer.
+• The appliance shall be stored in a room without continuously
+operating open flames (for example an operating gas appliance) and
+ignition sources (for example an operating electric heater).
+• Do not pierce or burn. Be aware that flammable refrigerants may not
+contain an odour.
+• The appliance shall be stored in a well-ventilated area where the
+room size corresponds to the room area as specified for operation.
+• The appliance shall be stored in a well-ventilated area where the
+room size corresponds to the room area as specified for operation.
+• The appliance shall be stored so as to prevent mechanical damage
+from occurring.
+• Any person who is involved with working on or breaking into a
+refrigerant circuit should hold a current valid certificate from an
+industry-accredited assessment authority, which authorises their
+competence to handle refrigerants safely in accordance with an
+industry recognised assessment specification.
+• Servicing shall only be performed as recommended by the
+equipment manufacturer. Maintenance and repair requiring the
+assistance of other skilled personnel shall be carried out under the
+supervision of the person competent in the use of flammable
+refrigerants.
+
+-- 8 of 32 --
+
+9	SAFETY INSTRUCTIONS
+
+
+15. CAUTION
+CAUTION
+• To reduce the risk of minor injury to persons, malfunction, or damage
+to the product or property when using this product, follow basic
+precautions, including the following:
+Installation
+• Take care when installing the product that exhaust or condensation
+does not damage nearby property.
+• Follow installation instructions exactly to avoid excessive vibration or
+water leakage.
+• Do not install the appliance in an area where it is directly exposed to
+sea air (salt spray).
+- Saline conditions are a cause of corrosion. (Particularly, corrosion of
+the condenser and evaporator can damage the appliance or impair
+its performance.)
+• Set up windbreak in front of the outdoor unit if installing it in coastal
+areas.
+- Avoid direct exposure to salt winds.
+- Install a firm and stiff concrete-wind shield that can withstand salt
+winds.
+• Wear gloves and use caution when unpacking and installing the
+appliance. Screws or sharp edges can cause injuries.
+Operation
+• This appliance is not intended for use as a precision refrigeration
+system. Do not use it for special purposes such as maintaining pets,
+food, precision machinery, or art objects.
+• Make sure the air inlet and outlet are free from obstructions.
+• Do not step on or place heavy objects on top of the appliance.
+• Do not operate the appliance without the filter securely installed.
+• Do not drink water drained from the appliance.
+
+-- 9 of 32 --
+
+10 	SAFETY INSTRUCTIONS
+• Be sure to ventilate sufficiently when the air conditioner and a
+heating appliance such as a heater are used simultaneously.
+• Being exposed to direct airflow for an extended period of time could
+be hazardous to your health.
+• Do not expose people, animals, or plants to the cold or hot wind from
+the air conditioner for extended periods of time.
+• Remove the batteries if the remote control is not to be used for an
+extended period of time.
+• Never mix different types of batteries, or old and new batteries in the
+remote control.
+• Stop using the remote control if there is fluid leaking from the
+battery. If your clothes or skin are exposed to the leaking battery
+fluid, wash it off with clean water.
+• If the leaking battery fluid has been swallowed, rinse the inside of the
+mouth thoroughly and consult a doctor.
+• Do not recharge or disassemble the batteries.
+Maintenance
+• Clean the filter every two weeks.
+• Never touch the metal parts of the air conditioner when removing the
+air filter.
+• Never use strong cleaning agents or solvents or spray water when
+cleaning the air conditioner. Use a soft cloth.
+• Use a soft cloth to clean the appliance. Do not use waxes, thinners, or
+harsh detergents.
+
+
+16. NOTE
+NOTE
+• Maximum cooling capacity declared on MRP/quality Label is as per
+our internal test report and not applicable for BEE star rating.
+
+-- 10 of 32 --
+
+11	INSTALLATION
+
+
+17. INSTALLATION
+INSTALLATION
+Before Installation
+Product Overviews
+Exterior Parts 	Interior Parts
+a 	Control Panel 	A 	Evaporator
+b 	Remote Control 	B 	Air Guide
+c 	Air Filter 	C 	Control Box
+d 	Vertical Air Deflector (Horizontal Louver) 	D 	Brace
+e 	Horizontal Air Deflector (Vertical Louver) 	E 	Compressor
+f 	Air Inlet 	F 	Condenser
+g 	Front Grille 	G 	Base Pan
+h 	Cabinet 	H 	Power Cord
+i 	Air Outlet
+
+-- 11 of 32 --
+
+12 	INSTALLATION
+Circuit Breaker Installation
+Read thoroughly and follow all directions provided.
+A circuit breaker must be installed between the power source and the unit if the plug is not used (see
+illustration below).
+a Main Power source
+b Circuit Breaker
+• Use a circuit breaker or time delay fuse.
+
+
+18. NOTE
+NOTE
+• Use 15 A circuit breaker.
+Installation Overview
+a Foam
+b Drain pan
+c Screw (For Front Grille, L: 10 mm, 2EA)
+d Screw (L : 30 mm, 3EA)
+
+-- 12 of 32 --
+
+13	INSTALLATION
+
+
+19. ENGLISH
+ENGLISH
+Tools Needed
+Phillips-head
+screwdriver Flat-blade screwdriver 	Pencil 	Level
+Tape measure 	Cutting knife 	Scissors
+
+-- 13 of 32 --
+
+14 	INSTALLATION
+Installing the Unit
+How to Install the Unit
+1 Measure the space for installation to assure a
+good fit. The air conditioner must be installed
+firmly into place to prevent vibration and noise.
+2 Avoid exposure to direct sunlight.
+3 Remove all obstacles from the rear of the unit.
+There must be at least 50 cm (20 in.) of cleared
+space around the rear of the unit. Obstacles
+restricting the airflow may reduce the cooling
+efficiency of the unit.
+a Foam
+b Awning
+c Fence
+d Cooled air
+e Heat radiation
+4 The unit should be installed with a slight tilt
+towards the outside to allow condensed water
+to drain. (About 10 mm ~ 15 mm or 1/4 bubble
+with Level)
+f 1/4 Bubble
+g Level
+
+
+20. CAUTION
+CAUTION
+• The external grille must be exposed outside for
+air discharge.
+Preparation of the Cabinet
+1 Remove 4 screws which fasten the cabinet at
+both sides and at the back.
+• Keep the screws for later use.
+a Screws
+2 Slide the unit from the cabinet by gripping the
+base pan handle and pulling forward while
+bracing the cabinet.
+
+
+21. CAUTION
+CAUTION
+• The product is heavy. To prevent injury, use
+proper lifting techniques when pulling product
+forward from cabinet. Obtain assistance from
+another person if possible.
+Drainage (On Some Models)
+The base-pan may overflow due to high humidity.
+To drain the excess water, remove the drain cap
+
+-- 14 of 32 --
+
+15	INSTALLATION
+
+
+22. ENGLISH
+ENGLISH
+from the base pan of the unit and secure the Drain
+Pan.
+1 Remove the rubber cap from the hole under
+the base-pan.
+2 Install the drain pan over the corner of the
+cabinet with 2 - 4 screws.
+• Drain pan can be install in 4 directions.
+3 Connect the drain hose to the outlet located on
+the bottom of the drain pan.
+• You can purchase the drain hose or tubing
+locally to satisfy your particular needs. Drain
+hose is not supplied.
+a Cabinet
+b Drain Pan
+c Screw
+Installation of the Cabinet
+1 Prepare the hole in the wall so that the bottom
+of the cabinet is well supported, the top has
+minimum clearace and the air inlet louveres
+have clearance as shown. Holes from the
+outside through to the cavity should be sealed.
+The cabinet should slope down towards the
+rear by about 10 mm ~ 15 mm to allow water
+formed during operation to drain.
+2 Install the cabinet into the wall and secure.
+Ensure the foam seals are not damaged. Flash,
+seal or fill gaps around the inside and outside
+to provide satisfactory appearance and
+protection against the weather, insects and
+rodents.
+
+
+23. NOTE
+NOTE
+• Unit may be supported by a solid frame from
+below or by a hanger from a solid overhead
+support.
+
+-- 15 of 32 --
+
+16 	INSTALLATION
+Space for Outside Air Flow
+Installations of the Unit into
+the Cabinet
+1 Slide the air conditioner into the case. Reinstall
+the 2 screws a removed earlier on each side of
+the case.
+
+
+24. CAUTION
+CAUTION
+• The unit is heavy. Use an assistant to help lift the
+unit and set it in place. Lifting and maneuvering
+the unit by yourself could result in injury.
+2 Stuff the foam b around the unit to prevent air
+and insects from getting into the room.
+3 Before installing the front grille, pull out the
+vent control lever located above the unit
+control knobs, as shown. (on some models)
+4 Connect the wire harness before assembling
+the front grille.
+5 Attach the front grille to the cabinet by
+inserting the tabs on the grille into the slots on
+the front top of the cabinet. Push the grille in
+until it snaps into place.
+
+-- 16 of 32 --
+
+17	INSTALLATION
+
+
+25. ENGLISH
+ENGLISH
+6 Open the air inlet grille and secure the front
+grille assembly with 2 screws (L:10 mm).
+
+-- 17 of 32 --
+
+18 	OPERATION
+
+
+26. OPERATION
+OPERATION
+Control Panel and Remote Control
+Overviews
+a Power
+Press to turn the air conditioner ON or OFF.
+b Sleep
+This mode keeps operating noise to a minimum
+and turns the air conditioner off after a set time.
+The timer can be set from 1 to 7 hours.
+• In the Cool, Dry Mode setting temperature
+increases by 1 7 after 30 minutes and
+additional 1 7 after another 30 minutes for a
+more comfortable sleep.
+• The setting temperature increases up to 2 7
+from the preset temperature.
+c Timer
+• Delay ON
+When the air conditioner is off, set it to
+automatically turn on from 1 to 24 hours
+later, at its previous mode and fan settings.
+• Delay OFF
+When the air conditioner is on, set it to
+automatically turn off from 1 to 24 hours
+later.
+
+
+27. NOTE
+NOTE
+• Each press of the Timer button advances the
+timer by 1 hour. After the last press the display
+returns to the temperature setting.
+d Mode
+Press the Mode button to cycle between 3 types
+of air conditioner operation: Cool / Fan / Dry.
+• Cool
+This mode is ideal on hot days to cool and
+dehumidify the room quickly. Use the Temp
+J, K buttons to set the desired room
+temperature and use the Fan Speed button
+to set the desired fan circulation speed.
+• Fan
+In this mode the fan circulates air but the
+compressor does not run. Use the Fan Speed
+Control Panel 	Remote Control
+Type 1 	Type 2
+
+
+28. ENGLISH
+ENGLISH
+button to set fan speed to High, Medium or
+Low. In this mode, you cannot adjust the set
+temperature.
+• Dry
+This mode is ideal for rainy and damp days to
+dehumidify the room rather than cooling it
+significantly. Humidity is reduced from the
+room by the combination of compressor
+operation and the fan speed fixed at Low. The
+compressor and fan turn off once the set
+temperature is reached. Fan speed cannot be
+adjusted in Dry mode.
+e Wi-Fi (Wi-Fi Model Only)
+Enables connection of the air conditioner to a
+home Wi-Fi network.
+
+
+29. NOTE
+NOTE
+• Follow instructions on LG ThinQ application on
+how to connect to your unit.
+f Clean Filter
+The Clean Filter LED lights up to notify you that
+the filter needs to be cleaned. After cleaning the
+filter, press Temp J and K together on the
+control panel to turn off the Clean Filter light.
+
+
+30. NOTE
+NOTE
+• The filter reset must be done using the control
+panel, not the remote control.
+• This feature is a reminder to clean the air filter
+for more efficient operation. The LED light turns
+on after 250 hours of operation.
+g Fan Speed
+Press to set the fan speed to Low (F1), Medium
+(F2) or High (F3). Also set the Diagnosis if held
+for 5 seconds (For remote type 2).
+h Temp
+The thermostat monitors room temperature to
+maintain the desired temperature. The
+thermostat can be set between 16 7 - 30 7 (60
+8 – 86 8). Press J or K arrows to increase or
+decrease the temperature setting.
+i 4-in-1
+Press 4-in-1 button repeatedly to select each
+step.
+
+
+31. NOTE
+NOTE
+• 1 step : The power Input is decreased by 20%
+compared to rated power input.
+- 8O is displayed on the display screen.
+• 2 step : The power Input is decreased by 40%
+compared to rated power input.
+- 6O is displayed on the display screen.
+• 3 step : The power Input is decreased by 60%
+compared to rated power input.
+- 4O is displayed on the display screen.
+• This function is available with Cooling Mode.
+• Capacity may decrease when 4-in-1 modes is
+selected.
+• Desired temperature is displayed about 5
+seconds if you press Fan Speed, J or K button.
+j Clear
+Cancel Sleep and Timer settings. Also set the
+Diagnosis if held for 5 seconds (For remote type
+1).
+
+
+32. NOTE
+NOTE
+• Auto Restart : If the air conditioner turns off due
+to a power outage, it will restart automatically
+once the power is restored, with the same
+settings as were set before the unit turned off.
+• The remote control will not function properly if
+the AC infrared sensor is exposed to direct light
+or if there are obstacles between the remote
+controller and the air conditioner.
+• Default temperature will be minimum 24 7 (in
+cooling cycle), when operated with remote
+control except power failure/power switched off.
+
+-- 19 of 32 --
+
+20 	OPERATION
+Using the Light Off Function
+You can set the brightness of the control panel.
+There are two ways to use the light off function
+with the remonte control and the control panal.
+• Press Mode button on the remote control for 3
+seconds.
+• Press Mode and Sleep button together on the
+control panel.
+
+
+33. NOTE
+NOTE
+• Turn on/off the control panel.
+Using the Auto Clean Function
+In the Cool and Dry Mode, Moisture is generated
+inside the indoor unit. This function reduces such
+moisture.
+Remote Type 1
+• Press Fan Speed button on the remote control
+for 3 seconds.
+- F or @ is displayed on the remote control.
+Remote Type 2
+• Press Sleep button on the remote control for 3
+seconds.
+- F or @ is displayed on the remote control.
+
+
+34. NOTE
+NOTE
+• If you turn off the unit, the fan continues to run
+for 10 minutes and cleans the inside of the
+indoor unit.
+Using the Mute Function
+You can turn on/off the unit’s buzzer sound.
+• Press 4-in-1 button on the remote control for 3
+seconds.
+Inserting Batteries in Remote
+If the display screen of the remote control begins
+to fade, replace the batteries. Insert AAA (1.5 V)
+batteries before using the remote control.
+1 Remove the cover on the back of the remote
+control.
+2 With the plus and minus poles facing as
+marked, insert two new AAA 1.5V batteries.
+
+
+35. NOTE
+NOTE
+• Two new batteries are supplied with the air
+conditioner for use in the remote control.
+• Do not use a rechargeable battery. Make sure
+that the battery is new.
+• Do not use batteries other than alkaline.
+• In order to prevent discharge, remove the
+battery from the remote control if the air
+conditioner is not going to be used for an
+extended period of time.
+• Keep the remote control away from extremely
+hot or humid places.
+• To maintain optimal operation of the remote
+control, the remote sensor should not be
+exposed to direct sunlight.
+
+-- 20 of 32 --
+
+21	OPERATION
+
+
+36. ENGLISH
+ENGLISH
+Additional Features
+Air Direction
+Airflow can be adjusted by changing the direction
+of the air conditioner’s louvers.
+Adjusting Horizontal Airflow
+Direction
+The horizontal airflow is adjusted by moving the
+levers of the vertical louvers to the left or right.
+Adjusting Vertical Airflow Direction
+Touch the horizontal louvers to adjust the airflow
+up or down.
+
+
+37. NOTE
+NOTE
+• When the weather is extremely hot, the unit may
+turn off automatically to protect the compressor.
+Slinger Fan
+This air conditioner is equipped with a slinger fan.
+(See drawing.)
+The fan’s outer ring a picks up the condensed
+water from the base pan if the water level gets high
+enough. The water is then picked up by the fan and
+expelled through the condenser, making the air
+conditioner more efficient.
+
+-- 21 of 32 --
+
+22 	SMART FUNCTIONS
+
+
+38. SMART FUNCTIONS
+SMART FUNCTIONS
+LG ThinQ Application
+This feature is only available on models with Wi-Fi.
+The LG ThinQ application allows you to
+communicate with the appliance using a
+smartphone.
+LG ThinQ Application Features
+Common features
+Communicate with the appliance from a
+smartphone using the LG ThinQ application.
+• Smart Diagnosis
+- If you experience a problem while using the
+appliance, this smart diagnosis feature will
+help you diagnose the problem.
+Additional features
+More features are available if your appliance is
+connected to Wi-Fi.
+• Settings
+- Allows you to set various options on the
+appliance and in the application.
+
+
+39. NOTE
+NOTE
+• In the following cases, you must update the
+network information for each appliance in the
+LG ThinQ application under Device Cards ~
+Settings ~ Change Network.
+- wireless router is changed
+- wireless router password is changed
+- Internet service provider is changed
+• The application is subject to change for
+appliance improvement purposes without notice
+to users.
+• Functions may vary by model.
+Installing LG ThinQ Application
+and Connecting an LG
+Appliance
+Models with QR Code
+Scan the QR code attached to the product using the
+camera or a QR code reader application on your
+smartphone.
+Models without QR Code
+1 Search for and install the LG ThinQ application
+from the Google Play Store or Apple App Store
+on a smartphone.
+2 Run the LG ThinQ application and sign in with
+your existing account or create an LG account
+to sign in.
+3 Touch the add (~) button on the LG ThinQ
+application to connect your LG appliance.
+Follow the instructions in the application to
+complete the process.
+
+
+40. NOTE
+NOTE
+• To verify the Wi-Fi connection, check that the Wi-
+Fi indicator on the control panel is lit.
+• The appliance supports 2.4 GHz Wi-Fi networks
+only. To check your network frequency, contact
+
+-- 22 of 32 --
+
+23	SMART FUNCTIONS
+
+
+41. ENGLISH
+ENGLISH
+your Internet service provider or refer to your
+wireless router manual.
+• LG ThinQ is not responsible for any network
+connection problems or any faults,
+malfunctions, or errors caused by network
+connection.
+• The surrounding wireless environment can
+make the wireless network service run slowly.
+• If the distance between the appliance and the
+wireless router is too far, the signal strength
+becomes weak. It may take a long time to
+connect or installation may fail.
+• If the appliance is having trouble connecting to
+the Wi-Fi network, it may be too far from the
+router. Purchase a Wi-Fi repeater (range
+extender) to improve the Wi-Fi signal strength.
+• The network connection may not work properly
+depending on the Internet service provider.
+• The Wi-Fi connection may not connect or may be
+interrupted because of the home network
+environment.
+• The appliance cannot be connected due to
+problems with the wireless signal transmission.
+Unplug the appliance and wait about a minute
+before trying again.
+• If the firewall on your wireless router is enabled,
+disable the firewall or add an exception to it.
+• The wireless network name (SSID) should be a
+combination of English letters and numbers. (Do
+not use special characters.)
+• Smartphone user interface (UI) may vary
+depending on the mobile operating system (OS)
+and the manufacturer.
+• If the security protocol of the router is set to
+WEP, you may fail to set up the network. Please
+change it to other security protocols (WPA2 is
+recommended) and connect the product again.
+kW Manager (On Some Models/
+LG ThinQ)
+The air conditioner power consumption is
+automatically adjusted based on a schedule and
+target power consumption set by the user.
+EO appears on the display of the indoor unit on
+some models.
+
+
+42. NOTE
+NOTE
+• When using kW Manager function, cooling
+output may be reduced, depending on the
+remaining target power amount.
+• When the target electricity consumption is
+exceeded, the kW Manager function is disabled.
+• The power usage shown through the LG ThinQ
+application may differ from the actual power
+usage shown on your utility bill.
+• Power consumption information may vary
+depending on the appliance.
+• Power consumption may differ from results
+measured using other measuring devices.
+• Depending on the environment in which the
+device is installed, measured power
+consumption may vary.
+• Measured power consumption may vary
+depending on the usage environment or usage
+method of the home appliance.
+• When setting the usage time, the appliance does
+not automatically turn on or off.
+• Even during the operation of the kW Manager
+function, the function set with the remote
+control is reflected first.
+• Actual usage may differ.
+Open Source Software Notice
+Information
+To obtain the source code that is contained in this
+product, under GPL, LGPL, MPL, and other open
+
+-- 23 of 32 --
+
+24 	SMART FUNCTIONS
+source licenses that have the obligation to disclose
+source code, and to access all referred license
+terms, copyright notices and other relevant
+documents, please visit https://
+opensource.lge.com.
+LG Electronics will also provide open source code to
+you on CD-ROM for a charge covering the cost of
+performing such distribution (such as the cost of
+media, shipping, and handling) upon email request
+to opensource@lge.com.
+This offer is valid to anyone in receipt of this
+information for a period of three years after our
+last shipment of this product.
+Diagnosis Using LG ThinQ
+Use this feature to help you diagnose and solve
+problems with your appliance.
+
+
+43. NOTE
+NOTE
+• For reasons not attributable to LGE’s negligence,
+the service may not operate due to external
+factors such as, but not limited to, Wi-Fi
+unavailability, Wi-Fi disconnection, local app
+store policy, or application unavailability.
+• The feature may be subject to change without
+prior notice and may have a different form
+depending on where you are located.
+Using LG ThinQ to Diagnose
+Issues
+If you experience a problem with your Wi-Fi
+equipped appliance, it can transmit
+troubleshooting data to a smartphone using the
+LG ThinQ application.
+• Launch the LG ThinQ application and select the
+Smart Diagnosis feature in the menu. Follow
+the instructions provided in the LG ThinQ
+application.
+Using Audible Diagnosis to
+Diagnose Issues
+Follow the instructions below to use the audible
+diagnosis method.
+• Launch the LG ThinQ application and select the
+Smart Diagnosis feature in the menu. Follow
+the instructions for audible diagnosis provided
+in the LG ThinQ application.
+1 Plug the power plug in the outlet properly.
+2 Place the mouthpiece of your smartphone
+close to the appliance.
+3 Remote Type 1
+Press and hold the Clear button for 5 seconds
+or longer while holding the smartphone
+mouthpiece to the appliance until the data
+transfer is complete.
+Remote Type 2
+Press and hold the Fan Speed button for 5
+seconds or longer while holding the
+smartphone mouthpiece to the appliance until
+the data transfer is complete.
+• Keep the smartphone in place until the data
+transfer has finished.
+4 After the data transfer is complete, the
+diagnosis will be displayed in the application.
+
+
+44. NOTE
+NOTE
+• For best results, do not move the phone while
+the tones are being transmitted.
+• Be sure to keep ambient noise to a minimum or
+the phone may not correctly receive the buzzer
+beeps from the indoor unit.
+
+-- 24 of 32 --
+
+25	MAINTENANCE
+
+
+45. WARNING
+WARNING
+• Before cleaning or performing maintenance,
+disconnect the power supply and wait until the
+fan stops.
+Check the air filter at least twice a month to see if
+cleaning is necessary. Trapped particles in the filter
+can build up and block the airflow, reducing
+cooling capacity and causing an accumulation of
+frost on the evaporator.
+Cleaning the Air Filter
+1 Remove the air filter from the front grille by
+pulling the filter forward and then up slightly.
+2 Wash the filter using lukewarm water below 40
+7 (104 8).
+3 Gently shake the excess water from the filter
+and replace.
+4 Dry the filter in the shade.
+5 Insert the filter into Front grile.
+Cleaning the Air Conditioner
+• Wipe the front grille and inlet grille with a cloth
+dampened with a mild detergent solution.
+• Wash the cabinet with mild soap or detergent
+and lukewarm water, then polish using liquid
+appliance wax.
+
+
+46. NOTE
+NOTE
+• To ensure continued peak efficiency, the
+condenser coils (outside of product) should be
+checked periodically and cleaned if clogged with
+soot or dirt from outside air.
+
+-- 25 of 32 --
+
+26 	MAINTENANCE
+
+
+47. NOTE
+NOTE
+• For repair and maintenance, contact a LG
+Electronics Customer Service Hotline. Have your
+model number and serial number available.
+
+-- 26 of 32 --
+
+27	TROUBLESHOOTING
+
+
+48. TROUBLESHOOTING
+TROUBLESHOOTING
+Before Calling for Service
+The appliance is equipped with an automatic error-monitoring system to detect and diagnose problems at
+an early stage. If the appliance does not function properly or does not function at all, check the following
+before you call for service.
+Normal Sounds You May Hear
+a High-Pitched Chatter
+Today’s high efficiency compressors may have a high-pitched chatter during the cooling cycle.
+b Sound of Rushing Air
+At the front of the unit, you may hear the sound of rushing air being moved by the fan.
+c Gurgle/Hiss
+Gurgling or hissing noises may be heard due to refrigerant passing through the evaporator during
+normal operation.
+d Vibration
+Unit may vibrate and make noise because of poor wall or window construction or incorrect installation.
+e Pinging or Swishing
+Droplets of water hitting condenser during normal operation may cause pinging or swishing sounds.
+
+-- 27 of 32 --
+
+28 	TROUBLESHOOTING
+Operation
+Symptoms 	Possible Cause & Solution
+Air conditioner does
+not start.
+The air conditioner is unplugged.
+• Make sure the air conditioner plug is pushed completely into the outlet.
+The fuse is blown/circuit breaker is tripped.
+• Check the house fuse/circuit breaker box and replace the fuse or reset the
+breaker.
+Power failure.
+• If power failure occurs, turn the mode control to off. When power is
+restored, wait 3 minutes to restart the air conditioner to prevent tripping
+of the compressor overload.
+Air conditioner does
+not cool as it should.
+Airflow is restricted.
+• Make sure there are no curtains, blinds, or furniture blocking the front of
+the air conditioner.
+The temp control may not be set correctly.
+• Set the desired temperature to a level lower than the current temperature.
+The air filter is dirty.
+• Clean the filter at least every 2 weeks. See the MAINTENANCE section.
+The room may have been hot.
+• When the air conditioner is first turned on, you need to allow time for the
+room to cool down.
+Cold air is escaping.
+• Check for open fumace floor registers and cold air returns.
+Cooling coils have iced up.
+• See ‘Air conditioner freezing up’ below.
+Air conditioner
+freezing up.
+The cooling coils are iced over.
+• Ice may block the airflow and obstruct the air conditioner from properly
+cooling the room. Set the mode control at High Fan or High Cool.
+Water drips outside. 	Hot, humid weather.
+• This is normal.
+Water drips Indoors. 	The air conditioner is not tilted to the outside.
+• For proper water disposal, make sure the air conditioner slants slightly
+from the cabinet front to the rear.
+Water collects in base
+pan.
+Moisture reduced from air and drains into base pan.
+• This is normal for a short period in areas with little humidity; normal for a
+longer period in very humid areas.
+
+-- 28 of 32 --
+
+29	TROUBLESHOOTING
+
+
+49. ENGLISH
+ENGLISH
+Wi-Fi
+Air conditioner turns
+on and off rapidly.
+Dirty air filter - air restricted.
+• Clean air filter.
+Outside temperature extremely hot.
+• Refer to installation instructions or check with installer.
+Noise when unit is
+cooling.
+Air movement sound.
+• This is normal. If too loud, set to lower fan speed.
+Window vibration - poor installation.
+• Refer to installation instructions or check with installer.
+Room too cold. 	Set temperature too low.
+• Increase set temperature.
+Symptoms 	Possible Cause & Solution
+Your home appliance
+and smartphone are
+not connected to the
+Wi-Fi network.
+The password for the Wi-Fi that you are trying to connect to is incorrect.
+• Find the Wi-Fi network connected to your smartphone and remove it, then
+register your appliance on LG ThinQ.
+Mobile data for your smartphone is turned on.
+• Turn off the Mobile data of your smartphone and register the appliance
+using the Wi-Fi network.
+The wireless network name (SSID) is set incorrectly.
+• The wireless network name (SSID) should be a combination of English
+letters and numbers. (Do not use special characters.)
+The router frequency is not 2.4 GHz.
+• Only a 2.4 GHz router frequency is supported. Set the wireless router to 2.4
+GHz and connect the appliance to the wireless router. To check the router
+frequency, check with your Internet service provider or the router
+manufacturer.
+The distance between the appliance and the router is too far.
+• If the distance between the appliance and the router is too far, the signal
+may be weak and the connection may not be configured correctly. Move
+the location of the router so that it is closer to the appliance.
+Symptoms 	Possible Cause & Solution
+
+-- 29 of 32 --
+
+30 	APPENDIX
+
+
+50. APPENDIX
+APPENDIX
+Information
+Disposal of Your Old Appliance
+• Do's
+- a. The product is required to be handed over only to the authorized recycler for disposal.
+- b. Keep the product in isolated area, after it becomes non-functional/unrepairable so as to prevent its
+accidental breakage.
+• Don'ts
+- a. The product should not be opened by the user himself/herself, but only by authorized service
+personnel.
+- b. The product is not meant for re-sale to any unauthorized agencies/scrap dealer/kabariwalah.
+- c. The product is not meant for mixing into household waste stream.
+- d. Do not keep any replaced spare part(s) from the product in exposed area.
+• Any disposal through unauthorized agencies/person will attract action under Environment (Protection)
+Act 1986.
+• This product is complied with the requirement of Hazardous Substances as specified under E-Waste
+Management Rules India published by MoEF & CC , Govt. of India.
+• To locate a nearest collection centre or call for pick-up (limited area only) for disposal of this appliance,
+please contact No. 08069379999, Toll Free No. 1800-315-9999 for details. All collection centre and pick
+up facilities are done by third parties with LG Electronics India Pvt. Ltd. Merely as a facilitator. For more
+detailed information, please visit : http://www.lg.com/in.
+• When this crossed out wheeled bin symbol is depicted on the product and its operator’s
+manual, it means the product is covered by E-Waste Management Rules India published
+by MoEF & CC , Govt. of India and are meant to be recycled, dismantled, refurbished or
+disposed off.
+
+-- 30 of 32 --
+
+31	APPENDIX
+

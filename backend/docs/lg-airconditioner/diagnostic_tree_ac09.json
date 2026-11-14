@@ -1,0 +1,141 @@
+{
+  "issue_id": "AC09",
+  "title": "Weak Airflow or No Air Coming Out",
+  "start_node": "q1_air_output",
+  "nodes": [
+    {
+      "id": "q1_air_output",
+      "type": "question",
+      "text_en": "Is any air coming out of the AC vents at all?",
+      "text_hi": "Kya AC ke vents se bilkul bhi hawa nikal rahi hai?",
+      "options": [
+        {
+          "label": "No air at all / Completely dead vent",
+          "next_node": "q2_fan_motor_hum"
+        },
+        {
+          "label": "Air is coming out, but airflow is very weak",
+          "next_node": "q3_filter_ice_check"
+        }
+      ]
+    },
+    {
+      "id": "q2_fan_motor_hum",
+      "type": "question",
+      "text_en": "Can you hear the indoor fan motor humming or does it show error CH 10?",
+      "text_hi": "Kya indoor fan motor ki humming sunai de rahi hai ya display par CH 10 aa raha hai?",
+      "options": [
+        {
+          "label": "Yes, humming or CH 10 appears",
+          "redirect_issue": "AC03"
+        },
+        {
+          "label": "No sound, completely silent",
+          "conclusion": "diag_blower_motor_capacitor_open"
+        }
+      ]
+    },
+    {
+      "id": "q3_filter_ice_check",
+      "type": "question",
+      "text_en": "Is the air filter heavily clogged with dust, or is there visible ice on the indoor coil fins?",
+      "text_hi": "Kya filter dhool se jam gaya hai ya cooling fins par barf (ice) dikh rahi hai?",
+      "options": [
+        {
+          "label": "Visible ice/frost on coil",
+          "conclusion": "diag_evaporator_coil_frozen"
+        },
+        {
+          "label": "Filter is very dirty",
+          "action": "instruct_clean_filter",
+          "next_node": "q_airflow_resolution"
+        },
+        {
+          "label": "Filter is clean and no ice",
+          "next_node": "q4_fan_speed_setting"
+        }
+      ]
+    },
+    {
+      "id": "q_airflow_resolution",
+      "type": "question",
+      "text_en": "Did cleaning the filter restore strong, normal airflow?",
+      "text_hi": "Filter saaf karne se kya hawa ka pressure wapas normal ho gaya?",
+      "options": [
+        {
+          "label": "Yes, airflow is strong now",
+          "resolution": "resolved_airflow_restored_filter"
+        },
+        {
+          "label": "No, airflow remains weak",
+          "next_node": "q4_fan_speed_setting"
+        }
+      ]
+    },
+    {
+      "id": "q4_fan_speed_setting",
+      "type": "question",
+      "text_en": "Is the fan speed set to High (F3/F5) or is the indoor blower wheel visibly caked with deep dirt?",
+      "text_hi": "Kya fan speed High par hai aur kya blower wheel ke blades par moti dhool ki parat jami hai?",
+      "options": [
+        {
+          "label": "Blower wheel blades are heavily choked with dust",
+          "conclusion": "diag_blower_wheel_deep_clog"
+        },
+        {
+          "label": "Clean blower wheel, but fan spins slowly on high setting",
+          "conclusion": "diag_blower_motor_degraded"
+        }
+      ]
+    }
+  ],
+  "conclusions": {
+    "diag_evaporator_coil_frozen": {
+      "probable_cause": "Evaporator Coil Choked with Ice due to Low Gas or Blower Failure",
+      "confidence": 0.9,
+      "parts": [
+        "R32 Refrigerant Gas",
+        "Indoor Pipe Thermistor 5kΩ"
+      ],
+      "priority": "High",
+      "safety_flag": false,
+      "rag_query": "LG AC ice on cooling coil weak airflow defrosting",
+      "technician_note": "Turn off cooling, melt ice. Check gas pressure and clean evaporator."
+    },
+    "diag_blower_wheel_deep_clog": {
+      "probable_cause": "Indoor Blower Wheel Blades Choked with Dirt / Fungal Sludge",
+      "confidence": 0.9,
+      "parts": [
+        "High Pressure Water Jet Wash Service"
+      ],
+      "priority": "Medium",
+      "safety_flag": false,
+      "rag_query": "LG AC blower fan cleaning pressure jet service",
+      "technician_note": "Dismantle indoor fascia, pressure wash cross-flow blower."
+    },
+    "diag_blower_motor_capacitor_open": {
+      "probable_cause": "Indoor BLDC Blower Motor Failure / Blown Thermal Fuse",
+      "confidence": 0.9,
+      "parts": [
+        "Indoor BLDC Blower Motor",
+        "Indoor Main PCB"
+      ],
+      "priority": "High",
+      "safety_flag": true,
+      "rag_query": "LG AC indoor blower motor not spinning replacement",
+      "technician_note": "Check motor winding continuity and 310V DC / 15V DC supply to motor."
+    },
+    "diag_blower_motor_degraded": {
+      "probable_cause": "Fan Motor Run Capacitor Weak or Motor Hall Sensor Degraded",
+      "confidence": 0.8,
+      "parts": [
+        "Fan Run Capacitor 1.5uF",
+        "BLDC Motor"
+      ],
+      "priority": "Medium",
+      "safety_flag": false,
+      "rag_query": "LG AC fan speed slow low airflow capacitor check",
+      "technician_note": "Measure motor RPM and capacitor rating."
+    }
+  }
+}

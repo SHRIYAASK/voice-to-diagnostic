@@ -1,0 +1,125 @@
+{
+  "issue_id": "AC11",
+  "title": "Function / Settings Problem",
+  "start_node": "q1_function_issue",
+  "nodes": [
+    {
+      "id": "q1_function_issue",
+      "type": "question",
+      "text_en": "Which operating function or setting is not behaving as expected?",
+      "text_hi": "Kaunsa feature ya setting theek se kaam nahi kar raha?",
+      "options": [
+        {
+          "label": "Mode switching (Cool / Dry / Fan / Auto)",
+          "next_node": "q2_mode_response"
+        },
+        {
+          "label": "Sleep / On-Off Timer setting",
+          "next_node": "q3_timer_cancel"
+        },
+        {
+          "label": "Horizontal / Vertical Swing louver",
+          "next_node": "q4_swing_motor"
+        },
+        {
+          "label": "Display Dim / Energy Saver mode",
+          "next_node": "q5_special_mode"
+        }
+      ]
+    },
+    {
+      "id": "q2_mode_response",
+      "type": "question",
+      "text_en": "When you press the 'Mode' button on remote, does the mode icon change on both remote and AC panel?",
+      "text_hi": "Remote par 'Mode' dabane par kya icon remote aur AC panel dono par badalta hai?",
+      "options": [
+        {
+          "label": "Yes, icon changes but compressor won't kick in",
+          "next_node": "q_compressor_delay"
+        },
+        {
+          "label": "No response to Mode button",
+          "redirect_issue": "AC08"
+        }
+      ]
+    },
+    {
+      "id": "q_compressor_delay",
+      "type": "question",
+      "text_en": "Inverter ACs have a 3-minute compressor protection safety delay before starting cooling. Has 3 minutes passed?",
+      "text_hi": "Inverter AC mein cooling shuru hone mein 3 minute ka safety delay hota hai. Kya 3 minute ho chuke hain?",
+      "options": [
+        {
+          "label": "Yes, cooling starts after 3 minutes",
+          "resolution": "resolved_compressor_time_delay_normal"
+        },
+        {
+          "label": "Waited 10+ minutes, still no cooling",
+          "redirect_issue": "AC01"
+        }
+      ]
+    },
+    {
+      "id": "q3_timer_cancel",
+      "type": "question",
+      "text_en": "Is the AC turning off automatically due to an active Timer or Sleep Mode?",
+      "text_hi": "Kya AC kisi purane Timer ya Sleep mode ki vajah se khud band ho raha hai?",
+      "options": [
+        {
+          "label": "Yes, Timer icon was ON; pressed Cancel",
+          "resolution": "resolved_timer_cancelled"
+        },
+        {
+          "label": "No timer set, still turns off randomly",
+          "redirect_issue": "AC02"
+        }
+      ]
+    },
+    {
+      "id": "q4_swing_motor",
+      "type": "question",
+      "text_en": "Is the swing flap stuck in one position or making a clicking sound?",
+      "text_hi": "Kya swing flap ek jagah atka hua hai ya tik-tik ki awaaz kar raha hai?",
+      "options": [
+        {
+          "label": "Flap is stuck / clicking sound",
+          "conclusion": "diag_step_motor_swing_broken"
+        },
+        {
+          "label": "Works fine via remote",
+          "resolution": "resolved_swing_normal"
+        }
+      ]
+    },
+    {
+      "id": "q5_special_mode",
+      "type": "question",
+      "text_en": "Is 'Energy Saver' or '6-in-1 AI Convertible' mode limiting cooling capacity to 40% / 60%?",
+      "text_hi": "Kya Convertible mode ne capacity ko 40% ya 60% par limit kar rakha hai?",
+      "options": [
+        {
+          "label": "Yes, returned to 100% capacity",
+          "resolution": "resolved_capacity_restored"
+        },
+        {
+          "label": "Running at 100%, still poor response",
+          "redirect_issue": "AC01"
+        }
+      ]
+    }
+  ],
+  "conclusions": {
+    "diag_step_motor_swing_broken": {
+      "probable_cause": "Indoor Louver Stepper Motor Broken or Gear Stripped",
+      "confidence": 0.9,
+      "parts": [
+        "12V DC Stepper Swing Motor (24BYJ48)",
+        "Louver Linkage Bushing"
+      ],
+      "priority": "Low",
+      "safety_flag": false,
+      "rag_query": "LG AC swing flap motor replacement clicking sound",
+      "technician_note": "Inspect stepper motor connector CN-STEP on indoor PCB and replace motor."
+    }
+  }
+}

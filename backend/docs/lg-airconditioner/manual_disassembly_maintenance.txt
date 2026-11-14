@@ -1,0 +1,621 @@
+DOCUMENT TYPE: SERVICE MANUAL
+MODEL: LG Split AC UW-Q18WUZA (1.5 Ton Inverter)
+SECTION: DISASSEMBLY, CLEANING AND PREVENTIVE MAINTENANCE
+DOCUMENT FILE: manual_disassembly_maintenance.txt
+
+DOCUMENT STATUS AND SCOPE
+This document expands the supplied disassembly and cleaning notes into a practical maintenance reference. The model designation and capacity are taken from the supplied request. The procedures below are general split-air-conditioner maintenance guidance unless explicitly identified as supplied procedure. They are not a substitute for the official LG service manual, model-specific exploded diagrams, safety notices, or service bulletins. Confirm fastener locations, clip positions, permitted cleaning methods, and component access against the documentation for the exact product variant before disassembly.
+
+This document is intended for trained service personnel and for limited user maintenance where explicitly stated. It does not authorize unqualified users to open electrical compartments, remove the indoor fan or motor, dismantle the refrigerant circuit, or perform live electrical measurements.
+
+CONTENTS
+1. Purpose and maintenance boundaries
+2. Safety precautions
+3. Tools and materials
+4. Preparation and isolation
+5. Indoor unit front panel removal
+6. Air filter removal, cleaning and installation
+7. Indoor evaporator coil inspection and cleaning
+8. Indoor blower and air outlet cleaning
+9. Indoor drain pan and drain hose inspection
+10. Outdoor unit condenser cleaning
+11. Outdoor fan and cabinet inspection
+12. Drain pipe maintenance and blockage checks
+13. Reassembly and post-maintenance checks
+14. Functional verification
+15. Troubleshooting after cleaning
+16. Preventive maintenance schedule
+17. Inspection checklist
+18. Service record template
+19. Common errors to avoid
+20. Escalation and stop-work conditions
+
+1. PURPOSE AND MAINTENANCE BOUNDARIES
+
+1.1 Purpose
+The purpose of this procedure is to maintain airflow, heat exchange, condensate drainage, cleanliness and safe operation of the indoor and outdoor units. Dust accumulation, blocked filters, obstructed outdoor coils and restricted drainage can reduce performance or contribute to water leakage, odor and abnormal operation.
+
+1.2 User-level maintenance
+The following tasks may generally be performed by a user if the product's user manual permits them:
+- Switching the air conditioner off and isolating power before cleaning.
+- Removing and cleaning accessible air filters.
+- Wiping accessible exterior cabinet surfaces with a soft, slightly damp cloth.
+- Keeping the outdoor unit's air inlet and outlet clear of leaves, fabric, packaging and other obstructions without opening the cabinet.
+- Checking whether the visible drain outlet is obstructed, without dismantling the unit.
+
+1.3 Technician-level maintenance
+The following tasks should be performed by a qualified air-conditioning technician:
+- Removing covers or components beyond the user-accessible filter panel.
+- Cleaning the evaporator coil, blower wheel, drain pan or concealed drain connections where access requires disassembly.
+- Removing the outdoor unit's service covers or fan assembly.
+- Repairing wiring, control boards, motors, sensors or terminals.
+- Correcting refrigerant leaks, charging refrigerant, pressure testing or opening the refrigerant circuit.
+- Diagnosing persistent error codes or abnormal electrical behavior.
+
+1.4 Model-specific verification
+Do not assume that every LG model uses identical clips, screws, filter rails, service clearances or internal component layouts. The supplied notes mention checking for hidden screws near the display area if the front panel resists movement. Treat that as a point to verify against the exact model's service documentation; do not pry or force the panel.
+
+2. SAFETY PRECAUTIONS
+
+WARNING — ELECTRICAL HAZARD
+- Switch the air conditioner off and isolate the dedicated supply at the appropriate breaker/MCB before maintenance that involves opening covers or contact with internal parts.
+- Prevent accidental reconnection while work is in progress. Follow the site's lockout/tagout procedure where applicable.
+- Do not touch electrical terminals, control boards, wiring or motor connections.
+- Do not spray water into electrical compartments, display assemblies, terminal blocks, motors or control boards.
+- Do not perform live-voltage measurements unless qualified, equipped and authorized to do so.
+
+WARNING — MOVING PARTS
+- Ensure the indoor and outdoor fans have stopped completely before approaching them.
+- Never insert fingers, tools, cloths or hoses through a fan grille.
+- Do not run the unit with protective covers removed unless an approved service procedure specifically requires it and the technician is qualified to perform that procedure.
+
+WARNING — CHEMICALS AND CLEANERS
+- Do not use gasoline, benzene, paint thinner, strong solvents, abrasive powders or harsh household chemicals.
+- Do not mix cleaning products.
+- Use only a coil cleaner compatible with the coil material and the manufacturer's instructions.
+- Avoid inhaling cleaning mist. Follow product safety data and use suitable eye, hand and respiratory protection where required.
+
+WARNING — HEIGHT AND OUTDOOR ACCESS
+- Do not lean out of windows or work from an unstable ladder to reach the outdoor unit.
+- Use suitable access equipment and fall protection where required.
+- Stop work if the unit is inaccessible or the working area is unsafe.
+
+WARNING — REFRIGERANT SYSTEM
+- Do not loosen refrigerant pipes, service valves or flare connections as part of cleaning.
+- Do not release refrigerant to the atmosphere.
+- Refrigerant-circuit diagnosis and repair must be performed by qualified personnel using the applicable procedures and equipment.
+
+STOP WORK AND ESCALATE if there is burning odor, smoke, sparking, damaged wiring, a tripped breaker that repeatedly trips, exposed conductors, severe corrosion, refrigerant-oil staining, a suspected refrigerant leak, a cracked cabinet, or an unsafe installation.
+
+3. TOOLS AND MATERIALS
+
+Potentially useful items, subject to the exact task and product instructions:
+- Soft, non-abrasive cleaning cloths.
+- Soft-bristle brush.
+- Clean lukewarm water.
+- Low-pressure water source for an outdoor coil, only where safe and appropriate.
+- Suitable collection sheet or cleaning bag for indoor coil servicing.
+- Absorbent towels and a container for condensate.
+- Flashlight.
+- Manufacturer-approved or coil-compatible cleaner when needed.
+- Fin comb matched to the fin spacing, used only by a trained person.
+- Appropriate hand tools for model-confirmed fasteners.
+- Personal protective equipment appropriate to the task.
+- Lockout/tagout equipment where required.
+
+Do not use a pressure washer on the coil. Do not use a sharp metal tool to scrape fins. Do not use a vacuum or water method on electrical components.
+
+4. PREPARATION AND ISOLATION
+
+4.1 Before starting
+1. Ask the occupant about the symptom: weak airflow, reduced cooling, odor, water leakage, unusual noise or a maintenance request.
+2. Record any displayed error code before switching power off.
+3. Note the operating mode, set temperature and fan setting if performance needs to be compared later.
+4. Inspect the indoor and outdoor units externally for impact damage, obstruction, unusual staining or signs of water leakage.
+5. Explain that deeper cleaning may require a trained technician and that cleaning cannot correct every cooling or electrical fault.
+
+4.2 Isolate the power
+1. Turn the unit off using the remote controller.
+2. Switch off the dedicated supply/MCB before opening covers or beginning cleaning that may expose internal parts.
+3. Confirm that fans have stopped.
+4. Keep the supply isolated throughout the work.
+5. Do not restore power until all removed parts are correctly reinstalled, the area is dry and the work area is clear.
+
+4.3 Protect the work area
+- Protect furniture, walls and flooring from dust and condensate.
+- Keep water away from the display, receiver, control electronics, wiring and electrical terminals.
+- Keep children and pets away from the work area.
+- Photograph the arrangement of removable parts if this helps ensure correct reassembly, but do not use a photograph as a substitute for a service diagram.
+
+5. INDOOR UNIT FRONT PANEL REMOVAL
+
+Purpose
+The front panel provides access to the user-serviceable filter area. Further disassembly beyond the panel and filter is technician-level work unless the product's user manual explicitly permits it.
+
+Procedure based on the supplied notes
+1. Switch the unit off and isolate power before cleaning.
+2. Stand directly in front of the indoor unit and inspect the panel edges.
+3. Locate the accessible tabs or handholds on the left and right sides, if present on this model.
+4. Support the panel with both hands.
+5. Gently lift or pull the lower edge in the direction indicated by the product's user manual. Avoid twisting one corner while the other side remains secured.
+6. Once the panel has released from its lower retainers, raise it carefully only as far as the hinges or upper hooks allow.
+7. If the panel is designed to detach, release it from the upper hooks only after confirming the correct release direction in the model-specific instructions.
+8. Place the panel on a clean, padded surface. Do not place weight on the display area or bend the panel.
+
+Important cautions
+- Do not force plastic clips or apply a screwdriver as a lever against the visible plastic.
+- If the panel resists movement, stop. Check the exact model's instructions for fasteners, hinges, locking tabs or a different opening method.
+- The supplied notes mention possible hidden screws near the display area. This is not confirmed here for every UW-Q18WUZA variant; verify before proceeding.
+- Do not disconnect display wiring or sensor connectors unless the official service procedure requires it and the technician is qualified.
+- Do not allow the panel to hang by a wire or place strain on hinges.
+
+Reinstallation
+1. Align the upper hooks or hinge points with their corresponding slots.
+2. Engage the panel evenly without twisting.
+3. Lower or press the panel gently until the retainers seat.
+4. Confirm that both sides are even and no gap remains.
+5. Open and close the panel gently to verify free movement.
+6. Do not operate the unit if the panel is loose, cracked or incorrectly seated.
+
+6. AIR FILTER REMOVAL, CLEANING AND INSTALLATION
+
+Purpose
+The filter captures airborne dust before it reaches the heat exchanger. A dirty filter can restrict airflow and reduce comfort and efficiency.
+
+Removal
+1. Turn the air conditioner off.
+2. Open the front panel using the model-confirmed method.
+3. Locate the filter frame and its designated tabs or grip points.
+4. Support the filter while releasing its tabs.
+5. Slide or lift the filter out along its rails, following the direction shown in the product manual.
+6. Avoid bending the frame or tearing the mesh.
+7. If there are multiple filter sections, keep track of their original positions and orientation.
+
+Cleaning
+1. Inspect the filter for tears, broken frames, heavy grease, mold-like growth or deformation.
+2. Remove loose dust gently with a soft brush or suitable low-suction vacuum method if permitted by the filter instructions.
+3. Wash the filter with clean lukewarm water. The supplied notes specify water below 40°C; follow the exact product manual if it gives a different limit.
+4. Brush gently in the direction that will not damage the mesh. Do not scrub aggressively.
+5. Do not use hot water, gasoline, benzene, paint thinner, abrasive cleaners or solvents.
+6. Do not use a high-pressure spray.
+7. Rinse away detergent residue if a mild detergent is permitted by the product instructions. Avoid leaving chemical residue on the filter.
+8. Shake off excess water without twisting the frame.
+
+Drying
+1. Allow the filter to dry completely in a shaded, well-ventilated area.
+2. Do not reinstall a wet filter.
+3. Do not expose the filter to direct sunlight, open flame, a high-temperature dryer or a heater.
+4. Do not use the air conditioner to dry a filter that is still wet.
+
+Installation
+1. Check that the filter is completely dry and undamaged.
+2. Align the filter with the correct rails and orientation.
+3. Slide or seat it into place without bending the frame.
+4. Confirm that all tabs are engaged and the filter lies flat.
+5. Close the front panel securely.
+6. Check for gaps, rattling or an incorrectly seated panel before restoring power.
+
+Frequency
+The supplied notes recommend cleaning every 15 days for optimal cooling performance. Treat this as a starting interval, not an absolute rule for every environment. Inspect more often in dusty, high-pollution, pet-hair or heavy-use environments. Follow the product manual's maintenance interval where it differs.
+
+Replace rather than clean if
+- The mesh is torn or separated from the frame.
+- The frame is warped or will not seat correctly.
+- The filter remains clogged after proper cleaning.
+- The filter has persistent contamination that cannot be removed safely.
+Use a compatible replacement part confirmed for the exact model.
+
+7. INDOOR EVAPORATOR COIL INSPECTION AND CLEANING
+
+Purpose
+The evaporator coil transfers heat from room air to the refrigerant system. Dust, grease and biological growth can restrict airflow, contribute to odor and reduce heat transfer.
+
+Inspection
+1. Isolate the power before opening any service-access panels.
+2. With only the approved access parts removed, inspect the visible coil surface using a flashlight.
+3. Look for dust mats, lint, blocked fin passages, corrosion, bent fins, unusual staining or signs of water overflowing.
+4. Do not touch sharp fin edges with bare hands.
+5. If access requires removal of electrical parts, the blower, refrigerant pipes or structural components, stop and use the model-specific technician procedure.
+
+Cleaning boundaries
+- Light, accessible surface dust may be removed only using a method permitted by the manufacturer.
+- For deeper cleaning, use a qualified technician and an appropriate coil-cleaning method.
+- Do not spray water or cleaner toward electrical controls, sensors, motors, display assemblies or wiring.
+- Do not flood the unit or allow liquid to run into the wall, insulation or electrical compartment.
+- Do not bend the fins or scrape the coil with a screwdriver.
+- Do not use household bleach or an unapproved chemical.
+- Ensure condensate is safely collected and the drain system can handle the cleaning liquid.
+
+General technician workflow
+1. Confirm the correct model-specific service procedure and isolate power.
+2. Protect the room and electrical components using appropriate covers.
+3. Gain access only to the components permitted by the service procedure.
+4. Remove loose debris using a suitable, non-damaging method.
+5. Apply a compatible coil cleaner only as directed by its manufacturer and the AC manufacturer's instructions.
+6. Rinse only if the cleaner requires rinsing and the coil/unit design permits it. Control runoff.
+7. Inspect the coil and drain pan for remaining debris.
+8. Restore all seals, insulation and covers.
+9. Allow components to dry as required before power is restored.
+10. Perform the post-maintenance checks in Section 13.
+
+Escalate if the coil is heavily corroded, crushed, oily, leaking, inaccessible without extensive disassembly or contaminated in a way that cannot be removed safely.
+
+8. INDOOR BLOWER AND AIR OUTLET CLEANING
+
+Purpose
+Dust on the blower wheel and outlet vanes can contribute to weak airflow, noise and odor. Internal blower cleaning commonly requires technician-level access.
+
+External outlet cleaning
+1. Switch off and isolate power.
+2. Wipe accessible exterior surfaces and outlet vanes with a soft, slightly damp cloth.
+3. Do not push cloths or tools deep into the air outlet.
+4. Do not rotate or force the blower wheel.
+5. Keep liquid away from motors, sensors and electrical parts.
+
+Technician-level blower cleaning
+1. Confirm the exact service manual and required disassembly sequence.
+2. Isolate power and protect the work area.
+3. Remove only the covers and components specified by the service procedure.
+4. Protect the motor, bearings, wiring and control components from moisture and cleaning agents.
+5. Clean the blower using the approved method without damaging blades or changing wheel balance.
+6. Inspect for cracks, loose mounting, rubbing, accumulated debris and bearing noise.
+7. Reinstall components in the correct orientation and torque/fastening sequence specified by the manufacturer.
+8. Confirm that wiring is routed away from moving parts and that no fasteners are left loose.
+9. Do not operate the unit with the blower exposed or its safety covers removed.
+
+Escalate if the blower is cracked, visibly unbalanced, rubbing against the housing, or producing persistent grinding or bearing noise.
+
+9. INDOOR DRAIN PAN AND DRAIN HOSE INSPECTION
+
+Purpose
+Condensation formed on the evaporator coil should collect in the drain pan and leave through the drain hose. A blocked, kinked, incorrectly sloped or disconnected drain can cause water leakage.
+
+Inspection
+1. Isolate power before any disassembly.
+2. Check for water marks below the indoor unit and along the wall penetration.
+3. Inspect the accessible drain hose for kinks, twists, crushing, disconnection or an uphill section that prevents gravity flow.
+4. Confirm that the hose outlet is not blocked or submerged in standing water.
+5. Check that the outlet is routed to a suitable drainage location and complies with the installation instructions.
+6. Do not assume that the drain outlet is always at the rear; confirm the actual routing for the installation.
+7. Do not remove the drain pan unless trained and following the exact service procedure.
+
+Cleaning limits
+- Remove visible debris from an accessible outlet without pushing it further into the hose.
+- Do not pour boiling water, caustic chemicals or solvents into the drain.
+- Do not blow high-pressure compressed air into the drain line; this can disconnect joints or force debris into the unit.
+- A wet/dry vacuum may be used at an accessible drain-hose end only by a person who understands the installation and can avoid damaging or disconnecting the hose. The supplied notes describe suction from the outdoor end; verify the actual hose routing and use a suitable, controlled method.
+- If the hose is concealed, shared, damaged or inaccessible, have a technician clear and test it.
+
+After cleaning
+1. Ensure the hose is securely connected and not kinked.
+2. Confirm the outlet is open and not submerged.
+3. Have the technician perform a controlled drainage test using the approved procedure.
+4. Check for leaks at the drain pan, hose joint, wall opening and outlet.
+5. If leakage continues, stop operation and arrange service.
+
+10. OUTDOOR UNIT CONDENSER CLEANING
+
+Purpose
+The outdoor heat exchanger releases heat to outside air. Blocked fins and restricted clearance can impair heat rejection and contribute to reduced cooling performance.
+
+Preparation
+1. Turn the air conditioner off.
+2. Switch off and isolate the appropriate supply/MCB.
+3. Ensure the fan has stopped completely.
+4. Confirm that the outdoor unit can be accessed safely.
+5. Remove loose leaves and debris from around the cabinet without opening electrical compartments.
+6. Protect nearby electrical equipment and surfaces from water.
+
+Cleaning procedure based on the supplied notes
+1. Inspect the coil and cabinet for dust, leaves, plastic bags, cottonwood, corrosion or physical damage.
+2. Use a garden hose at low pressure only if water cleaning is permitted by the product instructions and can be done safely.
+3. Where the coil design and access permit, direct water from the inside outward (opposite the normal airflow direction) to help dislodge debris trapped in the fins. This direction is taken from the supplied notes and must be checked against the model's approved cleaning procedure.
+4. Keep the spray away from the electrical terminal block, control compartment, motor bearings and other electrical parts.
+5. Do not use a pressure washer, steam cleaner or concentrated jet.
+6. Do not spray into open electrical compartments or through openings where water may reach electronics.
+7. Do not use a hose if the electrical areas cannot be adequately protected or if the product instructions prohibit it.
+8. Allow water to drain away naturally.
+9. Inspect the coil again after cleaning.
+
+Fin care
+- Aluminum fins are thin and easily bent.
+- Do not scrape the coil with a screwdriver, knife or wire brush.
+- A correctly sized fin comb may be used by a trained technician on accessible, mildly bent fins.
+- Do not force a fin comb through crushed or heavily damaged areas.
+- Extensive fin damage or corrosion requires professional assessment.
+
+Clearance
+- Keep the air inlet and outlet clear in accordance with the installation manual.
+- Do not cover the unit with fabric or store objects against the coil.
+- Do not alter the unit's position or mounting to improve access without an approved installation procedure.
+
+11. OUTDOOR FAN AND CABINET INSPECTION
+
+1. With power isolated, visually inspect the fan grille, blades where visible, cabinet panels and mounting supports.
+2. Remove loose external debris only where it can be reached safely without inserting tools through the grille.
+3. Do not bend fan blades or manually force the fan to rotate.
+4. Do not spray the motor, bearings, electrical compartment or terminal block.
+5. Check for loose cabinet panels, abnormal vibration marks, damaged grille sections and obstructed airflow.
+6. Do not tighten electrical terminals or open electrical covers unless qualified and following the official procedure.
+7. If a fan blade is cracked, the fan is obstructed internally, or there is persistent abnormal noise, leave the unit off and request service.
+
+12. DRAIN PIPE MAINTENANCE AND BLOCKAGE CHECKS
+
+The indoor condensate drain is separate from the refrigerant circuit. It should remain open and routed to allow reliable drainage.
+
+Routine check
+1. Locate the drain outlet using the actual installation layout.
+2. Check that the hose is not crushed, sharply bent, twisted or disconnected.
+3. Check that the end is open and is not submerged in a bucket or standing water.
+4. Confirm that the hose route follows the required slope and installation instructions.
+5. Look for algae-like deposits, sludge or debris at the accessible outlet.
+6. Do not pull forcefully on concealed drain tubing.
+
+If blockage is suspected
+1. Turn the AC off if water is leaking indoors.
+2. Isolate power before accessing internal components.
+3. Inspect the visible hose route and outlet.
+4. If the outlet is accessible and the installation allows it, a controlled suction method may be used by a competent person. Confirm the direction and method against the actual drain layout.
+5. Do not force rods, wires or sharp objects into the drain.
+6. Do not use high-pressure air or chemical drain cleaners.
+7. If the blockage does not clear, or if the hose disconnects, arrange professional cleaning.
+8. After clearing, perform a controlled drainage test and inspect for leaks.
+
+Possible causes of repeat blockage
+- Dust or biofilm accumulating in the drain pan.
+- Sludge or foreign material in the hose.
+- Hose kinked, crushed or incorrectly sloped.
+- Disconnected or leaking drain joints.
+- Incorrect installation or a damaged drain pan.
+- Ice formation or abnormal coil conditions that cause excessive water during thawing.
+
+If water leakage recurs after cleaning, do not assume the filter is the only cause. A technician should inspect the drain pan, hose routing, installation level, coil condition and operating behavior.
+
+13. REASSEMBLY AND POST-MAINTENANCE CHECKS
+
+Before reassembly
+- Confirm that all cleaning materials, cloths and tools have been removed.
+- Check that the filter is completely dry.
+- Check that accessible surfaces are dry and that no water entered electrical compartments.
+- Inspect the removed parts for cracks, broken clips or deformation.
+- Confirm that no connector, wire, sensor or pipe has been disturbed.
+- Verify that all drain connections disturbed during authorized service are secure.
+
+Reassembly
+1. Reinstall the air filter in the correct orientation.
+2. Align the front panel with its hinge points, hooks or retainers.
+3. Engage the panel evenly without force.
+4. Confirm that all fasteners removed under the approved procedure are restored to their correct positions.
+5. Reinstall any service covers and protective grilles.
+6. Check that insulation and seals are returned to their correct positions.
+7. Ensure wiring is not pinched and is routed away from fans or moving components.
+8. Confirm that the indoor and outdoor units are mechanically secure.
+9. Do not leave the unit operating with any required cover or protective part removed.
+
+Restore power
+1. Confirm the work area is dry and clear.
+2. Ensure everyone is clear of moving parts.
+3. Restore the supply only after the unit has been fully reassembled.
+4. Operate the unit using the normal controls.
+5. Observe the unit from a safe position; do not reach into the unit while it is operating.
+
+14. FUNCTIONAL VERIFICATION
+
+After cleaning, perform only the checks that are safe and appropriate for the person's qualification.
+
+Basic operational checks
+- The unit starts using the normal remote-control procedure.
+- No new error code appears.
+- Airflow is not obstructed by a misinstalled filter or panel.
+- The front panel remains secure and does not rattle.
+- No unusual scraping, grinding or excessive vibration is heard.
+- No water drips from the indoor cabinet or wall opening.
+- The outdoor unit's inlet and outlet remain unobstructed.
+- Cooling behavior is assessed after allowing sufficient operating time under suitable ambient conditions.
+
+Important notes
+- Do not diagnose refrigerant charge from touch alone or from one short temperature observation.
+- Inverter air conditioners vary compressor and fan speed with load, so operating sound and airflow may change normally.
+- Do not repeatedly power-cycle a unit that trips a breaker or shows an electrical fault.
+- If the unit does not cool after filter and airflow maintenance, additional causes may include settings, room heat load, installation, sensor, fan, control or refrigerant-system problems. These require systematic diagnosis rather than repeated cleaning.
+
+15. TROUBLESHOOTING AFTER CLEANING
+
+Symptom: Airflow remains weak
+Possible checks:
+- Confirm the filter is dry, correctly seated and not blocked.
+- Confirm the front panel and outlet vanes are not obstructed.
+- Check that curtains, furniture or other objects do not block room airflow.
+- If airflow remains weak, request inspection of the evaporator coil, blower and fan control.
+
+Symptom: Cooling remains poor
+Possible checks:
+- Confirm the selected mode and set temperature are appropriate.
+- Check that doors and windows are closed and that the room heat load is reasonable.
+- Confirm that the filter and outdoor coil are not obstructed.
+- Check whether an error code is displayed.
+- If poor cooling persists, request technician diagnosis. Do not open the refrigerant circuit.
+
+Symptom: Water leaks indoors
+Possible checks:
+- Turn the unit off if leakage is significant or near electrical equipment.
+- Check whether the filter is seated correctly and whether the visible drain outlet is blocked.
+- Inspect accessible hose routing for kinks or submersion.
+- Arrange service if the leak continues, if the drain pan is inaccessible, or if water may have reached electrical components.
+
+Symptom: Musty or unpleasant odor
+Possible checks:
+- Clean and fully dry the filter.
+- Inspect accessible areas for visible contamination.
+- Do not spray fragrance, bleach or household chemicals into the unit.
+- Persistent odor may require professional cleaning of the coil, blower and drain pan, and investigation of moisture sources.
+
+Symptom: New rattling after reassembly
+Possible checks:
+- Turn the unit off.
+- Confirm the front panel and filter are correctly seated.
+- Check accessible exterior panels for looseness without opening electrical compartments.
+- If noise persists or seems to come from the fan or motor, leave the unit off and request service.
+
+Symptom: Breaker trips, burning smell, smoke or sparks
+Action:
+- Switch the unit off if safe to do so and isolate power at the breaker if safe.
+- Do not restart the unit or attempt further cleaning.
+- Arrange qualified service immediately. Smoke, fire or immediate danger requires the appropriate emergency response.
+
+Symptom: Error code appears
+Action:
+- Record the exact code and when it appears.
+- Do not assume cleaning will resolve it.
+- Follow the official model-specific error-code instructions and arrange service when indicated.
+- Do not remove covers or perform electrical measurements to clear the code.
+
+16. PREVENTIVE MAINTENANCE SCHEDULE
+
+The intervals below are general planning guidance. The official user/service manual and site conditions take precedence.
+
+Before or during heavy-use periods
+- Inspect the filter and clean it when visibly dusty; the supplied notes suggest every 15 days.
+- Check for blocked air inlets and outlets.
+- Check the visible condensate outlet and look for water marks.
+- Remove loose leaves and debris around the outdoor unit.
+
+Monthly or as conditions require
+- Inspect the indoor filter, front panel and air outlet.
+- Check the outdoor unit's surrounding clearance.
+- Listen for new rattling, scraping or unusual vibration.
+- Look for recurring condensation or leakage.
+
+Periodic technician inspection
+- Inspect the evaporator coil and blower where accessible under the service procedure.
+- Inspect the drain pan and drain hose.
+- Inspect the outdoor coil and cabinet for blockage, corrosion and fin damage.
+- Check mounting, insulation and accessible pipework for visible deterioration.
+- Review stored error history where supported by the product and authorized diagnostic tools.
+- Perform electrical and refrigerant-system tests only as prescribed by the manufacturer and only by qualified personnel.
+
+After unusual events
+Arrange inspection after flooding, severe storms, impact damage, persistent water leakage, a repeated breaker trip, a burning smell or a sudden unexplained decline in cooling.
+
+17. INSPECTION CHECKLIST
+
+Pre-service
+[ ] User complaint recorded
+[ ] Displayed error code recorded
+[ ] Unit switched off
+[ ] Supply isolated where required
+[ ] Fan confirmed stopped
+[ ] Safe access and work area confirmed
+[ ] Wall, floor and nearby equipment protected
+
+Indoor unit
+[ ] Front panel inspected for damage
+[ ] Filter removed without damage
+[ ] Filter cleaned using an approved method
+[ ] Filter dried completely
+[ ] Filter reinstalled and seated correctly
+[ ] Accessible coil visually inspected
+[ ] Air outlet and vanes inspected
+[ ] Drain outlet and hose route checked
+[ ] No liquid entered electrical areas
+[ ] Panel reinstalled and securely seated
+
+Outdoor unit
+[ ] Supply isolated
+[ ] Air inlet/outlet clear
+[ ] Coil inspected for debris and fin damage
+[ ] Cleaning method compatible with product instructions
+[ ] Electrical compartment and motor protected from water
+[ ] Fan grille and cabinet inspected
+[ ] No tools or debris left near the fan
+
+Completion
+[ ] All covers and fasteners restored
+[ ] No wire, sensor or pipe left displaced
+[ ] Work area dry and clear
+[ ] Power restored safely
+[ ] Normal start-up checked
+[ ] Airflow and cooling behavior observed
+[ ] No new error code
+[ ] No abnormal noise or vibration
+[ ] No indoor water leakage
+[ ] Findings and follow-up actions recorded
+
+18. SERVICE RECORD TEMPLATE
+
+Model: LG UW-Q18WUZA (as supplied; confirm full nameplate details)
+Serial number: __________________________________
+Installation location: ____________________________
+Service date: ___________________________________
+Technician / service provider: ____________________
+Customer-reported symptom: ______________________
+Displayed error code(s): __________________________
+
+Work performed:
+[ ] Filter cleaning
+[ ] Front panel inspection
+[ ] Accessible coil inspection
+[ ] Technician coil cleaning
+[ ] Blower inspection/cleaning
+[ ] Drain hose inspection/clearing
+[ ] Outdoor coil cleaning
+[ ] Cabinet and clearance inspection
+[ ] Functional verification
+[ ] Other: ______________________________________
+
+Observations:
+________________________________________________
+________________________________________________
+
+Parts damaged or replaced:
+________________________________________________
+
+Post-service result:
+[ ] Operating normally at time of check
+[ ] Symptom improved but remains
+[ ] Fault persists
+[ ] Unit left switched off for safety
+
+Follow-up required:
+________________________________________________
+
+Technician notes:
+________________________________________________
+
+19. COMMON ERRORS TO AVOID
+
+- Forcing the front panel when a clip or fastener remains engaged.
+- Assuming every product variant has the same panel-release points.
+- Reinstalling a wet filter.
+- Using hot water, gasoline, benzene, solvents or abrasive cleaners on the filter.
+- Using a pressure washer on the outdoor coil.
+- Spraying water toward the terminal block, control board, motor or bearings.
+- Bending fins with a screwdriver or other sharp object.
+- Pushing sharp tools or wires into the drain hose.
+- Using high-pressure air or harsh drain chemicals to clear a blockage.
+- Opening the electrical compartment without the correct qualifications and procedure.
+- Disconnecting sensors or display wiring without model-specific instructions.
+- Running the unit with covers, filters or panels incorrectly installed.
+- Assuming every water leak is caused by a dirty filter.
+- Assuming poor cooling proves a refrigerant shortage.
+- Repeatedly restarting a unit that trips a breaker, smells burnt or displays a serious fault.
+- Treating this expanded document as a replacement for the official LG service manual.
+
+20. ESCALATION AND STOP-WORK CONDITIONS
+
+Stop cleaning and arrange qualified service if any of the following is found:
+- Burning smell, smoke, sparking or repeated breaker trips.
+- Exposed or damaged wiring.
+- Water inside electrical compartments.
+- Suspected refrigerant leak, oily residue around refrigerant joints or damaged refrigerant tubing.
+- Persistent error codes or failure to start.
+- Fan blade damage, severe rubbing or grinding noise.
+- Cracked or badly deformed panels or broken mounting points.
+- Severe coil corrosion or extensive fin damage.
+- Drain blockage that cannot be cleared using a safe, approved method.
+- Continued indoor leakage after basic accessible checks.
+- Unsafe access to the outdoor unit.
+- Any step requiring disassembly not covered by the exact model's official service instructions.
+
+FINAL NOTE
+This document is an expanded maintenance reference based on the supplied notes and general split-AC service practices. Before using it as an official service procedure or chatbot knowledge source, verify each model-specific instruction against LG's official documentation for the exact UW-Q18WUZA product variant and local electrical/safety requirements. Clearly label any unverified procedure as general guidance, and route electrical, refrigerant, internal blower and major disassembly tasks to qualified service personnel.

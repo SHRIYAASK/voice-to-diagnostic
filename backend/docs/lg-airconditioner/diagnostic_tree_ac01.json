@@ -1,0 +1,189 @@
+{
+  "issue_id": "AC01",
+  "title": "Cooling Performance / Not Cooling",
+  "start_node": "q1_power_check",
+  "nodes": [
+    {
+      "id": "q1_power_check",
+      "type": "question",
+      "text_en": "Is the AC turning on and showing lights on the display?",
+      "text_hi": "Kya AC chal raha hai aur display par lights dikhai de rahi hain?",
+      "options": [
+        {
+          "label": "Yes",
+          "next_node": "q2_cooling_symptom"
+        },
+        {
+          "label": "No",
+          "redirect_issue": "AC02"
+        }
+      ]
+    },
+    {
+      "id": "q2_cooling_symptom",
+      "type": "question",
+      "text_en": "Which best describes the cooling issue?",
+      "text_hi": "Cooling ki samasya ko kaunsa option sabse achha describe karta hai?",
+      "options": [
+        {
+          "label": "No cool air / Only warm air blowing",
+          "next_node": "q3_mode_check"
+        },
+        {
+          "label": "Air is slightly cool / Weak cooling",
+          "next_node": "q3_mode_check"
+        },
+        {
+          "label": "Cooling starts and stops intermittently",
+          "next_node": "q5_voltage_compressor"
+        },
+        {
+          "label": "Room does not reach set temperature",
+          "next_node": "q3_mode_check"
+        }
+      ]
+    },
+    {
+      "id": "q3_mode_check",
+      "type": "question",
+      "text_en": "Is the AC set to 'Cool' mode (Snowflake symbol) at 18°C with High Fan Speed?",
+      "text_hi": "Kya AC 'Cool' mode (Snowflake icon) par 18°C aur High Fan Speed par set hai?",
+      "options": [
+        {
+          "label": "Yes, already set to 18°C Cool mode",
+          "next_node": "q4_filter_check"
+        },
+        {
+          "label": "No / Not sure",
+          "action": "instruct_set_cool_18c",
+          "next_node": "q4_filter_check"
+        }
+      ]
+    },
+    {
+      "id": "q4_filter_check",
+      "type": "question",
+      "text_en": "Is the air filter dusty or clogged with dirt?",
+      "text_hi": "Kya air filter dhool ya kachre se bhara hua hai?",
+      "options": [
+        {
+          "label": "Filter is clean",
+          "next_node": "q5_voltage_compressor"
+        },
+        {
+          "label": "Filter is dirty",
+          "action": "instruct_clean_dry_filter",
+          "next_node": "q_filter_resolution"
+        },
+        {
+          "label": "Haven't checked yet",
+          "action": "instruct_inspect_filter",
+          "next_node": "q_filter_resolution"
+        }
+      ]
+    },
+    {
+      "id": "q_filter_resolution",
+      "type": "question",
+      "text_en": "Did cleaning and drying the filter resolve the cooling issue?",
+      "text_hi": "Filter ko dho kar sukhane ke baad kya cooling behtar hui?",
+      "options": [
+        {
+          "label": "Yes, cooling is restored",
+          "resolution": "resolved_filter_cleaning"
+        },
+        {
+          "label": "No, cooling is still poor",
+          "next_node": "q5_voltage_compressor"
+        }
+      ]
+    },
+    {
+      "id": "q5_voltage_compressor",
+      "type": "question",
+      "text_en": "Is the outdoor unit compressor and fan running smoothly without unusual humming or clicking?",
+      "text_hi": "Kya outdoor unit ka fan aur compressor bina kisi ajeeb awaaz ke chal rahe hain?",
+      "options": [
+        {
+          "label": "Yes, outdoor unit is running normally",
+          "next_node": "q6_refrigerant_check"
+        },
+        {
+          "label": "Outdoor fan stops frequently / humming sound",
+          "conclusion": "diag_capacitor_outdoor_fan"
+        },
+        {
+          "label": "Outdoor unit is completely off / not starting",
+          "conclusion": "diag_compressor_pcb_failure"
+        }
+      ]
+    },
+    {
+      "id": "q6_refrigerant_check",
+      "type": "question",
+      "text_en": "Is there ice or frost forming on the thin copper pipe or indoor cooling coil?",
+      "text_hi": "Kya patle copper pipe ya indoor cooling coil par barf (ice) jam rahi hai?",
+      "options": [
+        {
+          "label": "Yes, frost/ice is visible",
+          "conclusion": "diag_refrigerant_gas_leak"
+        },
+        {
+          "label": "No ice, just normal room air",
+          "conclusion": "diag_low_cooling_efficiency"
+        }
+      ]
+    }
+  ],
+  "conclusions": {
+    "diag_refrigerant_gas_leak": {
+      "probable_cause": "Low Refrigerant Gas (R32) due to Micro-leakage",
+      "confidence": 0.9,
+      "parts": [
+        "R32 Refrigerant Gas (1kg)",
+        "Flare Brass Nuts",
+        "Nitrogen Leak Testing Kit"
+      ],
+      "priority": "High",
+      "safety_flag": false,
+      "rag_query": "LG AC poor cooling ice on coil refrigerant recharge",
+      "technician_note": "Conduct 300 PSI nitrogen leak test on indoor/outdoor flare joints. Braze leak, vacuum down to 500 microns, refill R32 by weight."
+    },
+    "diag_capacitor_outdoor_fan": {
+      "probable_cause": "Outdoor Fan Motor or Starting Capacitor Failure / Low Grid Voltage",
+      "confidence": 0.85,
+      "parts": [
+        "Dual Run Capacitor 35+5uF",
+        "Outdoor Fan Motor"
+      ],
+      "priority": "High",
+      "safety_flag": true,
+      "rag_query": "LG AC outdoor fan motor humming capacitor replacement",
+      "technician_note": "Discharge capacitor safely before testing capacitance. Measure voltage under compressor start load."
+    },
+    "diag_compressor_pcb_failure": {
+      "probable_cause": "Inverter Compressor Drive / Outdoor Main PCB Failure",
+      "confidence": 0.85,
+      "parts": [
+        "Outdoor Inverter PCB",
+        "Compressor Overload Protector"
+      ],
+      "priority": "Critical",
+      "safety_flag": true,
+      "rag_query": "LG AC outdoor unit not starting inverter board troubleshooting",
+      "technician_note": "High voltage risk. Check DC Link voltage and IPM output to compressor U, V, W terminals."
+    },
+    "diag_low_cooling_efficiency": {
+      "probable_cause": "Clogged Heat Exchanger Coils or Thermal Sensor Drift",
+      "confidence": 0.75,
+      "parts": [
+        "Condenser Chemical Wash",
+        "Indoor Room Thermistor 10kΩ"
+      ],
+      "priority": "Medium",
+      "safety_flag": false,
+      "rag_query": "LG AC poor cooling room temperature sensor check",
+      "technician_note": "Check indoor thermistor calibration at 25°C. Perform foam jet cleaning of condenser."
+    }
+  }
+}

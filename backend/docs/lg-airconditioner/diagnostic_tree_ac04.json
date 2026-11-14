@@ -1,0 +1,77 @@
+{
+  "issue_id": "AC04",
+  "title": "Water Leaking from AC",
+  "start_node": "q1_leak_location",
+  "nodes": [
+    {
+      "id": "q1_leak_location",
+      "type": "question",
+      "text_en": "Where is the water coming from? Inside the room or outside?",
+      "text_hi": "Paani kahan se aa raha hai? Kamre ke andar ya bahar?",
+      "options": [
+        { "label": "Inside Room (Dripping from indoor unit)", "next_node": "q2_drain_pipe" },
+        { "label": "Outside Unit (Condensate drain or pipe)", "next_node": "q_condensation_check" }
+      ]
+    },
+    {
+      "id": "q2_drain_pipe",
+      "type": "question",
+      "text_en": "Is the drain pipe bent, twisted, inclined upwards, or submerged in a bucket of water?",
+      "text_hi": "Kya drain pipe muda hua hai, upar utha hai ya paani ki bucket mein duba hua hai?",
+      "options": [
+        { "label": "Yes, pipe was bent/submerged", "action": "instruct_fix_drain", "next_node": "q_resolution_check" },
+        { "label": "No, pipe is straight and free", "next_node": "q3_water_rate" }
+      ]
+    },
+    {
+      "id": "q3_water_rate",
+      "type": "question",
+      "text_en": "Is water dripping heavily like a stream, or only minor droplets forming on the casing?",
+      "text_hi": "Kya paani tezi se dhaar ban kar beh raha hai ya sirf halki boondein tapak rahi hain?",
+      "options": [
+        { "label": "Heavy continuous leak", "conclusion": "diag_blocked_drain_tray" },
+        { "label": "Minor droplets on panel", "redirect_issue": "AC05" }
+      ]
+    },
+    {
+      "id": "q_condensation_check",
+      "type": "question",
+      "text_en": "Is it very humid or rainy today, and is water draining normally through the outdoor drain outlet?",
+      "text_hi": "Kya aaj mausam bahut nam/barish wala hai aur outdoor pipe se paani nikal raha hai?",
+      "options": [
+        { "label": "Yes, normal outdoor condensation", "resolution": "normal_condensation" },
+        { "label": "No, dripping from copper pipe joints", "conclusion": "diag_insulation_issue" }
+      ]
+    },
+    {
+      "id": "q_resolution_check",
+      "type": "question",
+      "text_en": "Did straightening the pipe and clearing the outlet stop the leak?",
+      "text_hi": "Pipe seedha karne aur paani nikalne par kya leak ruk gayi?",
+      "options": [
+        { "label": "Yes, leakage stopped", "resolution": "resolved_self_help" },
+        { "label": "No, still leaking inside", "conclusion": "diag_blocked_drain_tray" }
+      ]
+    }
+  ],
+  "conclusions": {
+    "diag_blocked_drain_tray": {
+      "probable_cause": "Clogged Drain Pan, Algae Sludge in Drain Line, or Dirty Air Filter",
+      "confidence": 0.85,
+      "parts": ["Drain Cleaning Pump Kit", "Anti-Fungal Drain Tablets", "Replacement Drain Hose 1/2-inch"],
+      "priority": "Medium",
+      "safety_flag": false,
+      "rag_query": "LG AC indoor water leakage clogged drain tray cleaning",
+      "technician_note": "Flush drain line with nitrogen or hand pump. Inspect drain pan cracks and verify proper fall slope."
+    },
+    "diag_insulation_issue": {
+      "probable_cause": "Torn or Missing Thermal Armaflex Insulation on Suction/Liquid Copper Pipes",
+      "confidence": 0.8,
+      "parts": ["Armaflex Nitrile Foam Pipe Insulation", "Non-Adhesive Wrapping Tape"],
+      "priority": "Low",
+      "safety_flag": false,
+      "rag_query": "LG AC copper pipe sweat condensation insulation repair",
+      "technician_note": "Re-insulate exposed copper piping and wrap tightly with UV-resistant vinyl tape."
+    }
+  }
+}

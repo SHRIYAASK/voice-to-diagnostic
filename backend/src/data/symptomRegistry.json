@@ -1,0 +1,160 @@
+{
+  "symptoms": [
+    {
+      "id": "NOT_COOLING",
+      "canonicalName": "not cooling / warm air",
+      "targetTreeId": "AC01",
+      "displayTopic": "Cooling Performance / Not Cooling",
+      "pattern": "\\b(cooling|not\\s*cool|warm\\s*air|poor\\s*cool|no\\s*cooling|slow\\s*cooling|temperature\\s*not\\s*dropping|isn'?t\\s*getting\\s*cool|not\\s*getting\\s*cool|room\\s*stays\\s*hot|cool\\s*the\\s*room|cool\\s*nahi|thanda\\s*nahi|cooling\\s*(varala|varla|agala|illai|panla|illa))\\b",
+      "defaultArea": "indoor",
+      "safetyAlert": false
+    },
+    {
+      "id": "NO_POWER",
+      "canonicalName": "will not turn on / no power",
+      "targetTreeId": "AC02",
+      "displayTopic": "Power Failure / No Display",
+      "pattern": "\\b(power|won'?t\\s*turn\\s*on|isn'?t\\s*turning\\s*on|not\\s*turning\\s*on|not\\s*powering|dead|no\\s*power|switch\\s*off|won'?t\\s*start|doesn'?t\\s*start|chalu\\s*nahi|start\\s*nahi|no\\s*lights)\\b",
+      "defaultArea": "indoor",
+      "safetyAlert": false
+    },
+    {
+      "id": "MCB_TRIP",
+      "canonicalName": "mcb tripping / circuit breaker",
+      "targetTreeId": "AC02.q6_mcb_retrip_check",
+      "displayTopic": "MCB Tripping",
+      "pattern": "\\b(mcb\\s*trip(?:ping|ped|s)?|breaker\\s*trip(?:ping|ped|s)?|tripping|short\\s*circuit|current\\s*off|trip\\s*ho|trip\\s*aaguthu|ncb\\s*trip(?:ping|ped|s)?|fuse\\s*trip|trips\\s*every\\s*time)\\b",
+      "defaultArea": "electrical",
+      "safetyAlert": true
+    },
+    {
+      "id": "ERROR_CODE",
+      "canonicalName": "error code / display issue",
+      "targetTreeId": "AC03",
+      "displayTopic": "Error Code or Display Issue",
+      "pattern": "\\b(error\\s*code|fault\\s*code|display\\s*error|code\\s*on\\s*display|error\\s*number|ch\\s*error)\\b",
+      "defaultArea": "display",
+      "safetyAlert": true
+    },
+    {
+      "id": "WATER_LEAK",
+      "canonicalName": "water leakage / dripping",
+      "targetTreeId": "AC04",
+      "displayTopic": "Indoor Water Leakage",
+      "pattern": "\\b(water\\s*leak(?:ing|ed|s)?|water\\s*drip(?:ping|ped|s)?|water\\s*fall(?:ing|s)?|leaking\\s*water|dripping\\s*water|drain\\s*leak|water\\s*overflow|paani\\s*gir|thanni\\s*leak(?:ing|ed)?|thanni\\s*sottudhu)\\b",
+      "negationPattern": "\\b(not|no|isn'?t|aren'?t|won'?t|doesn'?t|without|never)\\s+(?:leaking|dripping|leak)\\b",
+      "defaultArea": "indoor",
+      "safetyAlert": false
+    },
+    {
+      "id": "ODOR_SMELL",
+      "canonicalName": "abnormal odor / burning smell",
+      "targetTreeId": "AC05",
+      "displayTopic": "Abnormal Odor or Burning Smell",
+      "pattern": "\\b(smell|odor|odour|burning\\s*smell|foul\\s*smell|musty|rotten|badbu|vasanai)\\b",
+      "negationPattern": "\\b(not|no|isn'?t|aren'?t|won'?t|doesn'?t|without|never)\\s+(?:smell|odor|odour)\\b",
+      "defaultArea": "indoor",
+      "safetyAlert": false
+    },
+    {
+      "id": "NOISE_VIBRATION",
+      "canonicalName": "abnormal noise / vibration",
+      "targetTreeId": "AC06",
+      "displayTopic": "Abnormal Noise & Vibration",
+      "pattern": "\\b(noise|loud\\s*sound|vibrat(?:ing|ion|e|es)?|rattl(?:ing|e|es)?|humming|grinding(?:\\s*noise)?|squeak|awaaz|shathama|sound\\s*athigama)\\b",
+      "negationPattern": "\\b(not|no|isn'?t|aren'?t|won'?t|doesn'?t|without|never)\\s+(?:making\\s+|having\\s+|any\\s+)?(noise|sound|vibration|rattl)\\b",
+      "defaultArea": "indoor",
+      "safetyAlert": false
+    },
+    {
+      "id": "AIRFLOW_BLOWER",
+      "canonicalName": "airflow / weak fan",
+      "targetTreeId": "AC07",
+      "displayTopic": "Airflow & Blower Issues",
+      "pattern": "\\b(airflow|low\\s*air|weak\\s*fan|fan\\s*slow|air\\s*not\\s*coming|blower\\s*weak)\\b",
+      "defaultArea": "indoor",
+      "safetyAlert": false
+    },
+    {
+      "id": "REMOTE_CONTROL",
+      "canonicalName": "remote not responding",
+      "targetTreeId": "AC08",
+      "displayTopic": "Remote Control Malfunction",
+      "pattern": "\\b(remote|remote\\s*control|remote\\s*not\\s*working|no\\s*response\\s*to\\s*remote|remote\\s*buttons)\\b",
+      "defaultArea": "remote",
+      "safetyAlert": false
+    },
+    {
+      "id": "ICE_FORMATION",
+      "canonicalName": "ice formation / frost on pipes",
+      "targetTreeId": "AC09",
+      "displayTopic": "Ice Formation & Coil Freezing",
+      "pattern": "\\b(ice|frost|frozen|freezing|ice\\s*on\\s*pipe|coil\\s*freezing|baraf\\s*jam|pani\\s*katti)\\b",
+      "defaultArea": "pipes",
+      "safetyAlert": false
+    },
+    {
+      "id": "COMPRESSOR_CYCLING",
+      "canonicalName": "compressor frequent cycling",
+      "targetTreeId": "AC10",
+      "displayTopic": "Compressor Frequent Cycling",
+      "pattern": "\\b(compressor\\s*cycling|frequent\\s*start|frequent\\s*stop|compressor\\s*cuts\\s*off)\\b",
+      "defaultArea": "outdoor",
+      "safetyAlert": false
+    },
+    {
+      "id": "DISPLAY_BLINKING",
+      "canonicalName": "display / led lights blinking",
+      "targetTreeId": "AC11",
+      "displayTopic": "Display & LED Blinking",
+      "pattern": "\\b(display\\s*blink|flashing\\s*lights?|led\\s*blink|blinking\\s*light|display\\s*flicker)\\b",
+      "defaultArea": "display",
+      "safetyAlert": false
+    },
+    {
+      "id": "FILTER_DIRTY",
+      "canonicalName": "dirty air filter",
+      "targetTreeId": "AC12",
+      "displayTopic": "Air Filter Cleaning & Maintenance",
+      "pattern": "\\b(dirty\\s*filter|filter\\s*dusty|clogged\\s*filter|filter\\s*mesh|clean\\s*filter|mesh\\s*clean|filter\\s*indicator)\\b",
+      "defaultArea": "indoor",
+      "safetyAlert": false
+    },
+    {
+      "id": "SENSOR_FAULT",
+      "canonicalName": "temperature sensor / thermistor issue",
+      "targetTreeId": "AC13",
+      "displayTopic": "Temperature Sensor & Thermistor",
+      "pattern": "\\b(sensor\\s*fault|thermistor|temperature\\s*reading\\s*wrong|room\\s*temp\\s*wrong)\\b",
+      "defaultArea": "indoor",
+      "safetyAlert": false
+    },
+    {
+      "id": "CABINET_DAMAGE",
+      "canonicalName": "cabinet / physical enclosure damage",
+      "targetTreeId": "AC14",
+      "displayTopic": "Cabinet & Physical Enclosure",
+      "pattern": "\\b(grille\\s*broken|cabinet\\s*damage|body\\s*broken|front\\s*panel\\s*loose)\\b",
+      "defaultArea": "indoor",
+      "safetyAlert": false
+    },
+    {
+      "id": "SMART_WIFI",
+      "canonicalName": "wifi / app connectivity issue",
+      "targetTreeId": "AC15",
+      "displayTopic": "Smart Connectivity & ThinQ Setup",
+      "pattern": "\\b(wifi|thinq|connect\\s*to\\s*app|pairing\\s*wifi|smart\\s*thinq)\\b",
+      "defaultArea": "remote",
+      "safetyAlert": false
+    },
+    {
+      "id": "EMERGENCY_SAFETY",
+      "canonicalName": "emergency / hazardous electrical failure",
+      "targetTreeId": "AC16",
+      "displayTopic": "Hardware Failure & Emergency Escalation",
+      "pattern": "\\b(hardware\\s*fail|emergency|smoke|spark|fire|blast|electric\\s*shock)\\b",
+      "defaultArea": "indoor",
+      "safetyAlert": true
+    }
+  ]
+}

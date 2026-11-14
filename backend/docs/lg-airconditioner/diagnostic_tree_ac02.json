@@ -1,0 +1,163 @@
+{
+  "issue_id": "AC02",
+  "title": "No Power / AC Won't Turn On",
+  "start_node": "q1_display_lights",
+  "nodes": [
+    {
+      "id": "q1_display_lights",
+      "type": "question",
+      "text_en": "Does the AC display or any indicator LED turn on?",
+      "text_hi": "Kya AC display ya koi bhi LED light ON ho rahi hai?",
+      "options": [
+        {
+          "label": "Yes, lights/display turn on",
+          "next_node": "q2_remote_operation"
+        },
+        {
+          "label": "No lights at all (Dead Unit)",
+          "next_node": "q3_remote_power_button"
+        }
+      ]
+    },
+    {
+      "id": "q2_remote_operation",
+      "type": "question",
+      "text_en": "Display lights up, but does the AC start blowing air when you press Power on the remote?",
+      "text_hi": "Display par light aa rahi hai, par remote se power dabane par kya hawa chalu hoti hai?",
+      "options": [
+        {
+          "label": "Yes, but stops immediately",
+          "conclusion": "diag_pcb_surge_protection"
+        },
+        {
+          "label": "No response to remote",
+          "redirect_issue": "AC08"
+        },
+        {
+          "label": "Shows error code instead",
+          "redirect_issue": "AC03"
+        }
+      ]
+    },
+    {
+      "id": "q3_remote_power_button",
+      "type": "question",
+      "text_en": "Have you tried pressing the ON/OFF button on the AC unit itself (manual emergency switch under the front panel)?",
+      "text_hi": "Kya aapne indoor unit ke panel ke andar diye gaye manual power button ko dabaya?",
+      "options": [
+        {
+          "label": "Yes, manual button also does not work",
+          "next_node": "q4_mcb_check"
+        },
+        {
+          "label": "Manual button turns on AC (Remote failed)",
+          "redirect_issue": "AC08"
+        }
+      ]
+    },
+    {
+      "id": "q4_mcb_check",
+      "type": "question",
+      "text_en": "Is the dedicated MCB (breaker) for the AC switched ON in your home's main distribution board?",
+      "text_hi": "Kya aapke distribution box mein AC ka MCB switch ON hai?",
+      "options": [
+        {
+          "label": "Yes, MCB is in UP (ON) position",
+          "next_node": "q5_home_power_check"
+        },
+        {
+          "label": "MCB was tripped / OFF",
+          "action": "instruct_safe_mcb_reset",
+          "next_node": "q6_mcb_retrip_check"
+        },
+        {
+          "label": "Unsure where MCB is",
+          "conclusion": "diag_power_socket_inspection"
+        }
+      ]
+    },
+    {
+      "id": "q5_home_power_check",
+      "type": "question",
+      "text_en": "Is power available in other appliances connected to the same room or power outlet?",
+      "text_hi": "Kya usi kamre ke baki switches aur appliances mein light aa rahi hai?",
+      "options": [
+        {
+          "label": "Yes, room power is normal",
+          "conclusion": "diag_internal_fuse_pcb"
+        },
+        {
+          "label": "No, home/room power is totally out",
+          "resolution": "resolved_mains_power_outage"
+        }
+      ]
+    },
+    {
+      "id": "q6_mcb_retrip_check",
+      "type": "question",
+      "text_en": "Did the MCB trip down again immediately when you switched it ON?",
+      "text_hi": "Kya MCB ko ON karte hi wo dobara turant trip (band) ho gaya?",
+      "options": [
+        {
+          "label": "Yes, trips immediately with spark/click",
+          "conclusion": "diag_severe_short_circuit"
+        },
+        {
+          "label": "No, MCB stayed ON and AC started",
+          "resolution": "resolved_mcb_reset"
+        }
+      ]
+    }
+  ],
+  "conclusions": {
+    "diag_severe_short_circuit": {
+      "probable_cause": "Dead Short Circuit in Inverter Compressor / Outdoor PCB / Power Cord",
+      "confidence": 0.95,
+      "parts": [
+        "Inverter Compressor",
+        "Outdoor Main PCB",
+        "20A Isolator MCB"
+      ],
+      "priority": "Critical",
+      "safety_flag": true,
+      "rag_query": "LG AC MCB trips immediately short circuit safety troubleshooting",
+      "technician_note": "DANGER: DO NOT ATTEMPT TO FORCE MCB ON. Disconnect power cord and megger test compressor windings to ground."
+    },
+    "diag_internal_fuse_pcb": {
+      "probable_cause": "Indoor PCB Power Fuse Blown (3.15A/250V) or Varistor Surge Damage",
+      "confidence": 0.9,
+      "parts": [
+        "Indoor Main PCB",
+        "3.15A Ceramic Fuse",
+        "Surge Varistor"
+      ],
+      "priority": "High",
+      "safety_flag": true,
+      "rag_query": "LG AC indoor PCB blown fuse surge repair",
+      "technician_note": "Check input AC 230V at CN-POWER terminal. Test continuity of PCB fuse and primary SMPS transformer."
+    },
+    "diag_pcb_surge_protection": {
+      "probable_cause": "PCB SMPS Power Supply Fault or Microcontroller Lockup",
+      "confidence": 0.8,
+      "parts": [
+        "Indoor Main PCB"
+      ],
+      "priority": "Medium",
+      "safety_flag": false,
+      "rag_query": "LG AC power shuts down immediately after start",
+      "technician_note": "Inspect 12V and 5V DC regulated rails on indoor PCB."
+    },
+    "diag_power_socket_inspection": {
+      "probable_cause": "Loose AC Wall Plug / Burnt Isolator Switch Contacts",
+      "confidence": 0.7,
+      "parts": [
+        "16A Power Plug Top",
+        "Wall Socket Isolator"
+      ],
+      "priority": "Medium",
+      "safety_flag": true,
+      "rag_query": "LG AC power plug loose neutral wire test",
+      "technician_note": "Verify 230V line-to-neutral and <2V neutral-to-earth at wall socket."
+    }
+  }
+}

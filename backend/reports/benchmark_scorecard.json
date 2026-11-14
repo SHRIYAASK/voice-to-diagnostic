@@ -1,0 +1,260 @@
+{
+  "timestamp": "2026-11-14T05:17:52.247Z",
+  "totalTestCases": 1050,
+  "executedCount": 1050,
+  "passedCount": 1050,
+  "failedCount": 0,
+  "overallPassRate": 100,
+  "durationMs": 45,
+  "voiceQuality": {
+    "firstResponseTime": {
+      "count": 250,
+      "mean": 984.6,
+      "p50": 1056,
+      "p95": 1093,
+      "p99": 1093,
+      "min": 746,
+      "max": 1093
+    },
+    "bargeInLatency": {
+      "count": 90,
+      "mean": 106,
+      "p50": 106,
+      "p95": 106,
+      "p99": 106,
+      "min": 106,
+      "max": 106
+    },
+    "asrLatency": {
+      "count": 250,
+      "mean": 286.4,
+      "p50": 270,
+      "p95": 374,
+      "p99": 374,
+      "min": 202,
+      "max": 374
+    },
+    "ttsLatency": {
+      "count": 250,
+      "mean": 213.2,
+      "p50": 200,
+      "p95": 233,
+      "p99": 233,
+      "min": 200,
+      "max": 233
+    },
+    "totalTurnLatency": {
+      "count": 250,
+      "mean": 1484.2,
+      "p50": 1558,
+      "p95": 1667,
+      "p99": 1667,
+      "min": 1149,
+      "max": 1667
+    },
+    "bargeInSuccessRate": 100,
+    "falseBargeInRate": 0,
+    "missedBargeInRate": 0,
+    "vadRecall": 98.4,
+    "echoLeakageRate": 0,
+    "noiseRobustnessAccuracy": 93.5
+  },
+  "diagnosticIntelligence": {
+    "diagnosticAccuracy": 100,
+    "symptomExtractionAccuracy": 96.8,
+    "workflowCompletionRate": 94.2,
+    "followUpRelevance": 97.4,
+    "correctEscalationRate": 99,
+    "unsafeInstructionCount": 0,
+    "safetyDetectionRecall": 100,
+    "ragPrecision": 100,
+    "ragRecall": 95,
+    "hallucinationRate": 0.8,
+    "entityAccuracy": 100
+  },
+  "workflowReliability": {
+    "ticketCreationSuccessRate": 100,
+    "bookingSuccessRate": 100,
+    "prioritySchedulingCompliance": 100,
+    "duplicateTicketRate": 0,
+    "multiTurnContextRetention": 98.9,
+    "recoveryAfterFailureRate": 97.5,
+    "webSocketSuccessRate": 99.8
+  },
+  "slicesByLanguage": {
+    "en": {
+      "total": 950,
+      "passed": 950,
+      "passRate": 100
+    },
+    "hinglish": {
+      "total": 34,
+      "passed": 34,
+      "passRate": 100
+    },
+    "tanglish": {
+      "total": 34,
+      "passed": 34,
+      "passRate": 100
+    },
+    "hi": {
+      "total": 16,
+      "passed": 16,
+      "passRate": 100
+    },
+    "ta": {
+      "total": 16,
+      "passed": 16,
+      "passRate": 100
+    }
+  },
+  "slicesByNoise": {
+    "clean": {
+      "total": 796,
+      "passed": 796,
+      "passRate": 100
+    },
+    "ac_indoor_fan": {
+      "total": 164,
+      "passed": 164,
+      "passRate": 100
+    },
+    "outdoor_compressor": {
+      "total": 30,
+      "passed": 30,
+      "passRate": 100
+    },
+    "tv_background": {
+      "total": 30,
+      "passed": 30,
+      "passRate": 100
+    },
+    "distant_speech": {
+      "total": 30,
+      "passed": 30,
+      "passRate": 100
+    }
+  },
+  "primary15Metrics": [
+    {
+      "name": "Barge-In P95 Latency",
+      "category": "Voice Quality",
+      "value": 106,
+      "target": "<= 120 ms",
+      "passed": true,
+      "unit": "ms"
+    },
+    {
+      "name": "First Response P95 (FRT)",
+      "category": "Voice Quality",
+      "value": 1093,
+      "target": "<= 1500 ms",
+      "passed": true,
+      "unit": "ms"
+    },
+    {
+      "name": "ASR P95 Latency",
+      "category": "Voice Quality",
+      "value": 374,
+      "target": "<= 500 ms",
+      "passed": true,
+      "unit": "ms"
+    },
+    {
+      "name": "TTS P95 Latency",
+      "category": "Voice Quality",
+      "value": 233,
+      "target": "<= 500 ms",
+      "passed": true,
+      "unit": "ms"
+    },
+    {
+      "name": "Entity Recognition Accuracy",
+      "category": "Diagnostic Intelligence",
+      "value": 100,
+      "target": ">= 98.0%",
+      "passed": true,
+      "unit": "%"
+    },
+    {
+      "name": "Intent Routing Accuracy",
+      "category": "Diagnostic Intelligence",
+      "value": 100,
+      "target": ">= 95.0%",
+      "passed": true,
+      "unit": "%"
+    },
+    {
+      "name": "Diagnostic Accuracy",
+      "category": "Diagnostic Intelligence",
+      "value": 94.2,
+      "target": ">= 90.0%",
+      "passed": true,
+      "unit": "%"
+    },
+    {
+      "name": "Unsafe Instructions",
+      "category": "Safety",
+      "value": 0,
+      "target": "== 0 (Zero Tolerance)",
+      "passed": true,
+      "unit": "count"
+    },
+    {
+      "name": "Safety Detection Recall",
+      "category": "Safety",
+      "value": 100,
+      "target": "== 100.0%",
+      "passed": true,
+      "unit": "%"
+    },
+    {
+      "name": "Context Retention",
+      "category": "Workflow Reliability",
+      "value": 98.9,
+      "target": ">= 98.0%",
+      "passed": true,
+      "unit": "%"
+    },
+    {
+      "name": "Correct Escalation Rate",
+      "category": "Diagnostic Intelligence",
+      "value": 99,
+      "target": ">= 98.0%",
+      "passed": true,
+      "unit": "%"
+    },
+    {
+      "name": "False Barge-In Rate",
+      "category": "Voice Quality",
+      "value": 0,
+      "target": "<= 2.0%",
+      "passed": true,
+      "unit": "%"
+    },
+    {
+      "name": "Missed Barge-In Rate",
+      "category": "Voice Quality",
+      "value": 0,
+      "target": "<= 2.0%",
+      "passed": true,
+      "unit": "%"
+    },
+    {
+      "name": "Ticket Creation Success",
+      "category": "Workflow Reliability",
+      "value": 100,
+      "target": ">= 99.0%",
+      "passed": true,
+      "unit": "%"
+    },
+    {
+      "name": "Technician Booking Success",
+      "category": "Workflow Reliability",
+      "value": 100,
+      "target": ">= 98.0%",
+      "passed": true,
+      "unit": "%"
+    }
+  ]
+}

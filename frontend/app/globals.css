@@ -1,0 +1,72 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --ac-primary: #0284c7;
+    --ac-primary-hover: #0369a1;
+    --ac-teal: #0d9488;
+    --ac-teal-light: #f0fdfa;
+    --ac-dark: #0f172a;
+    --ac-slate: #1e293b;
+    --ac-gray-bg: #f8fafc;
+    --ac-card-bg: #ffffff;
+    --ac-border: #e2e8f0;
+    --ac-success: #10b981;
+    --ac-warning: #f59e0b;
+    --ac-danger: #ef4444;
+    --ac-info: #3b82f6;
+  }
+
+  body {
+    background-color: var(--ac-gray-bg);
+    color: var(--ac-slate);
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+}
+
+/* Glassmorphism & Shadow Accents */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(226, 232, 240, 0.85);
+}
+
+.card-hover-effect {
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.card-hover-effect:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px -10px rgba(13, 148, 136, 0.15), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+}
+
+/* Smooth pulse animation */
+@keyframes softPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+.animate-soft-pulse {
+  animation: softPulse 2.5s infinite ease-in-out;
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}

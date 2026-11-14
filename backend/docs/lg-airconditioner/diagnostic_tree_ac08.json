@@ -1,0 +1,112 @@
+{
+  "issue_id": "AC08",
+  "title": "Remote Control / Buttons Not Working",
+  "start_node": "q1_remote_display",
+  "nodes": [
+    {
+      "id": "q1_remote_display",
+      "type": "question",
+      "text_en": "Is the LCD display on your remote control showing any text or icons?",
+      "text_hi": "Kya remote ke screen (display) par koi text ya icon dikh raha hai?",
+      "options": [
+        {
+          "label": "Yes, remote screen is clear and active",
+          "next_node": "q2_camera_ir_test"
+        },
+        {
+          "label": "No, remote screen is totally blank or faded",
+          "action": "instruct_replace_remote_batteries",
+          "next_node": "q_battery_result"
+        }
+      ]
+    },
+    {
+      "id": "q_battery_result",
+      "type": "question",
+      "text_en": "Did inserting a brand new pair of AAA alkaline batteries restore the remote display?",
+      "text_hi": "Nayi AAA batteries daalne ke baad kya remote display chalu hua?",
+      "options": [
+        {
+          "label": "Yes, display turned on and AC works",
+          "resolution": "resolved_batteries_replaced"
+        },
+        {
+          "label": "Display turned on, but AC still does not respond",
+          "next_node": "q2_camera_ir_test"
+        },
+        {
+          "label": "No, remote screen is still completely dead",
+          "conclusion": "diag_faulty_remote_hardware"
+        }
+      ]
+    },
+    {
+      "id": "q2_camera_ir_test",
+      "type": "question",
+      "text_en": "Point the remote tip at your smartphone camera and press buttons. Do you see a flashing purplish/red light on the camera screen?",
+      "text_hi": "Remote ko phone ke camera ke aage rakh kar button dabayein. Kya phone screen par pink/purple light chamakti dikhi?",
+      "options": [
+        {
+          "label": "Yes, camera sees purple flashing light (Remote transmits OK)",
+          "next_node": "q3_indoor_receiver_test"
+        },
+        {
+          "label": "No light visible on camera screen",
+          "conclusion": "diag_faulty_remote_ir_led"
+        }
+      ]
+    },
+    {
+      "id": "q3_indoor_receiver_test",
+      "type": "question",
+      "text_en": "Does the AC beep or respond to any button on the indoor unit's manual emergency switch?",
+      "text_hi": "Kya AC par manual power switch dabane se beep ki awaaz aati hai?",
+      "options": [
+        {
+          "label": "Yes, AC works via manual switch (IR receiver fault)",
+          "conclusion": "diag_indoor_display_ir_pcb"
+        },
+        {
+          "label": "No response to manual switch either",
+          "redirect_issue": "AC02"
+        }
+      ]
+    }
+  ],
+  "conclusions": {
+    "diag_faulty_remote_hardware": {
+      "probable_cause": "Corroded Battery Terminals or Broken Remote PCB Crystal",
+      "confidence": 0.95,
+      "parts": [
+        "LG AC Universal / OEM Remote Control (AKB74955604)"
+      ],
+      "priority": "Low",
+      "safety_flag": false,
+      "rag_query": "LG AC remote control replacement model UW-Q18WUZA",
+      "technician_note": "Provide replacement OEM remote control to customer."
+    },
+    "diag_faulty_remote_ir_led": {
+      "probable_cause": "Damaged IR Emitter LED or Remote Keypad Membrane",
+      "confidence": 0.9,
+      "parts": [
+        "LG AC Genuine Remote Control"
+      ],
+      "priority": "Low",
+      "safety_flag": false,
+      "rag_query": "LG AC remote IR emitter test replacement",
+      "technician_note": "Replace remote control handset."
+    },
+    "diag_indoor_display_ir_pcb": {
+      "probable_cause": "Indoor Display PCB IR Receiver Sensor (Photo-diode) Failure",
+      "confidence": 0.9,
+      "parts": [
+        "Indoor Display PCB Assembly (IR Receiver Board)",
+        "Ribbon Cable Harness"
+      ],
+      "priority": "Medium",
+      "safety_flag": false,
+      "rag_query": "LG AC indoor IR receiver board replacement",
+      "technician_note": "Measure 5V supply and IR signal pin on display PCB while firing remote."
+    }
+  }
+}

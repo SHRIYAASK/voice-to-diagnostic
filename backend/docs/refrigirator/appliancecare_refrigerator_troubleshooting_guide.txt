@@ -1,0 +1,547 @@
+DOCUMENT TYPE: TROUBLESHOOTING GUIDE
+PRODUCT CATEGORY: REFRIGERATORS
+PROJECT: ApplianceCare AI
+REFERENCE FORMAT: Adapted from the supplied LG Split AC troubleshooting guide
+SUPPORTED EXAMPLE MODELS:
+- LG GL-D201ABCD — 185 L single-door Direct Cool refrigerator
+- LG GL-N292RDSY — 242 L double-door Frost Free refrigerator
+
+IMPORTANT SCOPE AND VALIDATION NOTICE
+This guide adapts the structure and safety approach of the supplied AC troubleshooting document to refrigerator diagnostics. AC-specific CH codes, component assumptions, voltage/resistance values, and procedures have NOT been transferred to refrigerators.
+
+The issue IDs in this document (REFxx, SDFxx and DDFxx) are internal ApplianceCare AI identifiers, not LG manufacturer error codes. Manufacturer error-code meanings, display behavior, diagnostics and service procedures vary by exact model, product revision, region and control design.
+
+The two example models are included as product profiles. Do not assume every feature or error display exists on both models. Verify the exact product code and official owner/service documentation before deploying any model-specific claim. Where official documentation does not confirm a code or procedure, provide safe customer guidance and escalate instead of guessing.
+
+CUSTOMER SAFETY RULES
+1. If there is smoke, a burning smell, sparking, a damaged power cable, repeated breaker trips, or water near electrical parts, stop using the refrigerator. Disconnect power only if it is safe to do so; otherwise keep away and arrange qualified service.
+2. Never instruct customers to open electrical covers, access the compressor compartment, probe wiring, measure voltage/resistance, bypass protection, or replace internal parts.
+3. Do not ask customers to chip ice with a knife or sharp tool, use a flame/hair dryer to defrost, or pour hot water onto electrical components.
+4. Do not advise moving, tilting or laying the refrigerator down as a troubleshooting step.
+5. Do not recommend repeated power cycling to suppress a recurring fault. Only suggest a reset if the exact model's owner manual permits it.
+6. If food safety may be affected because the refrigerator has been warm for an unknown period, advise the customer to assess food safety conservatively and follow local food-safety guidance. Do not promise that food is safe.
+7. Internal electrical, sealed-system, compressor, refrigerant, sensor, fan and PCB diagnostics are technician-only.
+8. A symptom or display code is evidence for diagnosis, not proof that a particular part has failed.
+
+GENERAL CUSTOMER INTAKE
+Collect:
+- Exact model/product code from the product label, if safely accessible.
+- Refrigerator type: single-door Direct Cool, double-door Frost Free, or other.
+- Whether the appliance has power, interior light, display, alarm or unusual sounds.
+- The customer's exact symptom and when it began.
+- Whether cooling is absent, weak, intermittent, or limited to one compartment.
+- Whether the door was left open, the appliance was recently installed/moved, or there was a power interruption.
+- Any displayed code or blinking pattern, copied exactly or captured in a photo if convenient.
+- Whether there is water leakage, burning smell, sparking, damaged wiring or repeated breaker trips.
+- Whether a permitted reset was attempted and whether the symptom returned.
+
+Do not ask the customer to remove covers or reach behind/under the appliance to gather information.
+
+INTERNAL ISSUE INDEX — COMMON REFRIGERATOR ISSUES
+REF01 — Refrigerator not cooling
+REF02 — Insufficient or weak cooling
+REF03 — Refrigerator not powering on
+REF04 — Unusual noise
+REF05 — Excessive vibration or rattling
+REF06 — Water leakage
+REF07 — Door does not close or open properly
+REF08 — Door gasket/seal concern
+REF09 — Ice formation or ice-making concern (only where applicable)
+REF10 — Excessive frost or ice buildup
+REF11 — Bad smell/odor
+REF12 — Interior light not working
+REF13 — Food freezing unexpectedly
+REF14 — Condensation or moisture
+REF15 — Cleaning and maintenance guidance
+
+MODEL-SPECIFIC WORKFLOW INDEX
+Single-door Direct Cool profile:
+SDF01 — Manual temperature knob / OFF setting
+SDF02 — Manual defrost guidance
+SDF03 — Cooling-plate frost management
+SDF04 — Shelf, tray and food placement / internal water
+SDF05 — Cooling recovery after defrost
+
+Double-door Frost Free profile:
+DDF01 — Temperature setting and cooling adjustment
+DDF02 — Freezer cooling versus refrigerator compartment cooling
+DDF03 — Frost Free / automatic defrost concern
+DDF04 — Air circulation and blocked vents
+DDF05 — Uneven temperature between compartments
+
+MANUFACTURER ERROR-CODE HANDLING
+Refrigerators do not universally use the AC-style CHxx code scheme. Some refrigerator models may show text codes, blinking indicators, or other diagnostic signals; other models may have no customer-facing numeric display.
+
+A code example found in general LG refrigerator support material must NOT automatically be mapped to either example model above. The exact model manual/support entry must confirm applicability before the system presents a code meaning.
+
+Code-handling flow:
+1. Ask whether a code, letters, numbers, or a blinking indicator is visible.
+2. If yes, request the exact characters, including spaces and leading characters; ask for a photo only if practical.
+3. Confirm the full model/product code.
+4. Search only the verified model-specific knowledge base for an exact code match.
+5. If an exact match is confirmed, state the manufacturer-documented meaning cautiously and provide only owner-manual-approved actions.
+6. If the code is unknown, ambiguous, not listed for that model, or inconsistent with the manual, do not infer a meaning. Record it and escalate to qualified service.
+7. Never map an AC CH code to a refrigerator code or reuse AC diagnostic procedures.
+
+General LG refrigerator code examples sometimes documented for certain models include:
+- Er(E) DH / H — described on some support pages as a defrost-related error.
+- Er(E) CF — described on some support pages as a condenser-fan-related error.
+- Er(E) FF / rF — described on some support pages as a freezer/refrigerator fan-related error.
+- C / E CO — described on some support pages as a communication-related error.
+- OFF — may indicate demo/display mode on applicable models.
+
+These are examples only, not a verified code table for GL-D201ABCD or GL-N292RDSY. Do not show a code interpretation to a customer until the model-specific support/manual entry confirms it.
+
+----------------------------------------------------------------------
+REF01 — REFRIGERATOR NOT COOLING
+Category: Cooling performance
+Suggested urgency: High if food is warming; Critical if electrical danger is present.
+
+Ask the customer:
+1. Is the refrigerator completely warm, or is one compartment still cooling?
+2. Is the interior light or display working, if fitted?
+3. Is the temperature control set to OFF or an unusually warm setting?
+4. Was the door left open, or was a large amount of warm food added recently?
+5. Is there a burning smell, sparking, damaged cable or repeated breaker trip?
+
+Customer-safe checks:
+- Confirm the appliance is connected to a suitable working outlet only if the outlet and plug are dry and undamaged.
+- Check the temperature setting using the normal user control and the owner's manual.
+- Ensure the door closes fully and food is not preventing closure.
+- Keep external ventilation space around the refrigerator as specified in the manual.
+- If there is electrical danger, stop use and arrange qualified service.
+
+Technician-only checks:
+- Verify supply, control operation, temperature-sensor inputs, fan operation where fitted, compressor operation and sealed-system performance using the exact service manual.
+- Do not assume compressor, relay, sensor, fan or PCB failure from the symptom alone.
+
+Possible causes to investigate (not confirmed failures):
+- Incorrect control setting or power supply issue.
+- Door left open or poor seal.
+- Airflow obstruction or fan fault where fitted.
+- Control/sensor issue.
+- Compressor or sealed-system issue.
+
+Escalate if cooling does not return after owner-manual-approved checks, food is warming, or any electrical warning sign is present.
+
+----------------------------------------------------------------------
+REF02 — INSUFFICIENT OR WEAK COOLING
+Category: Cooling performance
+Suggested urgency: Medium to High depending on food temperature and duration.
+
+Ask:
+1. Is cooling weak in the whole refrigerator or only one compartment?
+2. Has the door been opened frequently or left ajar?
+3. Is the refrigerator heavily loaded or are air vents blocked?
+4. Was the appliance recently installed, moved, defrosted or restarted after a power cut?
+5. Is there an unusual sound or a displayed code?
+
+Customer-safe checks:
+- Confirm the control setting from the owner's manual.
+- Leave space around internal air vents and avoid overpacking.
+- Check that the door closes and the gasket is not visibly displaced.
+- Allow the recovery period specified in the model's manual; do not promise a universal number of hours.
+- Do not adjust undocumented service settings.
+
+Technician checks:
+- Confirm compartment temperatures and operating conditions.
+- Inspect airflow, fans, sensor inputs, door sealing and control operation as applicable.
+- Investigate the sealed system only through qualified procedures.
+
+Possible causes:
+- Setting, loading, door-opening or ambient conditions.
+- Blocked air circulation.
+- Door seal issue.
+- Sensor, fan, control, compressor or sealed-system issue requiring diagnosis.
+
+----------------------------------------------------------------------
+REF03 — REFRIGERATOR NOT POWERING ON
+Category: Power/electrical
+Suggested urgency: Critical if smoke, burning, sparking, damaged cable or repeated breaker trips occur.
+
+Ask:
+1. Is the display or interior light working, if the model has one?
+2. Is the plug/cable visibly damaged or wet?
+3. Has the household circuit tripped repeatedly?
+4. Did the problem begin after a power interruption?
+
+Customer-safe actions:
+- Do not touch wet or damaged electrical equipment.
+- If safe, check whether the plug is fully seated and the outlet is visibly dry and undamaged.
+- Do not use extension leads or adapters as a diagnostic workaround unless the manufacturer explicitly permits them.
+- If a breaker trips repeatedly, stop resetting it and call qualified service.
+
+Technician checks:
+- Verify supply and protective devices.
+- Inspect cord, connectors, control board and compressor-start/control circuitry using model-specific procedures.
+- Do not instruct customers to remove covers or test electrical components.
+
+Possible causes:
+- Outlet/supply issue.
+- Damaged cord or connection.
+- Internal control or compressor-start circuit fault.
+- Protective device operation.
+
+----------------------------------------------------------------------
+REF04 — UNUSUAL NOISE
+Category: Noise/mechanical
+Suggested urgency: Medium; High if accompanied by burning smell, loss of cooling or severe impact noise.
+
+Ask:
+1. Is the sound humming, clicking, buzzing, rattling, scraping, or gurgling?
+2. Does it happen continuously or only while cooling starts/stops?
+3. Is the refrigerator stable and level on the floor?
+4. Is anything touching the cabinet or vibrating against it?
+5. Has cooling performance changed?
+
+Customer-safe checks:
+- Move loose objects away from the cabinet.
+- Check that the appliance is stable without tilting or moving a loaded refrigerator.
+- Compare the sound with normal-operation guidance in the owner's manual.
+- Do not reach into fan openings or the compressor compartment.
+
+Technician checks:
+- Identify whether the sound comes from a fan, compressor, tubing, drain system or cabinet contact.
+- Inspect components only after safe isolation and according to the service manual.
+
+Possible causes:
+- Normal compressor/coolant operating sounds.
+- Cabinet contact or uneven floor.
+- Fan obstruction or mechanical wear where fitted.
+- Compressor or other internal fault.
+
+----------------------------------------------------------------------
+REF05 — EXCESSIVE VIBRATION OR RATTLING
+Category: Installation/mechanical
+Ask:
+1. Is the appliance stable on the floor?
+2. Does the sound stop when loose items on top or nearby are removed?
+3. Is the refrigerator touching a wall or cabinet?
+4. Did vibration begin after installation or moving?
+
+Customer-safe checks:
+- Remove loose objects from the top and nearby surfaces.
+- Check clearances in the installation manual.
+- Do not tip or move the appliance alone.
+Technician/installer checks:
+- Verify leveling, installation clearance, tubing/cabinet contact and mechanical mounting.
+- Inspect compressor mounts or internal parts only as qualified service.
+
+----------------------------------------------------------------------
+REF06 — WATER LEAKAGE
+Category: Water/drainage
+Suggested urgency: High if water is near electricity.
+
+Ask:
+1. Is water inside the refrigerator, beneath vegetable drawers, or on the floor?
+2. Is the appliance a Direct Cool or Frost Free model?
+3. Was it recently defrosted or cleaned?
+4. Is the water near a power outlet, plug or cable?
+
+Customer-safe actions:
+- If water is near electrical parts, keep away and disconnect power only if safe.
+- Wipe accessible interior water with the appliance safely powered off if the manual permits.
+- Do not remove panels, pour chemicals into drains or use sharp tools to clear ice.
+- If leakage continues, arrange service.
+
+Technician checks:
+- Inspect drain paths and drain-pan arrangements only where fitted.
+- Check door sealing, defrost drainage, internal water channels and any water connection if the model has one.
+- Verify the exact design; do not assume all refrigerators use the same drain arrangement.
+
+Possible causes:
+- Spillage or condensation.
+- Blocked/displaced drain path where applicable.
+- Door seal or alignment issue.
+- Defrost drainage issue.
+- Damaged internal water component on models that have one.
+
+----------------------------------------------------------------------
+REF07 — DOOR DOES NOT CLOSE OR OPEN PROPERLY
+Category: Door/mechanical
+
+Ask:
+1. Is food, a shelf or a door bin obstructing closure?
+2. Is the appliance stable and installed with required clearance?
+3. Is the door visibly misaligned or does it drop?
+4. Does the door alarm sound, if fitted?
+
+Customer-safe checks:
+- Reposition items that prevent closure.
+- Close the door gently and check the normal door path.
+- Do not force the door or attempt hinge repair.
+Technician checks:
+- Inspect hinge, door alignment, cabinet leveling and gasket placement according to the model's installation/service documentation.
+
+----------------------------------------------------------------------
+REF08 — DOOR GASKET / SEAL CONCERN
+Category: Sealing/cooling
+
+Ask:
+1. Is the gasket visibly torn, loose, dirty or deformed?
+2. Is moisture or frost concentrated around the door edge?
+3. Does the door close fully without being pushed?
+4. Is anything preventing the gasket from contacting the cabinet?
+
+Customer-safe checks:
+- Clean accessible gasket surfaces using the method approved in the owner's manual.
+- Remove items obstructing closure.
+- Do not use heat, adhesives or improvised seal repairs.
+Technician checks:
+- Inspect gasket fit, door alignment and cabinet condition; replace parts only when diagnosis and part number are confirmed.
+
+----------------------------------------------------------------------
+REF09 — ICE FORMATION / ICE-MAKING CONCERN
+Category: Ice/water
+Applicability: Ask whether the exact model includes an ice maker or manual ice tray; do not assume an automatic ice maker.
+
+Ask:
+1. Is the concern about an ice tray, freezer ice formation, or an automatic ice maker?
+2. Is the freezer cold enough according to the model's guidance?
+3. Is the ice tray positioned correctly, if applicable?
+4. Is there a displayed code or unusual sound?
+
+Customer-safe checks:
+- Follow the owner's manual for tray placement and normal use.
+- Do not remove covers or touch internal ice-maker mechanisms.
+Technician checks:
+- Only if the model has the feature: inspect the relevant water supply, ice-maker mechanism, sensors and controls according to the service manual.
+
+----------------------------------------------------------------------
+REF10 — EXCESSIVE FROST OR ICE BUILDUP
+Category: Frost/defrost
+
+Ask:
+1. Is the appliance Direct Cool or Frost Free?
+2. Is frost on the normal cooling plate/freezer area, around the door, or across the compartment?
+3. Is the door closing fully?
+4. Is food blocking vents in a Frost Free model?
+5. Was the appliance recently defrosted?
+
+Customer-safe checks:
+- For Direct Cool models, follow the exact manual's manual-defrost instructions and timing.
+- For Frost Free models, check door closure and keep internal vents unobstructed.
+- Never chip ice with sharp tools or use an open flame.
+- Do not assume a Frost Free model should never show any moisture or transient frost under all conditions.
+
+Technician checks:
+- On Frost Free designs, inspect defrost sensors/heater, drainage, airflow fan and control sequence where fitted.
+- Confirm the actual model architecture before testing or replacing parts.
+
+----------------------------------------------------------------------
+REF11 — BAD SMELL / ODOR
+Category: Hygiene/maintenance
+
+Ask:
+1. Is the smell from spilled food, a container, the drain area, or the appliance itself?
+2. Is there any burning or electrical smell?
+3. Is cooling normal?
+
+Customer-safe actions:
+- If the smell is burning/electrical, stop use and arrange service.
+- Otherwise remove spoiled food and clean accessible interior surfaces according to the manual.
+- Do not use strong chemicals, abrasive tools or unapproved deodorizing substances.
+Technician checks:
+- Investigate persistent odor after cleaning, including hidden spill/drain areas where applicable.
+
+----------------------------------------------------------------------
+REF12 — INTERIOR LIGHT NOT WORKING
+Category: Lighting/electrical
+Applicability: Only for models with an interior light.
+
+Ask:
+1. Does the refrigerator still cool normally?
+2. Does the light work intermittently when the door opens?
+3. Is the door closing normally?
+4. Is there any electrical warning sign?
+
+Customer-safe checks:
+- Confirm whether the model has an interior light and follow the manual.
+- Do not remove light covers or replace internal electrical parts unless the owner manual explicitly describes a user-replaceable part and procedure.
+Technician checks:
+- Inspect door switch/sensor, light module, wiring and control output as applicable.
+
+----------------------------------------------------------------------
+REF13 — FOOD FREEZING UNEXPECTEDLY
+Category: Temperature control
+
+Ask:
+1. Which items or area are freezing?
+2. What is the current control setting?
+3. Are items touching a cooling plate or placed directly in a cold-air outlet?
+4. Is the issue constant or intermittent?
+
+Customer-safe checks:
+- Adjust settings only as described in the owner's manual.
+- Move sensitive items away from the coldest surfaces/air outlets as appropriate for the design.
+- Do not alter service parameters.
+Technician checks:
+- Verify temperature sensor/control operation and air distribution where applicable.
+
+----------------------------------------------------------------------
+REF14 — CONDENSATION / MOISTURE
+Category: Moisture/door seal
+
+Ask:
+1. Is moisture on the outside, inside walls, door edge, or food containers?
+2. Is the door opened frequently or left ajar?
+3. Is the kitchen unusually humid?
+4. Is the gasket clean and seated?
+
+Customer-safe checks:
+- Close the door promptly and avoid placing hot uncovered food inside.
+- Clean accessible moisture and follow manual guidance for storage.
+- If water is near electrical parts, stop use and prioritize safety.
+Technician checks:
+- Inspect sealing, alignment, drainage and temperature performance if moisture is persistent or excessive.
+
+----------------------------------------------------------------------
+REF15 — CLEANING AND MAINTENANCE
+Category: Maintenance
+
+Ask:
+1. Is the customer asking for routine cleaning, defrosting, or a specific fault?
+2. What is the exact model?
+3. Is there a symptom such as leakage, poor cooling or unusual odor?
+
+Guidance:
+- Provide only the cleaning and defrost procedure in the exact owner's manual.
+- Recommend safe, accessible cleaning only.
+- Do not ask customers to dismantle panels, access electrical components, or use sharp tools/chemicals.
+- If maintenance reveals damaged wiring, burning smell, persistent leakage or a recurring code, stop routine guidance and escalate.
+
+----------------------------------------------------------------------
+SINGLE-DOOR DIRECT COOL WORKFLOWS
+
+SDF01 — MANUAL TEMPERATURE KNOB / OFF SETTING
+Purpose: Check user control settings before escalating weak/no cooling.
+1. Ask whether the model has a manual temperature knob.
+2. Ask whether the knob is at OFF or a setting identified as warm/low cooling in the manual.
+3. If yes, guide the user to choose a normal setting exactly as the owner's manual describes.
+4. Ask whether cooling begins to recover within the manual's expected recovery period.
+5. If not, route to REF01 or REF02.
+Do not invent numbered knob-to-temperature mappings unless the model manual supplies them.
+
+SDF02 — MANUAL DEFROST GUIDANCE
+Purpose: Help users follow the model's official defrost process.
+1. Confirm the exact model and that the manual describes manual defrost.
+2. Ask whether excess frost is affecting storage/cooling.
+3. Provide only the manual's safe steps for removing food, switching off/unplugging if specified, collecting meltwater and restarting.
+4. Explicitly prohibit sharp tools, flame, hair dryers and forced ice removal.
+5. If frost returns unusually quickly or cooling remains weak, route to REF10/REF02 and service review.
+
+SDF03 — COOLING-PLATE FROST MANAGEMENT
+Purpose: Distinguish normal frost behavior from an excessive-frost concern.
+1. Ask where frost forms and how thick it becomes.
+2. Ask whether the door is frequently opened or left ajar.
+3. Ask whether the cooling plate is obstructed by food.
+4. Provide model-manual guidance; do not promise a universal acceptable frost thickness or interval.
+5. If frost is persistent/excessive or cooling is poor, route to REF10/REF02.
+
+SDF04 — TRAY, SHELF AND INTERNAL WATER
+Purpose: Check simple placement/spillage issues.
+1. Ask where water or moisture collects.
+2. Ask whether there has been a spill or recent cleaning/defrosting.
+3. Ask whether trays/shelves are placed according to the manual.
+4. If water continues to collect or leaks to the floor, route to REF06.
+5. Do not assume a particular drain channel exists without model documentation.
+
+SDF05 — COOLING RECOVERY AFTER DEFROST
+Purpose: Check recovery without making unsupported timing claims.
+1. Ask when defrosting ended and whether the unit was restarted according to the manual.
+2. Ask whether the door is closed and the temperature control is set normally.
+3. Tell the customer to allow the model-manual recovery period.
+4. If cooling remains absent or food is warming, route to REF01/REF02 and escalate.
+5. Do not prescribe a universal waiting time.
+
+----------------------------------------------------------------------
+DOUBLE-DOOR FROST FREE WORKFLOWS
+
+DDF01 — TEMPERATURE SETTING AND COOLING ADJUSTMENT
+1. Confirm the model's control type and compartment settings.
+2. Ask whether the user changed settings recently.
+3. Guide adjustments only as specified in the owner's manual.
+4. Ask whether the issue affects both compartments or one.
+5. Route to REF01/REF02 if cooling does not recover within the manual's guidance.
+
+DDF02 — FREEZER COOLING VERSUS REFRIGERATOR COOLING
+1. Ask whether the freezer is cooling normally while the refrigerator compartment is warm.
+2. Ask whether internal vents are blocked by food.
+3. Ask whether there is unusual fan noise or a displayed code.
+4. Guide only accessible checks: keep vents clear, close doors, avoid overpacking.
+5. If the freezer works but refrigerator compartment remains warm, escalate for technician assessment of airflow, fan, damper (if fitted), sensor, defrost system and controls. Do not claim any one part has failed.
+
+DDF03 — FROST FREE / AUTOMATIC DEFROST CONCERN
+1. Ask where frost appears and whether it is widespread or concentrated around the door.
+2. Check door closure and whether warm air may be entering.
+3. Ask whether cooling performance is declining.
+4. Do not ask the customer to dismantle the freezer's inner panel or manually melt hidden ice.
+5. Persistent frost with weak cooling should be escalated for technician-only defrost, drainage, fan and sensor checks.
+
+DDF04 — AIR CIRCULATION AND BLOCKED VENTS
+1. Ask whether food is pushed against internal air vents.
+2. Ask whether the compartment is overpacked.
+3. Guide the customer to leave the clearances shown in the manual.
+4. Ask whether cooling improves after normal loading and door closure.
+5. If not, route to REF02/DDF02.
+
+DDF05 — COMPARTMENT TEMPERATURE IMBALANCE
+1. Ask which compartment is warmer or colder.
+2. Ask whether settings were changed, doors left open, or vents blocked.
+3. Ask whether unusual noise or a code is present.
+4. Perform only the user-manual-approved setting and airflow checks.
+5. Escalate persistent imbalance for model-specific fan, sensor, defrost, airflow and control diagnosis.
+
+----------------------------------------------------------------------
+TECHNICIAN-ONLY DIAGNOSTIC RULES
+- Confirm full model/product code and the correct service manual revision before component tests.
+- Verify the actual architecture: Direct Cool versus Frost Free, manual versus electronic controls, fan configuration, sensor count, defrost system and any water/ice features.
+- Inspect power, wiring, connectors, sensors, fans, control boards, compressor and sealed system only under the manufacturer's safety procedure.
+- Do not use generic resistance, voltage, pressure, temperature or compressor test values as pass/fail criteria.
+- Do not assume a relay, capacitor, fan, defrost heater, damper, water valve or particular sensor exists on every model.
+- Do not replace a compressor, PCB, sensor, fan or other part based solely on a symptom or displayed code.
+- Do not bypass thermal protection, door switches, overload devices or other safety controls.
+- Refrigerant/sealed-system work is restricted to qualified technicians using approved equipment and applicable regulations.
+- Record evidence and measurements with the test conditions and manual reference.
+
+CROSS-ISSUE SAFETY / ESCALATION RULES
+1. Electrical danger (smoke, burning smell, sparking, damaged cable, repeated breaker trips): stop troubleshooting and arrange qualified service.
+2. Water near electrical parts: keep away; disconnect power only if safe.
+3. Repeated loss of cooling or warming food: prioritize food-safety guidance and service escalation.
+4. A displayed code must be copied exactly and matched to the exact model documentation.
+5. Unknown or unverified codes must never be assigned guessed meanings.
+6. A symptom does not prove a component failure.
+7. Never transfer AC CH-code definitions or AC component procedures to a refrigerator.
+8. Never ask customers to dismantle panels, probe wiring, touch fans, open the compressor compartment or handle refrigerant.
+9. Model-specific procedures and parts must be validated before the diagnostic tree is deployed.
+
+SERVICE RECORD TEMPLATE
+Product category: Refrigerator
+Manufacturer and exact model/product code: __________________________
+Serial number (if needed for service): _______________________________
+Refrigerator type: Single-door Direct Cool / Double-door Frost Free / Other
+Date/time symptom began: __________________________________________
+Customer's description: ____________________________________________
+Power/light/display status: _________________________________________
+Exact displayed code or blinking pattern: ____________________________
+Compartment affected: ______________________________________________
+Door/seal/vent observations: ________________________________________
+Leakage, odor or safety warning signs: ______________________________
+Customer-safe checks performed: ____________________________________
+Was a manual-permitted reset performed? _____________________________
+Did the symptom return? ____________________________________________
+Official owner/service manual reference and revision: ________________
+Technician diagnosis and supporting evidence: _______________________
+Measurements and test conditions: __________________________________
+Confirmed fault (if identified): ____________________________________
+Parts replaced and part numbers: ___________________________________
+Post-repair cooling/leak/safety verification: ________________________
+Further action required: ____________________________________________
+
+FINAL VERIFICATION REQUIREMENT
+This guide is a structured starter for ApplianceCare AI, adapted from the supplied AC guide's format and safety approach. It is not a substitute for the official refrigerator service manual. Before deployment, verify every model-specific feature, code meaning, reset instruction, diagnostic procedure and part recommendation against the exact product documentation. The common, single-door and double-door JSON diagnostic trees should be loaded together as appropriate; cross-tree redirects must resolve correctly at runtime. When a detail cannot be verified, provide safe customer guidance and escalate rather than inventing a procedure.
+
+REFERENCE SOURCES FOR MODEL PROFILES
+- LG India product page for GL-D201ABCD: https://www.lg.com/in/refrigerators/single-door-refrigerators/gl-d201abcd/
+- LG India support/manual page for GL-N292RDSY: https://www.lg.com/in/support/product-support/cs-GL-N292RDSY/
+- LG India manuals portal: https://www.lg.com/in/support/manuals

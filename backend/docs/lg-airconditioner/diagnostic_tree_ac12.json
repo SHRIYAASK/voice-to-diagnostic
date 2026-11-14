@@ -1,0 +1,72 @@
+{
+  "issue_id": "AC12",
+  "title": "Installation / Connection Problem",
+  "start_node": "q1_installation_time",
+  "nodes": [
+    {
+      "id": "q1_installation_time",
+      "type": "question",
+      "text_en": "Was this AC newly installed within the last 7 to 30 days?",
+      "text_hi": "Kya ye AC pichhle 7 se 30 dino ke andar naya install hua hai?",
+      "options": [
+        {
+          "label": "Yes, brand new installation",
+          "next_node": "q2_installation_symptom"
+        },
+        {
+          "label": "No, installed long ago / re-installed after shifting",
+          "next_node": "q2_installation_symptom"
+        }
+      ]
+    },
+    {
+      "id": "q2_installation_symptom",
+      "type": "question",
+      "text_en": "What specific installation issue are you observing?",
+      "text_hi": "Installation mein kaunsi specific dikkat dikh rahi hai?",
+      "options": [
+        {
+          "label": "Unit is visibly tilted or loose on wall",
+          "conclusion": "diag_improper_mounting_tilt"
+        },
+        {
+          "label": "Water leaking from backplate / wall hole",
+          "redirect_issue": "AC04"
+        },
+        {
+          "label": "Outdoor unit vibrating heavily against wall",
+          "redirect_issue": "AC07"
+        },
+        {
+          "label": "No cooling immediately after technician left",
+          "conclusion": "diag_installation_gas_valve_closed"
+        }
+      ]
+    }
+  ],
+  "conclusions": {
+    "diag_improper_mounting_tilt": {
+      "probable_cause": "Indoor Unit Backplate Installed Reverse Tilted (Preventing Drainage)",
+      "confidence": 0.95,
+      "parts": [
+        "Level Alignment Re-installation Service"
+      ],
+      "priority": "High",
+      "safety_flag": true,
+      "rag_query": "LG AC wall mount tilt water drainage installation standard",
+      "technician_note": "Re-level indoor backplate with spirit level ensuring slight 2-3mm slope towards drain hose side."
+    },
+    "diag_installation_gas_valve_closed": {
+      "probable_cause": "Service Valves Not Opened or Flare Nut Not Torqued properly (Gas Leak)",
+      "confidence": 0.9,
+      "parts": [
+        "Refrigerant R32 Top-up",
+        "Flare Re-torqueing Service"
+      ],
+      "priority": "High",
+      "safety_flag": false,
+      "rag_query": "LG AC service valve open 2-way 3-way hex key check",
+      "technician_note": "Check service valve stems are fully open with Allen key. Perform nitrogen bubble test on both flare joints."
+    }
+  }
+}

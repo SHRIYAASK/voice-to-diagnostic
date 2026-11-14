@@ -1,0 +1,123 @@
+{
+  "issue_id": "AC13",
+  "title": "Cosmetic / Physical Damage",
+  "start_node": "q1_damage_part",
+  "nodes": [
+    {
+      "id": "q1_damage_part",
+      "type": "question",
+      "text_en": "Which physical part of the AC is cracked, broken, or damaged?",
+      "text_hi": "AC ka kaunsa hissa toota ya damage hua hai?",
+      "options": [
+        {
+          "label": "Front Panel / Grill / Display Casing",
+          "next_node": "q2_exposed_wires"
+        },
+        {
+          "label": "Air Louver / Swing Blade broken",
+          "conclusion": "diag_broken_louver_blade"
+        },
+        {
+          "label": "Outdoor unit casing / Condenser fin bent",
+          "next_node": "q3_outdoor_fin_damage"
+        },
+        {
+          "label": "Power Cord cut / Rodent bite",
+          "conclusion": "diag_rodent_damaged_power_cord"
+        }
+      ]
+    },
+    {
+      "id": "q2_exposed_wires",
+      "type": "question",
+      "text_en": "Is there any exposed high-voltage wiring, internal PCB, or live parts visible through the damage?",
+      "text_hi": "Kya toote hisse se koi nanga bijli ka taar ya internal PCB bahar dikh raha hai?",
+      "options": [
+        {
+          "label": "Yes, exposed wiring or live metal",
+          "conclusion": "diag_exposed_live_wiring_hazard"
+        },
+        {
+          "label": "No, only superficial plastic crack",
+          "conclusion": "diag_cosmetic_front_panel_replace"
+        }
+      ]
+    },
+    {
+      "id": "q3_outdoor_fin_damage",
+      "type": "question",
+      "text_en": "Are the outdoor condenser blue fins bent over a large area, blocking air flow?",
+      "text_hi": "Kya outdoor unit ke blue fins mude hue hain jisse hawa ruk rahi hai?",
+      "options": [
+        {
+          "label": "Yes, large bent fin area",
+          "conclusion": "diag_fin_comb_straightening"
+        },
+        {
+          "label": "Minor cosmetic scratches on cabinet",
+          "resolution": "resolved_minor_cosmetic_acceptable"
+        }
+      ]
+    }
+  ],
+  "conclusions": {
+    "diag_exposed_live_wiring_hazard": {
+      "probable_cause": "Broken Plastic Housing Exposing 230V Mains Terminals",
+      "confidence": 0.95,
+      "parts": [
+        "Front Fascia Assembly",
+        "Indoor Terminal Cover"
+      ],
+      "priority": "Critical",
+      "safety_flag": true,
+      "rag_query": "LG AC broken casing exposed wire safety hazard",
+      "technician_note": "SHUT OFF MCB. Replace damaged front fascia and electrical enclosure cover."
+    },
+    "diag_broken_louver_blade": {
+      "probable_cause": "Physical Impact Snapped Horizontal Louver Hinge Pin",
+      "confidence": 0.95,
+      "parts": [
+        "Horizontal Air Louver Blade",
+        "Louver Center Guide"
+      ],
+      "priority": "Low",
+      "safety_flag": false,
+      "rag_query": "LG AC horizontal louver vane replacement",
+      "technician_note": "Snap in replacement genuine louver blade into motor hinge."
+    },
+    "diag_cosmetic_front_panel_replace": {
+      "probable_cause": "Cracked Front Panel Grille",
+      "confidence": 0.9,
+      "parts": [
+        "Indoor Front Panel Grille (OEM)"
+      ],
+      "priority": "Low",
+      "safety_flag": false,
+      "rag_query": "LG AC front panel replacement UW-Q18WUZA",
+      "technician_note": "Provide replacement front panel."
+    },
+    "diag_rodent_damaged_power_cord": {
+      "probable_cause": "Rodent / Rat Chewed Power Cord or Interconnecting Cable",
+      "confidence": 0.95,
+      "parts": [
+        "3-Core 2.5sqmm Power Cable",
+        "Anti-Rodent PVC Sleeve"
+      ],
+      "priority": "Critical",
+      "safety_flag": true,
+      "rag_query": "LG AC rat bite cable replacement safety",
+      "technician_note": "Do not join with tape. Replace full interconnecting cable harness with rodent-proof braided sleeve."
+    },
+    "diag_fin_comb_straightening": {
+      "probable_cause": "Bent Aluminum Condenser Fins Restricting Heat Transfer",
+      "confidence": 0.85,
+      "parts": [
+        "Fin Comb Tool Straightening Service"
+      ],
+      "priority": "Medium",
+      "safety_flag": false,
+      "rag_query": "LG AC condenser fin comb repair",
+      "technician_note": "Use fin comb to gently align bent condenser fins."
+    }
+  }
+}

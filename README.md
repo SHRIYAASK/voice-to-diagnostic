@@ -14,34 +14,37 @@
 ---
 
 ## 📑 Table of Contents
-1. [Project Overview](#1-project-overview)
-2. [Problem Statement](#2-problem-statement)
-3. [Key Features](#3-key-features)
-4. [System Architecture](#4-system-architecture)
-5. [Technology Stack](#5-technology-stack)
-6. [Voice Processing Architecture](#6-voice-processing-architecture)
-7. [Real-Time Voice Interaction & Barge-In](#7-real-time-voice-interaction--barge-in)
-8. [Audio Processing & Noise Handling](#8-audio-processing--noise-handling)
-9. [AI Agent Architecture](#9-ai-agent-architecture)
-10. [Diagnostic Engine](#10-diagnostic-engine)
-11. [Diagnostic Decision Trees](#11-diagnostic-decision-trees)
-12. [Error Code Detection & Lookup](#12-error-code-detection--lookup)
-13. [RAG & Knowledge Retrieval](#13-rag--knowledge-retrieval)
-14. [Safety Architecture](#14-safety-architecture)
-15. [Service Ticket & Technician Booking](#15-service-ticket--technician-booking)
-16. [Conversation State Management](#16-conversation-state-management)
-17. [Project Directory Structure](#17-project-directory-structure)
-18. [Installation & Setup](#18-installation--setup)
-19. [Environment Variables](#19-environment-variables)
-20. [Running the Application](#20-running-the-application)
-21. [API Documentation](#21-api-documentation)
-22. [WebSocket Audio Protocol](#22-websocket-audio-protocol)
-23. [Benchmarking & Evaluation](#23-benchmarking--evaluation)
-24. [Performance Metrics & Results](#24-performance-metrics--results)
-25. [Screenshots & Demo](#25-screenshots--demo)
-26. [Limitations](#26-limitations)
-27. [Future Improvements](#27-future-improvements)
-28. [License & Acknowledgements](#28-license--acknowledgements)
+
+| # | Section | Primary Focus & Coverage |
+| :---: | :--- | :--- |
+| **01** | [Project Overview](#1-project-overview) | Mission, capabilities, and executive summary |
+| **02** | [Problem Statement](#2-problem-statement) | IVR failures, LLM hallucination risks, and technician scheduling delays |
+| **03** | [Key Features](#3-key-features) | Full-duplex voice, sub-120ms barge-in, decision trees, electrical safety |
+| **04** | [System Architecture](#4-system-architecture) | End-to-end dataflow, microservices, and component interaction |
+| **05** | [Technology Stack](#5-technology-stack) | Frontend, backend, speech AI, audio DSP, and vector DB technologies |
+| **06** | [Voice Processing Architecture](#6-voice-processing-architecture) | Audio pipeline, bidirectional streaming, VAD, and STT/TTS integration |
+| **07** | [Real-Time Voice Interaction & Barge-In](#7-real-time-voice-interaction--barge-in) | Dual-tier speech onset ducking, Silero VAD suppression, and state sync |
+| **08** | [Audio Processing & Noise Handling](#8-audio-processing--noise-handling) | 80Hz high-pass filtering, compressor rumble removal, and SNR calibration |
+| **09** | [AI Agent Architecture](#9-ai-agent-architecture) | Hybrid deterministic rule router and grounded LLM fallback orchestrator |
+| **10** | [Diagnostic Engine](#10-diagnostic-engine) | Graph traversal, evidence collection, symptom triage, and resolution paths |
+| **11** | [Diagnostic Decision Trees](#11-diagnostic-decision-trees) | Specification tables for Cooling, Power/MCB, Noise/Vibration, and Water Leakage |
+| **12** | [Error Code Detection & Lookup](#12-error-code-detection--lookup) | 3-stage extractor, phonetic mapping (CH05 vs CH06), and sensor fault routing |
+| **13** | [RAG & Knowledge Retrieval](#13-rag--knowledge-retrieval) | Pinecone vector search, service manual embeddings, and zero-hallucination citations |
+| **14** | [Safety Architecture](#14-safety-architecture) | 230V live electrical safety gates, capacitor discharge, and refrigerant hazard rules |
+| **15** | [Service Ticket & Technician Booking](#15-service-ticket--technician-booking) | Severity-based priority booking, conversational auto-fill, and slot confirmation |
+| **16** | [Conversation State Management](#16-conversation-state-management) | Redux/Zustand session state, context retention across interruptions, and resume logic |
+| **17** | [Project Directory Structure](#17-project-directory-structure) | Repository organization for frontend, backend, test suites, and benchmarks |
+| **18** | [Installation & Setup](#18-installation--setup) | Prerequisites, package installation, and dependency provisioning |
+| **19** | [Environment Variables](#19-environment-variables) | Complete `.env` reference guide for API keys, endpoints, and thresholds |
+| **20** | [Running the Application](#20-running-the-application) | Development servers, production build compilation, and background services |
+| **21** | [API Documentation](#21-api-documentation) | REST endpoints for diagnosis, ticket generation, booking, and error lookup |
+| **22** | [WebSocket Audio Protocol](#22-websocket-audio-protocol) | Frame specs, JSON control messages, binary PCM frames, and barge-in events |
+| **23** | [Benchmarking & Evaluation](#23-benchmarking--evaluation) | Tri-Scorecard methodology, 1,050 ground-truth test suite, and statistical engine |
+| **24** | [Performance Metrics & Results](#24-performance-metrics--results) | Empirical telemetry (P50/P95/P99 latency, 100% accuracy, zero unsafe instructions) |
+| **25** | [Screenshots & Demo](#25-screenshots--demo) | User interface walkthrough, diagnostic cards, and booking flow |
+| **26** | [Limitations](#26-limitations) | Acoustic boundary limits, network jitter thresholds, and unlisted OEM codes |
+| **27** | [Future Improvements](#27-future-improvements) | Edge-VAD WebAssembly, visual camera pre-inspection, and multi-OEM support |
+| **28** | [License & Acknowledgements](#28-license--acknowledgements) | Open-source licensing, Gnani AI, Silero VAD, and contributor credits |
 
 ---
 

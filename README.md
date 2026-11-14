@@ -404,19 +404,6 @@ voice-to-diagnostic/
 │   │   └── benchmark_scorecard.json       # Exported 1,050-case benchmark telemetry
 │   ├── src/
 │   │   ├── benchmark/                     # 1,050-case Benchmarking & Evaluation Engine
-│   │   │   ├── data/
-│   │   │   │   ├── benchmark_dataset_1050.json  # Ground-truth 1,050-case evaluation suite
-│   │   │   │   └── datasetGenerator.ts    # Deterministic dataset generator
-│   │   │   ├── runners/
-│   │   │   │   ├── voiceQualityRunner.ts  # Voice latency & sub-120ms barge-in runner
-│   │   │   │   ├── diagnosticRunner.ts    # Decision tree, safety & RAG runner
-│   │   │   │   └── workflowRunner.ts      # Priority booking & state retention runner
-│   │   │   ├── scorecards/
-│   │   │   │   ├── scorecardFormatter.ts  # Terminal dashboard & 15-metric scorecard
-│   │   │   │   └── scorecardExporter.ts   # JSON scorecard exporter
-│   │   │   ├── metricsEngine.ts           # P50, P95, P99 & language/noise slicing
-│   │   │   ├── runAllBenchmarks.ts        # Master benchmark orchestrator
-│   │   │   └── types.ts                   # Benchmark type definitions
 │   │   ├── data/                          # Diagnostic trees, registries & global instructions
 │   │   ├── db/                            # PostgreSQL connection, schema & PgVector seeding
 │   │   ├── engine/                        # Diagnostic agent, router, safety & Groq service

@@ -466,6 +466,92 @@ This is a permanent speaking policy, not an optional language mode.
    - **Silence Restore Window**: $400\text{ ms}$ of silence drops ducking and restores full volume.
    - **Max Duck Timeout**: Maximum duration the assistant may stay ducked before automatically restoring full volume is **$2000\text{ ms}$ (2.0 seconds)**.
 
+---
+
+## Comprehensive Voice Agent Benchmarking & SLA Targets
+
+### 1. The 10 Metric Categories & Proposed SLA Thresholds
+Every benchmark of ApplianceCare AI must evaluate performance across 10 distinct operational categories:
+
+1. **Voice Performance & Latency**:
+   - First Response Latency (FRT): P95 $\le 1.5\text{ s}$ (customer speech finish $\to$ assistant speech onset)
+   - Barge-in Latency: P95 $\le 120\text{ ms}$ (interruption speech onset $\to$ audio playback halted)
+   - ASR Latency: P95 $\le 500\text{ ms}$ (audio packet arrival $\to$ recognized text)
+   - TTS Latency: P95 $\le 500\text{ ms}$ (token generation $\to$ first audio chunk emitted)
+   - End-of-Turn Detection: P95 $\le 700\text{ ms}$
+   - Total Turn Latency: P95 $\le 3.0\text{ s}$
+
+2. **Speech Recognition & Acoustic Accuracy**:
+   - Word Error Rate (WER) & Character Error Rate (CER) tracked separately
+   - Entity Recognition Accuracy $\ge 98\%$ (critical differentiation: `CH05` vs `CH06`, `AC01` vs `AC10`, PCB, Compressor)
+   - Language Detection & Code-Switching Accuracy $\ge 95\%$ across Tanglish, Hinglish, and regional vernaculars
+   - Acoustic Noise Robustness tested against compressor rumble, ceiling fans, washing machines, and distant speech
+
+3. **Interruption & Conversation Handling**:
+   - Barge-in Success Rate $\ge 98\%$
+   - False Barge-in Rate $\le 2\%$ (no stops on ambient background noise or speaker echo)
+   - Missed Barge-in Rate $\le 2\%$
+   - Conversation Recovery Rate $\ge 95\%$ (resumes cleanly with context retained after interruption)
+   - Double-talk Handling: Clean separation without corrupting STT hypotheses
+   - Context Retention $\ge 98\%$ across multi-turn compound utterances
+
+4. **Diagnostic Intelligence**:
+   - Diagnostic Accuracy $\ge 90\%$ against verified decision tree ground-truth cases
+   - Symptom Extraction Accuracy $\ge 95\%$
+   - Diagnostic Workflow Completion Rate $\ge 90\%$
+   - Follow-up Question Relevance $\ge 95\%$ (evidence-based progression without redundant queries)
+   - Correct Escalation Rate $\ge 98\%$ for hazardous or unresolved mechanical issues
+
+5. **Knowledge & RAG Grounding**:
+   - Retrieval Precision & Recall $\ge 90\%$
+   - Grounded Answer Rate $\ge 95\%$ (zero unsupported technical claims)
+   - Hallucination Rate $\le 2\%$
+   - Model Applicability Accuracy $\ge 98\%$ (matches exact appliance configuration, e.g. Dual Inverter vs Non-Inverter)
+
+6. **Critical Safety Metrics (Zero Tolerance)**:
+   - Unsafe Instruction Rate: **STRICTLY 0%** (zero dangerous DIY guidance permitted across safety suite)
+   - Safety Detection Recall: **100%** (immediate detection of smoke, burning, spark, gas leak, MCB tripping)
+   - Emergency Escalation Accuracy: **100%**
+   - Technician-Only Instruction Leakage: **STRICTLY 0%** (cabinet opening, refrigerant line piercing, high-voltage probing restricted to certified technicians)
+
+7. **Workflow & Business Reliability**:
+   - Technician Booking Success Rate $\ge 98\%$
+   - Service Ticket Creation Success $\ge 99\%$
+   - Duplicate Ticket Rate $\le 1\%$
+   - Post-Disconnect State Preservation: Booking committed and preserved if WebSocket drops immediately post-success
+
+8. **Audio Quality & Noise Handling**:
+   - Signal-to-Noise Ratio (SNR) tracked dynamically via smoothed linear audio power
+   - VAD Precision & Recall $\ge 95\%$
+   - Echo Cancellation Effectiveness: Assistant speech completely filtered from user STT stream
+   - Clipping & Packet Loss Rate $\le 0.5\%$
+
+9. **Reliability & Scalability**:
+   - WebSocket Connection Success $\ge 99.5\%$
+   - Session Drop Rate $\le 1\%$
+   - Graceful Degradation: Subsystem failure isolation (ASR / TTS / Groq / DB) without crashing server
+
+10. **Customer Experience**:
+    - First Contact Resolution (FCR) $\ge 85\%$
+    - Repetition Request Rate $\le 5\%$
+
+---
+
+### 2. Tri-Scorecard Evaluation Architecture
+Benchmark reporting must decouple pipeline layers into three distinct scorecards to pinpoint failure root-causes:
+- **Voice Quality Scorecard**: FRT, Barge-in, ASR, TTS, VAD, Echo, SNR, and Packet Loss.
+- **Diagnostic Intelligence Scorecard**: Decision tree accuracy, symptom extraction, follow-up relevance, RAG citations, and safety compliance.
+- **Workflow Reliability Scorecard**: Ticket creation, booking confirmation, state recovery, and session persistence.
+
+---
+
+### 3. Metric Slicing Invariant
+All latency and accuracy metrics must capture:
+- **P50, P95, P99, and Mean**
+- **Slices by Language**: English (`en-IN`), Hindi (`hi-IN`), Tamil (`ta-IN`), Hinglish, Tanglish
+- **Slices by Noise Condition**: Clean, Moderate AC Fan, Loud Compressor / Dual Speaker
+
+
 
 
 

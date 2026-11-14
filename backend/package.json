@@ -14,6 +14,7 @@
     "test:voice:noise": "ts-node src/tests/voice/noiseRobustVoice.test.ts",
     "test:voice:suite": "ts-node src/tests/voice/runAllVoiceTests.ts",
     "test:voice": "ts-node src/scripts/voice-pipeline-test.ts",
+    "benchmark:suite": "ts-node src/benchmark/runAllBenchmarks.ts",
     "benchmark:lid": "ts-node benchmark/scripts/run_benchmark.ts",
     "benchmark:lid:testc": "ts-node benchmark/scripts/run_benchmark.ts --test-c",
     "benchmark:manifest": "ts-node benchmark/scripts/build_manifest.ts",
